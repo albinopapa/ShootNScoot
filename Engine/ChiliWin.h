@@ -63,4 +63,49 @@
 
 #define STRICT
 
+#include <string>
+#include <system_error>
+
 #include <Windows.h>
+// Windows helpers
+#include <windowsx.h>
+// Direct2D version 1.0
+#include <d2d1.h>
+// Direct3D version 1.0
+#include <d3d11.h>
+// DirectWrite version 1.0
+#include <dwrite.h>
+// Windows Multimedia for loading audio files
+#include <mmreg.h>
+// DirectSound for playing files
+#include <dsound.h>
+// Windows Imaging Codec
+#include <wincodec.h>
+// Windows Runtime Library helpers - used for ComPtr
+#include <wrl/client.h>
+// XBox Input API for xbox controllers
+#include <Xinput.h>
+
+#pragma comment(lib, "d2d1.lib")
+#pragma comment(lib, "d3d11.lib" )
+#pragma comment(lib, "dsound.lib")
+#pragma comment(lib, "dxguid.lib")
+#pragma comment(lib, "dwrite.lib")
+#pragma comment(lib, "windowscodecs.lib")
+#pragma comment(lib, "winmm.lib" )
+
+class system_error_exception : public std::system_error
+{
+public:
+	system_error_exception( HRESULT hr, const char* filename, int line_number )noexcept
+		:
+		std::system_error(
+			std::error_code( hr, std::system_category() ),
+			"Error in file: " + std::string( filename ) + "\n" +
+			"Error at line: " + std::to_string( line_number ) + "\n" )
+	{}
+
+};
+
+#define ThrowSystemErrorIf( hr )\
+if(FAILED((hr))) throw system_error_exception( ( hr ), __FILE__, __LINE__ )

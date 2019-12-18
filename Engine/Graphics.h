@@ -56,11 +56,13 @@ public:
 	void EndFrame();
 	void BeginFrame();
 	Color GetPixel( int x,int y ) const;
+	Color GetPixelClipped( int x, int y )const;
 	void PutPixel( int x,int y,int r,int g,int b )
 	{
 		PutPixel( x,y,{ unsigned char( r ),unsigned char( g ),unsigned char( b ) } );
 	}
 	void PutPixel( int x,int y,Color c );
+	void PutPixelClipped( int x, int y, Color c );
 	template<typename E>
 	void DrawSprite( int x,int y,const Surface& s,E effect )
 	{
@@ -88,13 +90,13 @@ public:
 			srcRect.top += clip.top - y;
 			y = clip.top;
 		}
-		if( x + srcRect.GetWidth() > clip.right )
+		if( x + srcRect.Width() > clip.right )
 		{
-			srcRect.right -= x + srcRect.GetWidth() - clip.right;
+			srcRect.right -= x + srcRect.Width() - clip.right;
 		}
-		if( y + srcRect.GetHeight() > clip.bottom )
+		if( y + srcRect.Height() > clip.bottom )
 		{
-			srcRect.bottom -= y + srcRect.GetHeight() - clip.bottom;
+			srcRect.bottom -= y + srcRect.Height() - clip.bottom;
 		}
 		for( int sy = srcRect.top; sy < srcRect.bottom; sy++ )
 		{
@@ -110,6 +112,7 @@ public:
 		}
 	}
 
+	static bool IsVisible( RectI const& rect );
 	~Graphics();
 private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain>				pSwapChain;
@@ -131,13 +134,4 @@ public:
 	static RectI GetScreenRect();
 };
 
-#include "SpriteEffect.h"
-
-#ifndef GOD_GRAPHICS
-extern template
-void Graphics::DrawSprite<SpriteEffect::Copy>( int x,int y,RectI srcRect,const RectI& clip,const Surface& s,SpriteEffect::Copy effect );
-extern template
-void Graphics::DrawSprite<SpriteEffect::Chroma>( int x,int y,RectI srcRect,const RectI& clip,const Surface& s,SpriteEffect::Chroma effect );
-extern template
-void Graphics::DrawSprite<SpriteEffect::Substitution>( int x,int y,RectI srcRect,const RectI& clip,const Surface& s,SpriteEffect::Substitution effect );
-#endif
+constexpr RectF screenRect = { 0.f,0.f,float( Graphics::ScreenWidth ),float( Graphics::ScreenHeight ) };

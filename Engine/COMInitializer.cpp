@@ -2,9 +2,9 @@
 #include <objbase.h>
 
 COMInitializer::COMInitializer()
-{
-	hr = CoInitializeEx( NULL,COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE );
-}
+	:
+	hr( CoInitializeEx( NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE ) )
+{}
 
 COMInitializer::~COMInitializer()
 {

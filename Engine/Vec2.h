@@ -7,61 +7,70 @@ class Vec2_
 {
 public:
 	Vec2_() = default;
-	Vec2_( T x_in,T y_in )
+	constexpr Vec2_( T x_in,T y_in )noexcept
 		:
 		x( x_in ),
 		y( y_in )
 	{}
-	template<typename S>
-	explicit Vec2_( const Vec2_<S>& src )
+	template<typename S> explicit Vec2_( const Vec2_<S>& src )noexcept
 		:
 		x( (T)src.x ),
 		y( (T)src.y )
 	{}
-	Vec2_ operator+( const Vec2_& rhs ) const
+	constexpr Vec2_ operator+( const Vec2_& rhs ) const noexcept
 	{
 		return Vec2_( x + rhs.x,y + rhs.y );
 	}
-	Vec2_& operator+=( const Vec2_& rhs )
+	constexpr Vec2_& operator+=( const Vec2_& rhs )noexcept
 	{
 		return *this = *this + rhs;
 	}
-	Vec2_ operator*( T rhs ) const
+	constexpr Vec2_ operator*( T rhs ) const noexcept
 	{
 		return Vec2_( x * rhs,y * rhs );
 	}
-	Vec2_& operator*=( T rhs )
+	constexpr Vec2_& operator*=( T rhs )noexcept
 	{
 		return *this = *this * rhs;
 	}
-	Vec2_ operator-( const Vec2_& rhs ) const
+	constexpr Vec2_ operator-( const Vec2_& rhs ) const noexcept
 	{
 		return Vec2_( x - rhs.x,y - rhs.y );
 	}
-	Vec2_& operator-=( const Vec2_& rhs )
+	constexpr Vec2_& operator-=( const Vec2_& rhs )noexcept
 	{
 		return *this = *this - rhs;
 	}
-	T GetLength() const
+	constexpr float Cross( const Vec2_& rhs )const noexcept {
+		return ( x * rhs.y ) - ( y*rhs.x );
+	}
+	constexpr Vec2_ Cross( T rhs )const noexcept {
+		return { y * -rhs, x * rhs };
+	}
+	constexpr T Dot( const Vec2_& rhs )const noexcept {
+		return ( x * rhs.x ) + ( y * rhs.y );
+	}
+	constexpr T LengthSq() const noexcept
+	{
+		return Dot( *this );
+	}
+	T Length() const noexcept
 	{
 		return (T)std::sqrt( GetLengthSq() );
 	}
-	T GetLengthSq() const
+
+	Vec2_ Normalize() const noexcept
 	{
-		return x * x + y * y;
-	}
-	Vec2_& Normalize()
-	{
-		return *this = GetNormalized();
-	}
-	Vec2_ GetNormalized() const
-	{
-		const T len = GetLength();
-		if( len != (T)0 )
+		const T lenSq = LengthSq();
+		if( lenSq == T( 0 ) )
 		{
-			return *this * ((T)1 / len);
+			return *this;
 		}
-		return *this;
+		else
+		{
+			const auto len = std::sqrt( lenSq );
+			return { x / len, y / len };
+		}
 	}
 public:
 	T x;

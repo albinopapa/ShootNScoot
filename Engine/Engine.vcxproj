@@ -80,6 +80,7 @@
       <FloatingPointModel>Fast</FloatingPointModel>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link />
   </ItemDefinitionGroup>
@@ -95,6 +96,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <CompileAsManaged>false</CompileAsManaged>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -111,6 +113,7 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <PreprocessorDefinitions>NDEBUG;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -131,6 +134,7 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <PreprocessorDefinitions>NDEBUG;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <CompileAsManaged>false</CompileAsManaged>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -139,33 +143,56 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
+    <ClInclude Include="Asteroids.h" />
+    <ClInclude Include="AsteroidSpawner.h" />
     <ClInclude Include="Bencher.h" />
+    <ClInclude Include="Bosses.h" />
+    <ClInclude Include="Bullet.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="ChiliException.h" />
+    <ClInclude Include="ChiliMath.h" />
     <ClInclude Include="ChiliWin.h" />
     <ClInclude Include="Colors.h" />
     <ClInclude Include="COMInitializer.h" />
     <ClInclude Include="DXErr.h" />
+    <ClInclude Include="Enemies.h" />
+    <ClInclude Include="EnemySpawner.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="FrameTimer.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameView.h" />
     <ClInclude Include="Graphics.h" />
+    <ClInclude Include="StarField.h" />
+    <ClInclude Include="Weapon.h" />
+    <ClInclude Include="Hero.h" />
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="Rect.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="Shield.h" />
+    <ClInclude Include="Size.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="SoundEffect.h" />
+    <ClInclude Include="SpriteCache.h" />
     <ClInclude Include="SpriteEffect.h" />
     <ClInclude Include="Surface.h" />
+    <ClInclude Include="Utilities.h" />
     <ClInclude Include="Vec2.h" />
+    <ClInclude Include="WicWrapper.h" />
+    <ClInclude Include="World.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="Asteroids.cpp" />
+    <ClCompile Include="AsteroidSpawner.cpp" />
+    <ClCompile Include="Bosses.cpp" />
+    <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="COMInitializer.cpp" />
     <ClCompile Include="DXErr.cpp" />
+    <ClCompile Include="Enemies.cpp" />
+    <ClCompile Include="EnemySpawner.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="FrameTimer.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -186,10 +213,14 @@
       <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </SDLCheck>
     </ClCompile>
+    <ClCompile Include="StarField.cpp" />
+    <ClCompile Include="Weapon.cpp" />
+    <ClCompile Include="Hero.cpp" />
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="Mouse.cpp" />
+    <ClCompile Include="Shield.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="Surface.cpp">
       <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -220,6 +251,7 @@
       <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </SDLCheck>
     </ClCompile>
+    <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="FramebufferPS.hlsl">

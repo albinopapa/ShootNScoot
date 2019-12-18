@@ -55,7 +55,7 @@ RectI Font::MapGlyphRect( char c ) const
 	const int xGlyph = glyphIndex % nColumns;
 	// convert the sheet grid coords to pixel coords in sheet
 	return RectI(
-		{ xGlyph * glyphWidth,yGlyph * glyphHeight },
-		glyphWidth,glyphHeight
+		Vei2{ xGlyph * glyphWidth, yGlyph * glyphHeight },
+		SizeI{ glyphWidth, glyphHeight }
 	);
 }

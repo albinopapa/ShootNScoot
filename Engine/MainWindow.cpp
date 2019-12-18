@@ -19,10 +19,10 @@
 *	along with The Chili DirectX Framework.  If not, see <http://www.gnu.org/licenses/>.  *
 ******************************************************************************************/
 #include "MainWindow.h"
-#include "Resource.h"
-#include "Graphics.h"
 #include "ChiliException.h"
 #include "Game.h"
+#include "Graphics.h"
+#include "Resource.h"
 #include <assert.h>
 
 MainWindow::MainWindow( HINSTANCE hInst,wchar_t * pArgs )
@@ -76,7 +76,7 @@ bool MainWindow::IsActive() const
 
 bool MainWindow::IsMinimized() const
 {
-	return IsIconic( hWnd ) != 0;
+	return ::IsIconic( hWnd ) != 0;
 }
 
 void MainWindow::ShowMessageBox( const std::wstring& title,const std::wstring& message,UINT type ) const

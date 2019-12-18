@@ -19,8 +19,9 @@
 *	along with The Chili DirectX Framework.  If not, see <http://www.gnu.org/licenses/>.  *
 ******************************************************************************************/
 #include "MainWindow.h"
-#include "Game.h"
 #include "ChiliException.h"
+#include "COMInitializer.h"
+#include "Game.h"
 
 int WINAPI wWinMain( HINSTANCE hInst,HINSTANCE,LPWSTR pArgs,INT )
 {

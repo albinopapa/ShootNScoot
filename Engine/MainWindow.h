@@ -25,7 +25,7 @@
 #include "Mouse.h"
 #include "ChiliException.h"
 #include <string>
-
+#undef IsMinimized
 // for granting special access to hWnd only for Graphics constructor
 class HWNDKey
 {

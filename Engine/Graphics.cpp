@@ -240,6 +240,11 @@ Graphics::Graphics( HWNDKey& key )
 		_aligned_malloc( sizeof( Color ) * Graphics::ScreenWidth * Graphics::ScreenHeight,16u ));
 }
 
+bool Graphics::IsVisible( RectI const & rect )
+{
+	return rect.Overlaps( screenRect );
+}
+
 Graphics::~Graphics()
 {
 	// free sysbuffer memory (aligned free)
@@ -254,7 +259,45 @@ Graphics::~Graphics()
 
 RectI Graphics::GetScreenRect()
 {
-	return{ 0,ScreenWidth,0,ScreenHeight };
+	return{ 0,0,ScreenWidth,ScreenHeight };
+}
+
+void Graphics::BeginFrame()
+{
+	// clear the sysbuffer
+	memset( pSysBuffer, 0u, sizeof( Color ) * Graphics::ScreenHeight * Graphics::ScreenWidth );
+}
+
+void Graphics::PutPixel( int x, int y, Color c )
+{
+	assert( x >= 0 );
+	assert( x < int( Graphics::ScreenWidth ) );
+	assert( y >= 0 );
+	assert( y < int( Graphics::ScreenHeight ) );
+	pSysBuffer[ Graphics::ScreenWidth * y + x ] = c;
+}
+
+void Graphics::PutPixelClipped( int x, int y, Color c )
+{
+	if( x >= 0 && x < ScreenWidth && y >= 0 && y < ScreenHeight )
+		pSysBuffer[ x + ( y * ScreenWidth ) ] = c;
+}
+
+Color Graphics::GetPixel( int x, int y ) const
+{
+	assert( x >= 0 );
+	assert( x < int( Graphics::ScreenWidth ) );
+	assert( y >= 0 );
+	assert( y < int( Graphics::ScreenHeight ) );
+	return pSysBuffer[ Graphics::ScreenWidth * y + x ];
+}
+
+Color Graphics::GetPixelClipped( int x, int y ) const
+{
+	if( x >= 0 && x < ScreenWidth && y >= 0 && y < ScreenHeight )
+		return pSysBuffer[ Graphics::ScreenWidth * y + x ];
+	else
+		return Colors::Black;
 }
 
 void Graphics::EndFrame()
