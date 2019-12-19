@@ -1,0 +1,34 @@
+Enemy1
+	
+	Shots to kill:		3
+	Chance of shooting: 5%
+	Spawns per level:	( level + 1 ) + ( level * 1.0 )
+	Group count:		10
+Enemy2
+	Shots to kill:		4
+	Chance of shooting: 10%
+	Spawns per level:	( level + 1 ) + ( level * 1.2 )
+	Group count:		10
+Enemy3
+	Shots to kill:		4
+	Chance of shooting: 20%
+	Spawns per level:	( level + 1 ) + ( level * 1.4 )
+	Group count:		10
+Enemy4
+	Shots to kill:		5
+	Chance of shooting: 25%
+	Spawns per level:	( level + 1 ) + ( level * 1.6 )
+	Group count:		10
+Enemy5
+	Shots to kill:		5
+	Chance of shooting: 30%
+	Spawns per level:	( level + 1 ) + ( level * 1.8 )
+	Group count:		10
+Enemy6 
+	Fly down to bottom of screen, turn around toward center and fly off top of screen
+	Shots to kill:		6
+	Chance of shooting: 50%
+	Spawns per level:	( level + 1 ) + ( level * 2.0 )
+	Group count:		16
+Enemy7
+	
