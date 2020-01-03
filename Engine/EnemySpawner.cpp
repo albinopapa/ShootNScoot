@@ -29,27 +29,27 @@ void sns::EnemySpawner::Update( World& world, float dt )
 				{
 					case 0:
 					{
-						world.SpawnEnemy( { Enemy1{} } );
+						world.SpawnEnemy( { Enemy1{}, Enemy1::waypoints[ 0 ], {0.f, 0.f} } );
 						break;
 					}
 					case 1:
 					{
-						world.SpawnEnemy( { Enemy2{} } );
+						world.SpawnEnemy( { Enemy2{}, Enemy2::waypoints[ 0 ], {0.f, 0.f} } );
 						break;
 					}
 					case 2:
 					{
-						world.SpawnEnemy( { Enemy3{} } );
+						world.SpawnEnemy( { Enemy3{}, Enemy3::waypoints[ 0 ], {0.f, 0.f} } );
 						break;
 					}
 					case 3:
 					{
-						world.SpawnEnemy( { Enemy4{} } );
+						world.SpawnEnemy( { Enemy4{}, Enemy4::waypoints[ 0 ], {0.f, 0.f} } );
 						break;
 					}
 					case 4:
 					{
-						world.SpawnEnemy( { Enemy5{} } );
+						world.SpawnEnemy( { Enemy5{}, Enemy5::waypoints[ 0 ], {0.f, 0.f} } );
 						break;
 					}
 					default:

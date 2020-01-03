@@ -17,9 +17,9 @@ namespace sns
 		constexpr auto radius = PlasmaBall::aabb.Width() * .5f;
 		constexpr auto sqrRadius = sqr( radius );
 
-		for( int y = 0; y < sprite.GetHeight(); ++y )
+		for( int y = -radius; y < radius; ++y )
 		{
-			for( int x = 0; x < sprite.GetWidth(); ++x )
+			for( int x = -radius; x < radius; ++x )
 			{
 				const auto sqrDist = sqr( x ) + sqr( y );
 				if( sqrDist < sqrRadius )
@@ -27,7 +27,7 @@ namespace sns
 					const auto alpha = uint8_t( 255.f * ( 1.f - ( sqrDist / sqrRadius ) ) );
 					const auto glow = AlphaBlend( Color( Colors::White, alpha ), PlasmaBall::color);
 
-					sprite.PutPixel( x, y, Color( glow, alpha ) );
+					sprite.PutPixel( x + radius, y + radius, Color( glow, alpha ) );
 				}
 			}
 		}

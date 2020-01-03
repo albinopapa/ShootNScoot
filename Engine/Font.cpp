@@ -1,32 +1,31 @@
 #include "Font.h"
 #include <cassert>
-#include "SpriteEffect.h"
 
-Font::Font( const std::string& filename, Color chroma )
-	:
-	surface( filename ),
-	// calculate glyph dimensions from bitmap dimensions
-	glyphWidth( surface.GetWidth() / nColumns ),
-	glyphHeight( surface.GetHeight() / nRows ),
-	chroma( chroma )
+Font::Font( const std::string& filename )
 {
-	// verify that bitmap had valid dimensions
-	assert( glyphWidth * nColumns == surface.GetWidth() );
-	assert( glyphHeight * nRows == surface.GetHeight() );
-}
-
-void Font::DrawText( const std::string& text,const Vei2& pos,Color color,Graphics& gfx ) const
-{
-	// Make pipeline compatible temp glyph sprite
-	auto make_temp_sprite = [ & ]( RectI const& sheetRect )
+	auto make_temp_sprite = [ this ]( Surface const& font_sheet, char ch )
 	{
-		auto temp = Surface{ glyphWidth, glyphHeight };
+		assert( ch >= firstChar && ch <= lastChar );
+		// font sheet glyphs start at ' ', calculate index into sheet
+		const int glyphIndex = ch - ' ';
+
+		// map 1d glyphIndex to 2D coordinates
+		const int yGlyph = glyphIndex / nColumns;
+		const int xGlyph = glyphIndex % nColumns;
+
+		// convert the sheet grid coords to pixel coords in sheet
+		const auto sheetRect = RectI(
+			Vei2{ xGlyph * int( glyph_rect.Width() ), yGlyph * int( glyph_rect.Height() ) },
+			SizeI{ int( glyph_rect.Width() ), int( glyph_rect.Height() ) }
+		);
+
+		auto temp = Surface{ sheetRect.Width(), sheetRect.Height() };
 
 		for( int y = 0; y < temp.GetHeight(); ++y )
 		{
 			for( int x = 0; x < temp.GetWidth(); ++x )
 			{
-				if( surface.GetPixel( sheetRect.left + x, sheetRect.top + y ) == Colors::Black )
+				if( font_sheet.GetPixel( sheetRect.left + x, sheetRect.top + y ) == Colors::Black )
 					temp.PutPixel( x, y, Colors::White );
 				else
 					temp.PutPixel( x, y, Colors::Magenta );
@@ -36,54 +35,62 @@ void Font::DrawText( const std::string& text,const Vei2& pos,Color color,Graphic
 		return temp;
 	};
 
-	const auto glyph_rect = RectF(
-		-Vec2{ float( glyphWidth / 2 ),float( glyphHeight / 2 ) },
+	// holds the font sheet bitmap data
+	auto surface = Surface{ filename };
+
+	const auto glyphWidth = surface.GetWidth() / nColumns;
+	const auto glyphHeight = surface.GetHeight() / nRows;
+
+	// verify that bitmap had valid dimensions
+	assert( glyphWidth * nColumns == surface.GetWidth() );
+	assert( glyphHeight * nRows == surface.GetHeight() );
+
+	// calculate glyph dimensions from bitmap dimensions
+	glyph_rect = RectF(
+		( -Vec2{ float( glyphWidth ),float( glyphHeight ) } ) * .5f,
 		SizeF{ float( glyphWidth ),float( glyphHeight ) }
 	);
 
+	char ch = firstChar;
+	for( auto& glyph : glyphs )
+	{
+		if( ch > lastChar ) break;
+		glyph = make_temp_sprite( surface, ch++ );
+	}
+
+}
+
+void Font::DrawText( const std::string& text, const Vei2& pos, Color color, Graphics& gfx )const
+{
 	// curPos is the pos that we are drawing to on the screen
 	auto curPos = pos;
 	for( auto c : text )
 	{
+		// only draw characters that are on the font sheet
+		// start at firstChar + 1 because might as well skip ' ' as well
 		// on a newline character, reset x position and move down by 1 glyph height
-		if( c == '\n' )
+		if( c >= firstChar + 1 && c <= lastChar )
+		{
+			const auto index = c - ' ';
+			gfx.DrawSprite( glyph_rect + Vec2( curPos ), Radian{ 0.f }, glyphs[ index ], color );
+		}
+		else if( c == '\n' )
 		{
 			// carriage return
 			curPos.x = pos.x;
+			
 			// line feed
-			curPos.y += glyphHeight;
+			curPos.y += glyph_rect.Height();
+
 			// we don't want to advance the character position right for a newline
 			continue;
 		}
-		// only draw characters that are on the font sheet
-		// start at firstChar + 1 because might as well skip ' ' as well
-		else if( c >= firstChar + 1 && c <= lastChar )
+		else if( c == '\t' )
 		{
-			const auto sheetRect = MapGlyphRect( c );
-
-			const auto rect = glyph_rect + Vec2( float( curPos.x ), float( curPos.y ) );
-
-			// Temporary sprite to be compatible with pipeline
-			const auto glyph_sprite = make_temp_sprite( sheetRect );
-
-			gfx.DrawSprite( rect, Radian{ 0.f }, glyph_sprite, color );
+			curPos.x += ( glyph_rect.Width() * 4 );
 		}
-		// advance screen pos for next character
-		curPos.x += glyphWidth;
-	}
-}
 
-RectI Font::MapGlyphRect( char c ) const
-{
-	assert( c >= firstChar && c <= lastChar );
-	// font sheet glyphs start at ' ', calculate index into sheet
-	const int glyphIndex = c - ' ';
-	// map 1d glyphIndex to 2D coordinates
-	const int yGlyph = glyphIndex / nColumns;
-	const int xGlyph = glyphIndex % nColumns;
-	// convert the sheet grid coords to pixel coords in sheet
-	return RectI(
-		Vei2{ xGlyph * glyphWidth, yGlyph * glyphHeight },
-		SizeI{ glyphWidth, glyphHeight }
-	);
+		// advance screen pos for next character
+		curPos.x += glyph_rect.Width();
+	}
 }

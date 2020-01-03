@@ -33,6 +33,13 @@ namespace sns
 				}
 				break;
 			}
+			case ShieldState::Full:
+			{
+				if( model.health < Shield::recharge_max )
+					model.state = ShieldState::Recharging;
+				else if( model.health <= 0.f )
+					model.state = ShieldState::Depleted;
+			}
 		}
 	}
 

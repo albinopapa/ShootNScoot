@@ -7,21 +7,19 @@
 class Font
 {
 public:
-	Font( const std::string& filename,Color chroma = Colors::White );
-	void DrawText( const std::string& text,const Vei2& pos,Color color,Graphics& gfx ) const;
+	Font( const std::string& filename );
+	void DrawText( const std::string& text, const Vei2& pos, Color color, Graphics& gfx )const;
+
 private:
-	RectI MapGlyphRect( char c ) const;
-private:
-	// holds the font sheet bitmap data
-	Surface surface;
+	std::vector<Surface> glyphs = std::vector<Surface>{ 96 };
+
 	// this gives the dimensions of a glyph in the font sheet
-	int glyphWidth = 0;
-	int glyphHeight = 0;
+	RectF glyph_rect;
+
 	// number of rows / columns in the font sheet (this is fixed)
 	static constexpr int nColumns = 32;
 	static constexpr int nRows = 3;
-	// font sheet chroma color
-	Color chroma = Colors::White;
+
 	// start and end drawable character codes
 	static constexpr char firstChar = ' ';
 	static constexpr char lastChar = '~';
