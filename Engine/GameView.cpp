@@ -30,9 +30,9 @@ void GameView::Draw( Game const& model )noexcept
 			world_view.Draw( model.world, gfx );
 
 			const auto score_str = std::to_string( model.score );
-			const auto pixel_length = ( int( score_str.size() ) * 16 );
+			const auto pixel_length = ( int( score_str.size() ) * font.GlyphWidth() );
 			const auto x = Graphics::ScreenWidth - pixel_length;
-			const auto y = 4;
+			const auto y = font.GlyphHeight() / 2;
 			font.DrawText( score_str, { x, y }, Colors::White, gfx );
 
 			break;

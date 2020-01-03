@@ -99,7 +99,8 @@ namespace sns
 		static constexpr int score_value = 10;
 
 		std::variant<Enemy1, Enemy2, Enemy3, Enemy4, Enemy5> variant;
-		Vec2 position = { 0.f, -16.f }, velocity = { 0.f, 0.f };
+		Vec2 position = { 0.f, -16.f };
+		Vec2 velocity = { 0.f, 0.f };
 		float health = 100.f;
 		int waypoint_index = 0;
 	};
