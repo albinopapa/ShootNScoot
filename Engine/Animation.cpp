@@ -14,29 +14,9 @@ Animation::Animation( int x,int y,int width,int height,int count,
 	}
 }
 
-void Animation::Draw( const Vei2& pos,Graphics& gfx ) const
+void Animation::Draw( const Vec2& pos, Graphics& gfx, Color tint )const noexcept
 {
-	gfx.DrawSprite( pos.x,pos.y,frames[iCurFrame],sprite,
-		[this]( Color cSrc,int xDest,int yDest,Graphics& gfx )
-		{
-			if( cSrc != chroma )
-			{
-				gfx.PutPixel( xDest,yDest,
-					{ 255u - cSrc.GetR(),255u - cSrc.GetG(),255u - cSrc.GetB() }
-				);
-			}
-		}
-	);
-}
-
-void Animation::Draw( const Vei2& pos,Graphics& gfx,const RectI& clip ) const
-{
-	gfx.DrawSprite( pos.x,pos.y,frames[iCurFrame],clip,sprite,SpriteEffect::Ghost{ chroma } );
-}
-
-void Animation::DrawColor( const Vei2& pos,Graphics& gfx,Color c ) const
-{
-	gfx.DrawSprite( pos.x,pos.y,frames[iCurFrame],sprite,SpriteEffect::Substitution{ chroma,c } );
+	gfx.DrawSprite( RectF( frames[ iCurFrame ] ) + pos, Radian{ 0.f }, sprite, tint );
 }
 
 void Animation::Update( float dt )

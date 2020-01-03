@@ -122,8 +122,8 @@ public:
 		assert( width != 0u );
 		assert( height != 0u );
 
-		auto const stride = width * sizeof( uint32_t );
-		auto const buffer_size = width * sizeof( uint32_t ) * height;
+		auto const stride = UINT( width * sizeof( uint32_t ) );
+		auto const buffer_size = UINT( width * sizeof( uint32_t ) * height );
 		auto pixels = std::make_unique<std::uint8_t[]>( buffer_size );
 
 		ThrowSystemErrorIf( pConverter->CopyPixels( nullptr, stride, buffer_size, pixels.get() ) );

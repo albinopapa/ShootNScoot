@@ -1,20 +1,20 @@
 #pragma once
 
+#include "Enumerations.h"
+#include "Graphics.h"		// For screenRect
 #include "Shield.h"
 #include "Weapon.h"
 
 namespace sns
 {
-	struct Boss1
+	class Boss1
 	{
 	public:
 		Boss1()noexcept;
-		void Update( float dt, struct World& world );
-		void TakeDamage( float amount )noexcept;
-		void Draw( class Surface const& sprite, class Graphics& gfx )const noexcept;
+		void Update( float dt );
 		void Reset()noexcept;
 	public:
-		enum class State { Idle, Attack, Regen };
+		
 
 	public:
 		static constexpr auto aabb = RectF{ -16.f, -16.f, 16.f, 16.f };
@@ -28,7 +28,7 @@ namespace sns
 		Weapon weapon;
 		Vec2 position = { screenRect.Center().x, -32.f };
 		Vec2 direction = { 0.f, 1.f };
-		State state = State::Idle;
+		Boss1State state = Boss1State::Idle;
 		float regen_timer = regen_delay;
 		float health = max_health;
 		int missile_count = 0;

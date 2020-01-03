@@ -15,13 +15,13 @@ private:
 	// holds the font sheet bitmap data
 	Surface surface;
 	// this gives the dimensions of a glyph in the font sheet
-	int glyphWidth;
-	int glyphHeight;
+	int glyphWidth = 0;
+	int glyphHeight = 0;
 	// number of rows / columns in the font sheet (this is fixed)
 	static constexpr int nColumns = 32;
 	static constexpr int nRows = 3;
 	// font sheet chroma color
-	Color chroma;
+	Color chroma = Colors::White;
 	// start and end drawable character codes
 	static constexpr char firstChar = ' ';
 	static constexpr char lastChar = '~';

@@ -1,31 +1,22 @@
 #pragma once
 
-#include "Graphics.h"
-#include "Vec2.h"
-
+#include "Rect.h"
+#include "Star.h"
 #include <random>
+#include <utility>
 #include <vector>
 
 namespace sns
 {
-	struct Star
-	{
-		Vec2 position;
-		float speed;
-	};
-
-	struct StarField
+	class Starfield
 	{
 	public:
-		StarField();
-		void Update()noexcept;
-		void Draw( Graphics& gfx )const noexcept;
+		static std::vector<Star> generate(
+			RectF position_bounds,
+			std::pair<float, float> speed_bounds,
+			int count );
 
-	public:
-		std::mt19937 rng;
-		std::uniform_real_distribution<float> xDist = std::uniform_real_distribution<float>{ 0.f, float( Graphics::ScreenWidth - 1 ) };
-		std::uniform_real_distribution<float> yDist = std::uniform_real_distribution<float>{ 0.f, float( Graphics::ScreenHeight - 1 ) };
-		std::uniform_real_distribution<float> spdDist = std::uniform_real_distribution<float>{ 1.f, 2.f };
-		std::vector<Star> stars = std::vector<Star>{ 250 };
+		static Star generate_star( std::mt19937& rng, std::pair<float, float> width_bounds, std::pair<float, float> speed_bounds )noexcept;
+
 	};
 }

@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Colors.h"
+#include "Rect.h"
 #include <string>
 #include <vector>
-#include "Rect.h"
 
 class Surface
 {

@@ -104,12 +104,11 @@ constexpr Color AlphaBlend( Color lhs, Color rhs )noexcept
 	const auto sg2 = rhs.GetG();
 	const auto sb2 = rhs.GetB();
 
-	const auto r = uint8_t( ( ( sr1 * sa1 ) + ( sr2 * sa2 ) ) >> 8 );
-	const auto g = uint8_t( ( ( sg1 * sa1 ) + ( sg2 * sa2 ) ) >> 8 );
-	const auto b = uint8_t( ( ( sb1 * sa1 ) + ( sb2 * sa2 ) ) >> 8 );
-	const auto a = uint8_t( 255 );
-
-	return{ a, r, g, b };
+	return{ 
+		uint8_t( ( ( sr1 * sa1 ) + ( sr2 * sa2 ) ) >> 8 ),
+		uint8_t( ( ( sg1 * sa1 ) + ( sg2 * sa2 ) ) >> 8 ),
+		uint8_t( ( ( sb1 * sa1 ) + ( sb2 * sa2 ) ) >> 8 ) 
+	};
 }
 namespace Colors
 {

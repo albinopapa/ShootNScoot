@@ -9,7 +9,7 @@
 
 namespace sns
 {
-	struct World;
+	class World;
 
 	struct Enemy1
 	{ 
@@ -90,14 +90,10 @@ namespace sns
 	template<typename T>
 	constexpr bool is_enemy_v = is_enemy<T>::value;
 
-	struct Enemy
+	class Enemy
 	{
 	public:
 		void Update( float dt );
-		void TakeDamage( float amount )noexcept;
-		void Draw( Surface const& sprite, Graphics& gfx )const noexcept;
-		RectF AABB()const noexcept;
-		float Damage()const noexcept;
 		
 	public:
 		static constexpr int score_value = 10;

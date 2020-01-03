@@ -2,7 +2,7 @@
 #include <cassert>
 #include "SpriteEffect.h"
 
-Font::Font( const std::string& filename,Color chroma )
+Font::Font( const std::string& filename, Color chroma )
 	:
 	surface( filename ),
 	// calculate glyph dimensions from bitmap dimensions
@@ -17,8 +17,30 @@ Font::Font( const std::string& filename,Color chroma )
 
 void Font::DrawText( const std::string& text,const Vei2& pos,Color color,Graphics& gfx ) const
 {
-	// create effect functor
-	SpriteEffect::Substitution e{ chroma,color };
+	// Make pipeline compatible temp glyph sprite
+	auto make_temp_sprite = [ & ]( RectI const& sheetRect )
+	{
+		auto temp = Surface{ glyphWidth, glyphHeight };
+
+		for( int y = 0; y < temp.GetHeight(); ++y )
+		{
+			for( int x = 0; x < temp.GetWidth(); ++x )
+			{
+				if( surface.GetPixel( sheetRect.left + x, sheetRect.top + y ) == Colors::Black )
+					temp.PutPixel( x, y, Colors::White );
+				else
+					temp.PutPixel( x, y, Colors::Magenta );
+			}
+		}
+
+		return temp;
+	};
+
+	const auto glyph_rect = RectF(
+		-Vec2{ float( glyphWidth / 2 ),float( glyphHeight / 2 ) },
+		SizeF{ float( glyphWidth ),float( glyphHeight ) }
+	);
+
 	// curPos is the pos that we are drawing to on the screen
 	auto curPos = pos;
 	for( auto c : text )
@@ -37,8 +59,14 @@ void Font::DrawText( const std::string& text,const Vei2& pos,Color color,Graphic
 		// start at firstChar + 1 because might as well skip ' ' as well
 		else if( c >= firstChar + 1 && c <= lastChar )
 		{
-			// use DrawSpriteSubstitute so that we can choose the color of the font rendered
-			gfx.DrawSprite( curPos.x,curPos.y,MapGlyphRect( c ),surface,e );
+			const auto sheetRect = MapGlyphRect( c );
+
+			const auto rect = glyph_rect + Vec2( float( curPos.x ), float( curPos.y ) );
+
+			// Temporary sprite to be compatible with pipeline
+			const auto glyph_sprite = make_temp_sprite( sheetRect );
+
+			gfx.DrawSprite( rect, Radian{ 0.f }, glyph_sprite, color );
 		}
 		// advance screen pos for next character
 		curPos.x += glyphWidth;

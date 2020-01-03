@@ -20,50 +20,36 @@
  ******************************************************************************************/
 #pragma once
 
-#include "Keyboard.h"
-#include "Mouse.h"
-#include "Graphics.h"
-
-#include "Font.h"
-#include "FrameTimer.h"
-#include "Hero.h"
-#include "Surface.h"
+#include "Enumerations.h"
 #include "World.h"
 
 class Game
 {
 public:
-	Game( class MainWindow& wnd );
+	Game( class MainWindow& wnd )noexcept;
 	Game( const Game& ) = delete;
 	Game& operator=( const Game& ) = delete;
-	void Go();
-private:
-	enum class State { Intro, MainMenu, Play, PauseMenu, Gameover };
+	void Update( float dt )noexcept;
 
-	void ComposeFrame();
-	void UpdateModel();
+	void IncrementScore( int amount )noexcept;
+private:
+
 	/********************************/
 	/*  User Functions              */
 	/********************************/
-
-	void DoIntroState();
-	void DoMainMenuState();
-	void DoPlayState( float dt );
-	void DoPauseMenuState();
-	void DoGameoverState();
-	void TransitionState( State newState );
+	void TransitionState( GameState newState )noexcept;
 private:
+	friend class GameView;
+	friend class GameController;
 
 	MainWindow& wnd;
-	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
 	/********************************/
-	FrameTimer timer;
 	sns::World world;
-	Font font			= Font( "Images/Fixedsys16x28.bmp" );
-	State state			= State::Intro;
-	State nextState		= State::Intro;
+	GameState state			= GameState::Intro;
+	GameState nextState		= GameState::Intro;
 
 	int menu_choice = 0;
+	int score = 0;
 };

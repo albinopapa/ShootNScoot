@@ -2,12 +2,12 @@
 
 namespace sns
 {
-	struct World;
+	class World;
 
 	struct EnemySpawner
 	{
 	public:
-		void Update( float dt, World& world );
+		void Update( World& world, float dt );
 		void Reset()noexcept;
 
 	public:
@@ -25,6 +25,6 @@ namespace sns
 		float enemy_spawn_group_timer					= enemy_spawn_group_delay;
 		float enemy_spawn_timer							= 0.f;
 
-		State state								= State::Waiting;
+		State state										= State::Waiting;
 	};
 }

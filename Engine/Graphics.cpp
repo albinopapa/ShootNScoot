@@ -18,13 +18,20 @@
 *	You should have received a copy of the GNU General Public License					  *
 *	along with The Chili DirectX Framework.  If not, see <http://www.gnu.org/licenses/>.  *
 ******************************************************************************************/
-#include "MainWindow.h"
-#include "Graphics.h"
-#include "DXErr.h"
 #include "ChiliException.h"
+#include "ColorKeyTextureEffect.h"
+#include "DXErr.h"
+#include "DiscFillEffect.h"
+#include "Graphics.h"
+#include "MainWindow.h"
+#include "Pipeline.h"
+#include "PointSampler.h"
+#include "RectFillEffect.h"
+
+#include <algorithm>
+#include <array>
 #include <assert.h>
 #include <string>
-#include <array>
 
 // Ignore the intellisense error "cannot open source file" for .shh files.
 // They will be created during the build sequence before the preprocessor runs.
@@ -245,6 +252,61 @@ bool Graphics::IsVisible( RectI const & rect )
 	return rect.Overlaps( screenRect );
 }
 
+
+void Graphics::DrawSprite( RectF const & dst, Radian angle, Surface const & sprite, Color tint, Color key ) noexcept
+{
+	auto pl = Pipeline{ ColorKeyTextureEffect<PointSampler>{}, *this };
+
+	pl.vertices[ 0 ] = { {-.5f, -.5f}, { 0.f, 0.f} };
+	pl.vertices[ 1 ] = { { .5f, -.5f}, { 1.f, 0.f} };
+	pl.vertices[ 2 ] = { {-.5f,  .5f}, { 0.f, 1.f} };
+	pl.vertices[ 3 ] = { { .5f,  .5f}, { 1.f, 1.f} };
+
+	pl.PSSetConstantBuffer( { key, tint } );
+	pl.PSSetTexture( sprite );
+
+	pl.Draw( dst, angle );
+}
+
+void Graphics::DrawDisc( Vec2 const & center, float radius, Color color ) noexcept
+{
+	auto pl = Pipeline{ DiscFillEffect{}, *this };
+	pl.vertices[ 0 ] = { { -.5f, -.5f }, color };
+	pl.vertices[ 1 ] = { {  .5f, -.5f }, color };
+	pl.vertices[ 2 ] = { { -.5f,  .5f }, color };
+	pl.vertices[ 3 ] = { {  .5f,  .5f }, color };
+	pl.PSSetConstantBuffer( { center, sqr( radius ) } );
+	pl.Draw( RectF{ -radius, -radius, radius, radius } + center, Radian{ 0.f } );
+}
+
+void Graphics::DrawRect( RectF const& dst, Radian angle, Color color ) noexcept
+{
+	auto pl = Pipeline{ RectFillEffect{}, *this };
+	pl.vertices[ 0 ] = { { -.5f, -.5f }, color };
+	pl.vertices[ 1 ] = { {  .5f, -.5f }, color };
+	pl.vertices[ 2 ] = { { -.5f,  .5f }, color };
+	pl.vertices[ 3 ] = { {  .5f,  .5f }, color };
+
+	pl.Draw( dst, angle );
+}
+
+void Graphics::DrawLine( Vec2 const & p0, Vec2 const & p1, float thickness, Color color ) noexcept
+{
+	auto pl = Pipeline{ RectFillEffect{}, *this };
+	pl.vertices[ 0 ] = { { -.5f, -.5f }, color };
+	pl.vertices[ 1 ] = { {  .5f, -.5f }, color };
+	pl.vertices[ 2 ] = { { -.5f,  .5f }, color };
+	pl.vertices[ 3 ] = { {  .5f,  .5f }, color };
+
+	thickness = std::max( thickness, 1.f );
+
+	const auto delta = ( p1 - p0 );
+	const auto center = p0 + ( delta * .5f );
+	const auto size = Vec2{ delta.Length() * .5f, thickness * .5f };
+	
+	pl.Draw( RectF{ center - size, center + size }, Radian{ std::atan2( delta.y, delta.x ) } );
+}
+
 Graphics::~Graphics()
 {
 	// free sysbuffer memory (aligned free)
@@ -262,7 +324,7 @@ RectI Graphics::GetScreenRect()
 	return{ 0,0,ScreenWidth,ScreenHeight };
 }
 
-void Graphics::BeginFrame()
+void Graphics::BeginFrame()noexcept
 {
 	// clear the sysbuffer
 	memset( pSysBuffer, 0u, sizeof( Color ) * Graphics::ScreenHeight * Graphics::ScreenWidth );
@@ -277,12 +339,6 @@ void Graphics::PutPixel( int x, int y, Color c )
 	pSysBuffer[ Graphics::ScreenWidth * y + x ] = c;
 }
 
-void Graphics::PutPixelClipped( int x, int y, Color c )
-{
-	if( x >= 0 && x < ScreenWidth && y >= 0 && y < ScreenHeight )
-		pSysBuffer[ x + ( y * ScreenWidth ) ] = c;
-}
-
 Color Graphics::GetPixel( int x, int y ) const
 {
 	assert( x >= 0 );
@@ -290,14 +346,6 @@ Color Graphics::GetPixel( int x, int y ) const
 	assert( y >= 0 );
 	assert( y < int( Graphics::ScreenHeight ) );
 	return pSysBuffer[ Graphics::ScreenWidth * y + x ];
-}
-
-Color Graphics::GetPixelClipped( int x, int y ) const
-{
-	if( x >= 0 && x < ScreenWidth && y >= 0 && y < ScreenHeight )
-		return pSysBuffer[ Graphics::ScreenWidth * y + x ];
-	else
-		return Colors::Black;
 }
 
 void Graphics::EndFrame()

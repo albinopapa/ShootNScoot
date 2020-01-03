@@ -2,7 +2,7 @@
 #include "Asteroids.h"
 #include "World.h"
 
-void sns::AsteroidSpawner::Update( float dt, World & world )
+void sns::AsteroidSpawner::Update( World& world, float dt )
 {
 	switch( state )
 	{
@@ -20,10 +20,12 @@ void sns::AsteroidSpawner::Update( float dt, World & world )
 		{
 			constexpr auto cx = screenRect.Center().x;
 			constexpr auto cy = screenRect.Center().y;
-			const auto pos = Vec2{ xDist( rng ), -200.f };
+			const auto pos = Vec2{ xDist( rng ), -50.f };
 			const auto dir = Vec2{ pos.x > cx ? -vxDist( rng ) : vxDist( rng ), 1.f }.Normalize();
 			spawn_timer = AsteroidSpawner::spawn_delay;
+			
 			world.SpawnAsteroid( Asteroid{ BigAsteroid{}, pos, dir } );
+
 			++spawn_count;
 			state = State::Idle;
 			break;

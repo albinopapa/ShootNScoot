@@ -4,94 +4,59 @@
 
 namespace sns
 {
-	void Bullet::DrawEffect( float x, float y, Vec2 const & position, Graphics & gfx ) noexcept
-	{
-		gfx.PutPixel(
-			int( x + position.x ),
-			int( y + position.y ),
-			color
-		);
-	}
+	Surface make_bullet_sprite() {
+		auto sprite = Surface{ int( Bullet::aabb.Width() ), int( Bullet::aabb.Height() ) };
 
-	void PlasmaBall::DrawEffect( float x, float y, Vec2 const & position, Graphics & gfx ) noexcept
-	{
-		constexpr auto radius = aabb.Width() * .5f;
+		sprite.Fill( Bullet::color );
+
+		return sprite;
+	}
+	Surface make_plasma_ball_sprite() {
+		auto sprite = Surface{ int( PlasmaBall::aabb.Width() ), int( PlasmaBall::aabb.Height() ) };
+
+		constexpr auto radius = PlasmaBall::aabb.Width() * .5f;
 		constexpr auto sqrRadius = sqr( radius );
 
-		const auto ix = x;
-		const auto iy = y;
-
-		const auto sqrDist = sqr( ix ) + sqr( iy );
-		if( sqrDist < sqrRadius )
+		for( int y = 0; y < sprite.GetHeight(); ++y )
 		{
-			const auto px = int( ix + position.x );
-			const auto py = int( iy + position.y );
-			
-			const auto alpha = uint8_t( 255.f * ( 1.f - ( sqrDist / sqrRadius ) ) );
-			const auto bgcolor = gfx.GetPixel( px, py );
-			const auto glow = AlphaBlend( Color( Colors::White, alpha ), color );
-			const auto clr = AlphaBlend( Color( glow, alpha ), bgcolor );
+			for( int x = 0; x < sprite.GetWidth(); ++x )
+			{
+				const auto sqrDist = sqr( x ) + sqr( y );
+				if( sqrDist < sqrRadius )
+				{
+					const auto alpha = uint8_t( 255.f * ( 1.f - ( sqrDist / sqrRadius ) ) );
+					const auto glow = AlphaBlend( Color( Colors::White, alpha ), PlasmaBall::color);
 
-			gfx.PutPixel( px, py, clr );
+					sprite.PutPixel( x, y, Color( glow, alpha ) );
+				}
+			}
 		}
+
+		return sprite;
+	}
+	Surface make_missile_sprite() {
+		auto sprite = Surface{ int( Missile::aabb.Width() ), int( Missile::aabb.Height() ) };
+
+		for( int y = 0; y < sprite.GetHeight(); ++y )
+		{
+			for( int x = 0; x < sprite.GetWidth(); ++x )
+			{
+				sprite.PutPixel( x, y, Missile::color );
+			}
+		}
+
+		return sprite;
 	}
 
-	void Missile::DrawEffect( float x, float y, Vec2 const & position, Graphics & gfx ) noexcept
-	{
-		gfx.PutPixel(
-			int( x + position.x ),
-			int( y + position.y ),
-			color
-		);
-	}
+	const Surface Bullet::sprite = make_bullet_sprite();
+	const Surface PlasmaBall::sprite = make_plasma_ball_sprite();
+	const Surface Missile::sprite = make_missile_sprite();
 
 	void Ammo::Update( float delta_time ) noexcept
 	{
 		std::visit( [ & ]( const auto& ammo_ ) {
 			using type = std::decay_t<decltype( ammo_ )>;
 			position += ( velocity * ( type::speed * delta_time ) );
-			isAlive = Graphics::IsVisible( RectI( type::aabb + position ) ) && energy > 0.f;
-		}, variant );
-	}
-	void Ammo::TakeDamage( float amount ) noexcept
-	{
-		energy -= amount;
-		energy = std::max( energy, 0.f );
-	}
-	float Ammo::Damage() const noexcept
-	{
-		return std::visit( [ & ]( const auto& ammo_ ) {
-			using type = std::decay_t<decltype( ammo_ )>;
-			return type::damage * ( energy / type::max_energy );
-		}, variant );
-	}
-	RectF Ammo::AABB() const noexcept
-	{
-		return std::visit( [ & ]( const auto& ammo ) {
-			return std::decay_t<decltype( ammo )>::aabb + position;
-		}, variant );
-	}
-	void Ammo::Draw( Graphics & gfx ) const noexcept
-	{
-		std::visit( [ & ]( const auto& ammo_ ) {
-			using type = std::decay_t<decltype( ammo_ )>;
-			constexpr auto half_width = type::aabb.Width() * .5f;
-			constexpr auto half_height = type::aabb.Height() * .5f;
-
-			const auto tborder = type::aabb + position;
-
-			const auto xStart = std::max( 0.f, -tborder.left ) - half_width;
-			const auto yStart = std::max( 0.f, -tborder.top ) - half_height;
-			const auto xEnd = std::min( float( Graphics::ScreenWidth ) - tborder.left, type::aabb.Width() ) - half_width;
-			const auto yEnd = std::min( float( Graphics::ScreenHeight ) - tborder.top, type::aabb.Height() ) - half_height;
-
-			for( float y = yStart; y < yEnd; ++y )
-			{
-				for( float x = xStart; x < xEnd; ++x )
-				{
-					type::DrawEffect( x, y, position, gfx );
-				}
-			}
 		}, variant );
 	}
 }

@@ -21,7 +21,10 @@
 #include "MainWindow.h"
 #include "ChiliException.h"
 #include "COMInitializer.h"
+#include "FrameTimer.h"
 #include "Game.h"
+#include "GameView.h"
+#include "GameController.h"
 
 int WINAPI wWinMain( HINSTANCE hInst,HINSTANCE,LPWSTR pArgs,INT )
 {
@@ -30,10 +33,22 @@ int WINAPI wWinMain( HINSTANCE hInst,HINSTANCE,LPWSTR pArgs,INT )
 		MainWindow wnd( hInst,pArgs );		
 		try
 		{
-			Game theGame( wnd );
+			auto game_model = Game( wnd );
+			auto game_view = GameView( wnd );
+			auto game_controller = GameController();
+
+			FrameTimer timer;
 			while( wnd.ProcessMessage() )
 			{
-				theGame.Go();
+#if defined(_DEBUG)
+				const auto dt = .016f;
+#else
+				const auto dt = timer.Mark();
+#endif
+
+				game_model.Update( dt );
+				game_controller.Update( game_model, dt );
+				game_view.Draw( game_model );
 			}
 		}
 		catch( const ChiliException& e )

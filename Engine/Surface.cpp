@@ -44,6 +44,24 @@ Surface& Surface::operator=( Surface&& rhs )
 	return *this;
 }
 
+void Surface::PutPixel( int x, int y, Color c )
+{
+	assert( x >= 0 );
+	assert( y >= 0 );
+	assert( x < width );
+	assert( y < height );
+	pixels[ x + ( y * width ) ] = c;
+}
+
+Color Surface::GetPixel( int x, int y ) const
+{
+	assert( x >= 0 );
+	assert( y >= 0 );
+	assert( x < width );
+	assert( y < height );
+	return pixels[ x + ( y * width ) ];
+}
+
 int Surface::GetWidth() const
 {
 	return width;
@@ -57,6 +75,28 @@ int Surface::GetHeight() const
 RectI Surface::GetRect() const
 {
 	return{ 0, 0, width, height };
+}
+
+void Surface::Fill( Color c )
+{
+	if( c.GetA() == 0 )
+	{
+		memset( pixels.data(), 0, sizeof( Color ) * width * height );
+	}
+	else if( c.GetB() == c.GetG() && c.GetB() == c.GetR() )
+	{
+		memset( pixels.data(), c.GetB(), sizeof( Color ) * width * height );
+	}
+	else
+	{
+		for( int y = 0; y < height; ++y )
+		{
+			for( int x = 0; x < width; ++x )
+			{
+				PutPixel( x, y, c );
+			}
+		}
+	}
 }
 
 const Color* Surface::Data() const

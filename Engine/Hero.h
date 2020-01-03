@@ -11,17 +11,13 @@
 
 namespace sns
 {
-	struct World;
+	class World;
 
-	struct Hero
+	class Hero
 	{
 	public:
-		Hero()noexcept;
-		void Update( Keyboard& kbd, float dt, World& world );
-		void TakeDamage( float amount )noexcept;
-		void Draw( Surface const& sprite, Graphics& gfx )const noexcept;
+		void Update( float dt );
 		void Reset()noexcept;
-		RectF AABB()const noexcept;
 
 	public:
 		static constexpr auto aabb		= RectF{ -16.f, -16.f, 16.f, 16.f };
@@ -29,8 +25,9 @@ namespace sns
 		static constexpr auto damage	= 20.f;
 
 		Shield shield;
-		Weapon weapon;
-		Vec2 position, velocity;
+		Weapon weapon = Weapon{ Gun{} };
+		Vec2 position = { 400.f, 300.f };
+		Vec2 velocity = { 0.f, 0.f };
 		float health = 100.f;
 	};
 

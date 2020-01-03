@@ -1,8 +1,10 @@
 #include "EnemySpawner.h"
 #include "Enemies.h"
 #include "World.h"
+#include "WorldView.h"
+#include "WorldController.h"
 
-void sns::EnemySpawner::Update( float dt, World & world )
+void sns::EnemySpawner::Update( World& world, float dt )
 {
 	switch( state )
 	{
@@ -26,19 +28,32 @@ void sns::EnemySpawner::Update( float dt, World & world )
 				switch( enemy_spawn_group )
 				{
 					case 0:
+					{
 						world.SpawnEnemy( { Enemy1{} } );
 						break;
+					}
 					case 1:
+					{
 						world.SpawnEnemy( { Enemy2{} } );
 						break;
+					}
 					case 2:
+					{
 						world.SpawnEnemy( { Enemy3{} } );
 						break;
+					}
 					case 3:
+					{
 						world.SpawnEnemy( { Enemy4{} } );
 						break;
+					}
 					case 4:
+					{
 						world.SpawnEnemy( { Enemy5{} } );
+						break;
+					}
+					default:
+						assert( false );
 						break;
 				}
 

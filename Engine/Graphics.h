@@ -19,17 +19,25 @@
 *	along with The Chili DirectX Framework.  If not, see <http://www.gnu.org/licenses/>.  *
 ******************************************************************************************/
 #pragma once
+
 #include "ChiliWin.h"
-#include <d3d11.h>
-#include <wrl.h>
 #include "ChiliException.h"
 #include "Colors.h"
 #include "Surface.h"
+
 #include "Rect.h"
+#include "Mat3.h"
+#include "Vec2.h"
 #include <cassert>
+#include <d3d11.h>
+#include <wrl.h>
 
 class Graphics
 {
+public:
+	static constexpr int ScreenWidth = 800;
+	static constexpr int ScreenHeight = 600;
+
 public:
 	class Exception : public ChiliException
 	{
@@ -49,70 +57,26 @@ private:
 		float x,y,z;		// position
 		float u,v;			// texcoords
 	};
+
 public:
 	Graphics( class HWNDKey& key );
 	Graphics( const Graphics& ) = delete;
 	Graphics& operator=( const Graphics& ) = delete;
+
 	void EndFrame();
-	void BeginFrame();
+	void BeginFrame()noexcept;
+
 	Color GetPixel( int x,int y ) const;
-	Color GetPixelClipped( int x, int y )const;
-	void PutPixel( int x,int y,int r,int g,int b )
-	{
-		PutPixel( x,y,{ unsigned char( r ),unsigned char( g ),unsigned char( b ) } );
-	}
 	void PutPixel( int x,int y,Color c );
-	void PutPixelClipped( int x, int y, Color c );
-	template<typename E>
-	void DrawSprite( int x,int y,const Surface& s,E effect )
-	{
-		DrawSprite( x,y,s.GetRect(),s,effect );
-	}
-	template<typename E>
-	void DrawSprite( int x,int y,const RectI& srcRect,const Surface& s,E effect )
-	{
-		DrawSprite( x,y,srcRect,GetScreenRect(),s,effect );
-	}
-	template<typename E>
-	void DrawSprite( int x,int y,RectI srcRect,const RectI& clip,const Surface& s,E effect )
-	{
-		assert( srcRect.left >= 0 );
-		assert( srcRect.right <= s.GetWidth() );
-		assert( srcRect.top >= 0 );
-		assert( srcRect.bottom <= s.GetHeight() );
-		if( x < clip.left )
-		{
-			srcRect.left += clip.left - x;
-			x = clip.left;
-		}
-		if( y < clip.top )
-		{
-			srcRect.top += clip.top - y;
-			y = clip.top;
-		}
-		if( x + srcRect.Width() > clip.right )
-		{
-			srcRect.right -= x + srcRect.Width() - clip.right;
-		}
-		if( y + srcRect.Height() > clip.bottom )
-		{
-			srcRect.bottom -= y + srcRect.Height() - clip.bottom;
-		}
-		for( int sy = srcRect.top; sy < srcRect.bottom; sy++ )
-		{
-			for( int sx = srcRect.left; sx < srcRect.right; sx++ )
-			{
-				effect(
-					s.GetPixel( sx,sy ),
-					x + sx - srcRect.left,
-					y + sy - srcRect.top,
-					*this
-				);
-			}
-		}
-	}
 
 	static bool IsVisible( RectI const& rect );
+
+	void DrawDisc( Vec2 const& center, float radius, Color color )noexcept;
+	void DrawRect( RectF const& dst, Radian angle, Color color )noexcept;
+	void DrawLine( Vec2 const& p0, Vec2 const& p2, float thickness, Color color )noexcept;
+	void DrawSprite( RectF const& dst, Radian angle, Surface const& sprite, Color tint = Colors::White, Color key = Colors::Magenta )noexcept;
+
+
 	~Graphics();
 private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain>				pSwapChain;
@@ -129,9 +93,8 @@ private:
 	D3D11_MAPPED_SUBRESOURCE							mappedSysBufferTexture;
 	Color*                                              pSysBuffer = nullptr;
 public:
-	static constexpr int ScreenWidth = 800;
-	static constexpr int ScreenHeight = 600;
 	static RectI GetScreenRect();
 };
+
 
 constexpr RectF screenRect = { 0.f,0.f,float( Graphics::ScreenWidth ),float( Graphics::ScreenHeight ) };

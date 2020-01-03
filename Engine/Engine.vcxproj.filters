@@ -16,207 +16,408 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{8b6c92a8-f65d-451e-80e3-d65773602b92}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Chili Framework">
+      <UniqueIdentifier>{4f7a8aab-e720-4f8e-9d92-21e626154cce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game Files">
+      <UniqueIdentifier>{345bf53f-dda9-4f79-a187-07a930e66613}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utilities">
+      <UniqueIdentifier>{b946ea55-2f53-4c55-aed9-9d2757e2c268}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphics">
+      <UniqueIdentifier>{536de179-79b3-4ac2-87a5-4c522a5a4741}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphics\Vertices">
+      <UniqueIdentifier>{f9aa18ab-30f4-4100-bc91-87ecb9a43c63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphics\Shader Effects">
+      <UniqueIdentifier>{d552b8cb-493f-46d7-88a8-4fde64c5f92c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphics\Samplers">
+      <UniqueIdentifier>{64aa6201-b46d-4a1b-811d-fdfad181c63f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game Files\Views">
+      <UniqueIdentifier>{edb1d11d-0f91-4b70-8fbd-b3c56f530182}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game Files\Models">
+      <UniqueIdentifier>{c8cdf04d-cbb4-40c5-8b13-add3ef935979}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game Files\Controllers">
+      <UniqueIdentifier>{f1d48b51-e68a-4bf5-8c45-90e0b18704a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphics\Base Shaders">
+      <UniqueIdentifier>{ad42cf37-9b59-4a3b-bb2f-ed5f41e11f2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Chili Framework">
+      <UniqueIdentifier>{13c50067-c8b6-4c72-beb7-26e777b16ef9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game Files">
+      <UniqueIdentifier>{1665a5aa-3066-4f8f-9fe8-6fc7b113e166}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game Files\Models">
+      <UniqueIdentifier>{1c884479-0565-46ac-b0c1-112bd336e00b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game Files\Controllers">
+      <UniqueIdentifier>{5da1dc25-c598-4e7b-b885-9e2196bb4823}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game Files\Views">
+      <UniqueIdentifier>{23334094-6691-4de8-a5ec-cf61ff2d86a0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ChiliWin.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="SolidTextureEffect.h">
+      <Filter>Header Files\Graphics\Shader Effects</Filter>
     </ClInclude>
-    <ClInclude Include="Colors.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="ShieldEffect.h">
+      <Filter>Header Files\Graphics\Shader Effects</Filter>
     </ClInclude>
-    <ClInclude Include="DXErr.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="RectFillEffect.h">
+      <Filter>Header Files\Graphics\Shader Effects</Filter>
     </ClInclude>
-    <ClInclude Include="Game.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Keyboard.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MainWindow.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Mouse.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ChiliException.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sound.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SoundEffect.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="COMInitializer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Surface.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="ColorKeyTextureEffect.h">
+      <Filter>Header Files\Graphics\Shader Effects</Filter>
     </ClInclude>
     <ClInclude Include="Animation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FrameTimer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Character.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Vec2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Font.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Rect.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SpriteEffect.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Chili Framework</Filter>
     </ClInclude>
     <ClInclude Include="Bencher.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Chili Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Hero.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Character.h">
+      <Filter>Header Files\Chili Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Size.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="ChiliException.h">
+      <Filter>Header Files\Chili Framework</Filter>
     </ClInclude>
-    <ClInclude Include="WicWrapper.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="ChiliWin.h">
+      <Filter>Header Files\Chili Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Shield.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Colors.h">
+      <Filter>Header Files\Chili Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="COMInitializer.h">
+      <Filter>Header Files\Chili Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="DXErr.h">
+      <Filter>Header Files\Chili Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Font.h">
+      <Filter>Header Files\Chili Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameTimer.h">
+      <Filter>Header Files\Chili Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Keyboard.h">
+      <Filter>Header Files\Chili Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="MainWindow.h">
+      <Filter>Header Files\Chili Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Mouse.h">
+      <Filter>Header Files\Chili Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Rect.h">
+      <Filter>Header Files\Chili Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files\Chili Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound.h">
+      <Filter>Header Files\Chili Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundEffect.h">
+      <Filter>Header Files\Chili Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteEffect.h">
+      <Filter>Header Files\Chili Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Surface.h">
+      <Filter>Header Files\Chili Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Vec2.h">
+      <Filter>Header Files\Chili Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="AngleMath.h">
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="ChiliMath.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="Bullet.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Mat3.h">
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="World.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameView.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemies.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SpriteCache.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Size.h">
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="Utilities.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="Weapon.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="WicWrapper.h">
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="StarField.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Graphics.h">
+      <Filter>Header Files\Chili Framework</Filter>
     </ClInclude>
-    <ClInclude Include="EnemySpawner.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="ColorVertex.h">
+      <Filter>Header Files\Graphics\Vertices</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureVertex.h">
+      <Filter>Header Files\Graphics\Vertices</Filter>
+    </ClInclude>
+    <ClInclude Include="Pipeline.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Triangle.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="PointSampler.h">
+      <Filter>Header Files\Graphics\Samplers</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Header Files\Game Files\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="World.h">
+      <Filter>Header Files\Game Files\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldView.h">
+      <Filter>Header Files\Game Files\Views</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldController.h">
+      <Filter>Header Files\Game Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameView.h">
+      <Filter>Header Files\Game Files\Views</Filter>
     </ClInclude>
     <ClInclude Include="Asteroids.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AsteroidSpawner.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Game Files\Models</Filter>
     </ClInclude>
     <ClInclude Include="Bosses.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Game Files\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Bullet.h">
+      <Filter>Header Files\Game Files\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies.h">
+      <Filter>Header Files\Game Files\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Hero.h">
+      <Filter>Header Files\Game Files\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Shield.h">
+      <Filter>Header Files\Game Files\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Weapon.h">
+      <Filter>Header Files\Game Files\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="DiscFillEffect.h">
+      <Filter>Header Files\Graphics\Shader Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseGeometryShader.h">
+      <Filter>Header Files\Graphics\Base Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="StarView.h">
+      <Filter>Header Files\Game Files\Views</Filter>
+    </ClInclude>
+    <ClInclude Include="Star.h">
+      <Filter>Header Files\Game Files\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="StarController.h">
+      <Filter>Header Files\Game Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="AsteroidController.h">
+      <Filter>Header Files\Game Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="AsteroidView.h">
+      <Filter>Header Files\Game Files\Views</Filter>
+    </ClInclude>
+    <ClInclude Include="Boss1Controller.h">
+      <Filter>Header Files\Game Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="AmmoController.h">
+      <Filter>Header Files\Game Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="AmmoView.h">
+      <Filter>Header Files\Game Files\Views</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyView.h">
+      <Filter>Header Files\Game Files\Views</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyController.h">
+      <Filter>Header Files\Game Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="HeroController.h">
+      <Filter>Header Files\Game Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="HeroView.h">
+      <Filter>Header Files\Game Files\Views</Filter>
+    </ClInclude>
+    <ClInclude Include="WeaponController.h">
+      <Filter>Header Files\Game Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="ShieldController.h">
+      <Filter>Header Files\Game Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="ShieldView.h">
+      <Filter>Header Files\Game Files\Views</Filter>
+    </ClInclude>
+    <ClInclude Include="Boss1View.h">
+      <Filter>Header Files\Game Files\Views</Filter>
+    </ClInclude>
+    <ClInclude Include="AsteroidSpawner.h">
+      <Filter>Header Files\Game Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemySpawner.h">
+      <Filter>Header Files\Game Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameController.h">
+      <Filter>Header Files\Game Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="Starfield.h">
+      <Filter>Header Files\Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteCache.h">
+      <Filter>Header Files\Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Enumerations.h">
+      <Filter>Header Files\Game Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DXErr.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Game.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Keyboard.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MainWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Mouse.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Sound.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="COMInitializer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Surface.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Animation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FrameTimer.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Chili Framework</Filter>
     </ClCompile>
     <ClCompile Include="Character.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Chili Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="COMInitializer.cpp">
+      <Filter>Source Files\Chili Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="DXErr.cpp">
+      <Filter>Source Files\Chili Framework</Filter>
     </ClCompile>
     <ClCompile Include="Font.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Chili Framework</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsOD.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="FrameTimer.cpp">
+      <Filter>Source Files\Chili Framework</Filter>
     </ClCompile>
-    <ClCompile Include="SurfaceOD.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Keyboard.cpp">
+      <Filter>Source Files\Chili Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Hero.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Main.cpp">
+      <Filter>Source Files\Chili Framework</Filter>
     </ClCompile>
-    <ClCompile Include="World.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="MainWindow.cpp">
+      <Filter>Source Files\Chili Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Bullet.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Mouse.cpp">
+      <Filter>Source Files\Chili Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Sound.cpp">
+      <Filter>Source Files\Chili Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Shield.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Weapon.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="StarField.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="EnemySpawner.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Surface.cpp">
+      <Filter>Source Files\Chili Framework</Filter>
     </ClCompile>
     <ClCompile Include="Asteroids.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AsteroidSpawner.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Game Files\Models</Filter>
     </ClCompile>
     <ClCompile Include="Bosses.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Game Files\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Bullet.cpp">
+      <Filter>Source Files\Game Files\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies.cpp">
+      <Filter>Source Files\Game Files\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Source Files\Game Files\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Hero.cpp">
+      <Filter>Source Files\Game Files\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Shield.cpp">
+      <Filter>Source Files\Game Files\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Star.cpp">
+      <Filter>Source Files\Game Files\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Weapon.cpp">
+      <Filter>Source Files\Game Files\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="World.cpp">
+      <Filter>Source Files\Game Files\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="AsteroidSpawner.cpp">
+      <Filter>Source Files\Game Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemySpawner.cpp">
+      <Filter>Source Files\Game Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="StarController.cpp">
+      <Filter>Source Files\Game Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldController.cpp">
+      <Filter>Source Files\Game Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics.cpp">
+      <Filter>Source Files\Chili Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="GameView.cpp">
+      <Filter>Source Files\Game Files\Views</Filter>
+    </ClCompile>
+    <ClCompile Include="StarView.cpp">
+      <Filter>Source Files\Game Files\Views</Filter>
+    </ClCompile>
+    <ClCompile Include="AmmoController.cpp">
+      <Filter>Source Files\Game Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="AmmoView.cpp">
+      <Filter>Source Files\Game Files\Views</Filter>
+    </ClCompile>
+    <ClCompile Include="AsteroidController.cpp">
+      <Filter>Source Files\Game Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="AsteroidView.cpp">
+      <Filter>Source Files\Game Files\Views</Filter>
+    </ClCompile>
+    <ClCompile Include="Boss1Controller.cpp">
+      <Filter>Source Files\Game Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyController.cpp">
+      <Filter>Source Files\Game Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyView.cpp">
+      <Filter>Source Files\Game Files\Views</Filter>
+    </ClCompile>
+    <ClCompile Include="HeroController.cpp">
+      <Filter>Source Files\Game Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="HeroView.cpp">
+      <Filter>Source Files\Game Files\Views</Filter>
+    </ClCompile>
+    <ClCompile Include="ShieldView.cpp">
+      <Filter>Source Files\Game Files\Views</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldView.cpp">
+      <Filter>Source Files\Game Files\Views</Filter>
+    </ClCompile>
+    <ClCompile Include="ShieldController.cpp">
+      <Filter>Source Files\Game Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="WeaponController.cpp">
+      <Filter>Source Files\Game Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="Boss1View.cpp">
+      <Filter>Source Files\Game Files\Views</Filter>
+    </ClCompile>
+    <ClCompile Include="GameController.cpp">
+      <Filter>Source Files\Game Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="Starfield.cpp">
+      <Filter>Source Files\Game Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

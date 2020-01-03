@@ -1,12 +1,11 @@
 #pragma once
 
 #include "Bullet.h"
+#include "Enumerations.h"
 #include <variant>
 
 namespace sns
 {
-	struct World;
-
 	struct Gun
 	{
 		using ammo_type = Bullet;
@@ -27,20 +26,16 @@ namespace sns
 		using ammo_type = Missile;
 		static constexpr float fire_delay = 30.f / 60.f;
 	};
-	struct Weapon
+
+	class Weapon
 	{
 	public:
 		void Update( float dt )noexcept;
-		bool CanFire()const noexcept;
-		void Fire( Vec2 const& position, Vec2 const& direction, World& world, Ammo::Owner ammo_owner = Ammo::Owner::Hero )noexcept;
 		void Reset()noexcept;
-
-	public:
-		enum class State { Idle, Recharge };
 
 	public:
 		std::variant<Gun, MachineGun, PlasmaGun, MissileLauncher> variant;
 		float fire_timer = 0.f;
-		State state = State::Idle;
+		WeaponState state = WeaponState::Idle;
 	};
 }

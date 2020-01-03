@@ -1,38 +1,33 @@
-#include "StarField.h"
+#include "Starfield.h"
 
-sns::StarField::StarField()
+namespace sns
 {
-	for( auto& star : stars )
+	std::vector<Star> Starfield::generate(
+		RectF position_bounds,
+		std::pair<float, float> speed_bounds,
+		int count )
 	{
-		star.position = Vec2{ xDist( rng ), yDist( rng ) };
-		star.speed = spdDist( rng );
-	}
-}
+		std::mt19937 rng;
+		auto xDist = std::uniform_real_distribution<float>{ position_bounds.left,position_bounds.right };
+		auto yDist = std::uniform_real_distribution<float>{ position_bounds.top,position_bounds.bottom };
+		auto spdDist = std::uniform_real_distribution<float>{ speed_bounds.first, speed_bounds.second };
 
-void sns::StarField::Update() noexcept
-{
-	for( auto& star : stars )
-	{
-		star.position += { 0.f, star.speed };
-		if( !screenRect.Contains( star.position ) )
+		auto stars = std::vector<Star>{ size_t( count ) };
+
+		for( auto& star : stars )
 		{
-			star.position = { xDist( rng ), 0.f };
-			star.speed = spdDist( rng );
+			star = Star{ Vec2{xDist( rng ), yDist( rng )}, spdDist( rng ) };
 		}
-	}
-}
 
-void sns::StarField::Draw( Graphics & gfx ) const noexcept
-{
-	for( auto const& star : stars )
-	{
-		constexpr int radius = 1;
-		for( int y = -radius; y < radius; ++y )
-		{
-			for( int x = -radius; x < radius; ++x )
-			{
-				gfx.PutPixelClipped( int( star.position.x ) + x, int( star.position.y ) + y, Colors::White );
-			}
-		}
+		return stars;
 	}
+
+	Star Starfield::generate_star( std::mt19937& rng, std::pair<float, float> width_bounds, std::pair<float, float> speed_bounds )noexcept
+	{
+		auto xDist = std::uniform_real_distribution<float>{ width_bounds.first, width_bounds.second };
+		auto spdDist = std::uniform_real_distribution<float>{ speed_bounds.first, speed_bounds.second };
+
+		return Star{ Vec2{xDist( rng ), 0.f}, spdDist( rng ) };
+	}
+
 }
