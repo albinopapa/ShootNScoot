@@ -1,53 +1,37 @@
 #pragma once
 
-#include "AmmoController.h"
-#include "AsteroidController.h"
-#include "AsteroidSpawner.h"
-#include "Boss1Controller.h"
-#include "EnemyController.h"
-#include "EnemySpawner.h"
-#include "HeroController.h"
 #include "Keyboard.h"
-#include "StarController.h"
 
 class Game;
 
 namespace sns
 {
+	class Ammo;
+	class Asteroid;
+	class Enemy;
 	class World;
 
 	class WorldController
 	{
 	public:
-		void Update( World& model, Keyboard& kbd, Game& game_controller, float dt );
-
-		void RemoveDeadBullets( World& model )noexcept;
-		void RemoveDeadEnemies( World& model )noexcept;
-		void RemoveDeadAsteroids( World& model )noexcept;
-
-		// Enemy vs Hero, HeroAmmo, Asteroids
-		void DoEnemyCollision( World& model, Enemy& enemy, Game& game )noexcept;
-		// EnemyAmmo vs Hero, Asteroid
-		void DoEnemyAmmoCollision( World& model, Ammo& ammo )noexcept;
-		// Asteroid vs Asteroid, HeroAmmo, Hero
-		void DoAsteroidCollision( World& model, Asteroid& asteroid, Game& game )noexcept;
-		// Boss vs Hero, HeroAmmo
-		void DoBossCollision( World& model, Game& game )noexcept;
-		// BossAmmo vs Hero
-		void DoBossAmmoCollision( World& model, Ammo& ammo )noexcept;
-
-		void Reset( World& model )noexcept;
+		static void Update( World& model, Keyboard& kbd, Game& game_controller, float dt );
+		static void Reset( World& model )noexcept;
+		static bool IsGameOver( World& model )noexcept;
 
 	private:
-		AsteroidController asteroid_controller;
-		AmmoController ammo_controller;
-		EnemyController enemy_controller;
-		StarController star_controller;
-		
-		AsteroidSpawner astro_spawner;
-		EnemySpawner enemy_spawner;
+		static void RemoveDeadBullets( World& model )noexcept;
+		static void RemoveDeadEnemies( World& model )noexcept;
+		static void RemoveDeadAsteroids( World& model )noexcept;
 
-		HeroController hero_controller;
-		Boss1Controller boss_controller;
+		// Enemy vs Hero, HeroAmmo, Asteroids
+		static void DoEnemyCollision( World& model, Enemy& enemy, Game& game )noexcept;
+		// EnemyAmmo vs Hero, Asteroid
+		static void DoEnemyAmmoCollision( World& model, Ammo& ammo )noexcept;
+		// Asteroid vs Asteroid, HeroAmmo, Hero
+		static void DoAsteroidCollision( World& model, Asteroid& asteroid, Game& game )noexcept;
+		// Boss vs Hero, HeroAmmo
+		static void DoBossCollision( World& model, Game& game )noexcept;
+		// BossAmmo vs Hero
+		static void DoBossAmmoCollision( World& model, Ammo& ammo )noexcept;
 	};
 }

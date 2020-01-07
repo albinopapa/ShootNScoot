@@ -3,7 +3,7 @@
 
 namespace sns
 {
-	void AsteroidView::Draw( Asteroid const& model, Graphics & gfx ) const noexcept
+	void AsteroidView::Draw( Asteroid const& model, Graphics & gfx )noexcept
 	{
 		std::visit( [ & ]( auto const& asteroid )
 		{

@@ -9,33 +9,26 @@
 
 namespace sns
 {
-	void WorldView::Draw( World const& model, Graphics & gfx ) const noexcept
+	void WorldView::Draw( World const& model, Graphics & gfx )noexcept
 	{
-		StarView star_view;
-		for( auto const& star : model.stars ) star_view.Draw( star, gfx );
+		for( auto const& star : model.stars ) StarView::Draw( star, gfx );
 
-		HeroView hero_view;
-		hero_view.Draw( model.hero, gfx );
+		HeroView::Draw( model.hero, gfx );
 
-		AmmoView ammo_view;
-		for( auto const& bullet : model.hero_bullets ) ammo_view.Draw( bullet, gfx );
-		for( auto const& bullet : model.enemy_bullets ) ammo_view.Draw( bullet, gfx );
+		for( auto const& bullet : model.hero_bullets ) AmmoView::Draw( bullet, gfx );
+		for( auto const& bullet : model.enemy_bullets ) AmmoView::Draw( bullet, gfx );
 
 		switch( model.state )
 		{
 			case WorldState::Arena:
 			{
-				EnemyView enemy_view;
-				for( auto const& enemy : model.enemies ) enemy_view.Draw( enemy, gfx );
-
-				AsteroidView asteroid_view;
-				for( auto const& asteroid : model.asteroids ) asteroid_view.Draw( asteroid, gfx );
+				for( auto const& enemy : model.enemies ) EnemyView::Draw( enemy, gfx );
+				for( auto const& asteroid : model.asteroids ) AsteroidView::Draw( asteroid, gfx );
 				break;
 			}
 			case WorldState::Boss:
 			{
-				Boss1View boss_view;
-				boss_view.Draw( model.boss, gfx );
+				Boss1View::Draw( model.boss, gfx );
 				break;
 			}
 		}

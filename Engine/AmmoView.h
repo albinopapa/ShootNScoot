@@ -8,6 +8,6 @@ namespace sns
 	class AmmoView
 	{
 	public:
-		void Draw( Ammo const& model, Graphics& gfx )const noexcept;
+		static void Draw( Ammo const& model, Graphics& gfx )noexcept;
 	};
 }

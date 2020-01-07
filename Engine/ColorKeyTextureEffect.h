@@ -46,8 +46,8 @@ struct ColorKeyTextureEffect
 			return ( texcolor == buffer.key ) ? Color( 0, r, g, b ) : Color( a, r, g, b );
 		}
 
-		ConstantBuffer buffer;
 		Surface const* sprite = nullptr;
+		ConstantBuffer buffer;
 		SamplerType sampler;
 	};
 

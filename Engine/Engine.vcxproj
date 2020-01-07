@@ -152,8 +152,8 @@
     <ClInclude Include="AsteroidView.h" />
     <ClInclude Include="BaseGeometryShader.h" />
     <ClInclude Include="Bencher.h" />
-    <ClInclude Include="Boss1Controller.h" />
-    <ClInclude Include="Boss1View.h" />
+    <ClInclude Include="BossController.h" />
+    <ClInclude Include="BossView.h" />
     <ClInclude Include="Bosses.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Character.h" />
@@ -180,6 +180,7 @@
     <ClInclude Include="HeroController.h" />
     <ClInclude Include="HeroView.h" />
     <ClInclude Include="Mat3.h" />
+    <ClInclude Include="NullPixelShader.h" />
     <ClInclude Include="Pipeline.h" />
     <ClInclude Include="PointSampler.h" />
     <ClInclude Include="RectFillEffect.h" />
@@ -223,7 +224,7 @@
     <ClCompile Include="Asteroids.cpp" />
     <ClCompile Include="AsteroidSpawner.cpp" />
     <ClCompile Include="AsteroidView.cpp" />
-    <ClCompile Include="Boss1Controller.cpp" />
+    <ClCompile Include="BossController.cpp" />
     <ClCompile Include="Boss1View.cpp" />
     <ClCompile Include="Bosses.cpp" />
     <ClCompile Include="Bullet.cpp" />

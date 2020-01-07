@@ -23,33 +23,20 @@
 #include "Enumerations.h"
 #include "World.h"
 
-class Game
+struct Game
 {
 public:
 	Game( class MainWindow& wnd )noexcept;
 	Game( const Game& ) = delete;
 	Game& operator=( const Game& ) = delete;
 	void Update( float dt )noexcept;
-
-	void IncrementScore( int amount )noexcept;
-private:
-
-	/********************************/
-	/*  User Functions              */
-	/********************************/
 	void TransitionState( GameState newState )noexcept;
-private:
-	friend class GameView;
-	friend class GameController;
 
+public:
 	MainWindow& wnd;
-	/********************************/
-	/*  User Variables              */
-	/********************************/
 	sns::World world;
 	GameState state			= GameState::Intro;
 	GameState nextState		= GameState::Intro;
-
 	int menu_choice = 0;
 	int score = 0;
 };

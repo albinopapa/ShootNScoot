@@ -231,9 +231,6 @@
     <ClInclude Include="AsteroidView.h">
       <Filter>Header Files\Game Files\Views</Filter>
     </ClInclude>
-    <ClInclude Include="Boss1Controller.h">
-      <Filter>Header Files\Game Files\Controllers</Filter>
-    </ClInclude>
     <ClInclude Include="AmmoController.h">
       <Filter>Header Files\Game Files\Controllers</Filter>
     </ClInclude>
@@ -261,9 +258,6 @@
     <ClInclude Include="ShieldView.h">
       <Filter>Header Files\Game Files\Views</Filter>
     </ClInclude>
-    <ClInclude Include="Boss1View.h">
-      <Filter>Header Files\Game Files\Views</Filter>
-    </ClInclude>
     <ClInclude Include="AsteroidSpawner.h">
       <Filter>Header Files\Game Files\Controllers</Filter>
     </ClInclude>
@@ -281,6 +275,15 @@
     </ClInclude>
     <ClInclude Include="Enumerations.h">
       <Filter>Header Files\Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NullPixelShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BossView.h">
+      <Filter>Header Files\Game Files\Views</Filter>
+    </ClInclude>
+    <ClInclude Include="BossController.h">
+      <Filter>Header Files\Game Files\Controllers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -383,9 +386,6 @@
     <ClCompile Include="AsteroidView.cpp">
       <Filter>Source Files\Game Files\Views</Filter>
     </ClCompile>
-    <ClCompile Include="Boss1Controller.cpp">
-      <Filter>Source Files\Game Files\Controllers</Filter>
-    </ClCompile>
     <ClCompile Include="EnemyController.cpp">
       <Filter>Source Files\Game Files\Controllers</Filter>
     </ClCompile>
@@ -418,6 +418,9 @@
     </ClCompile>
     <ClCompile Include="Starfield.cpp">
       <Filter>Source Files\Game Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BossController.cpp">
+      <Filter>Source Files\Game Files\Controllers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

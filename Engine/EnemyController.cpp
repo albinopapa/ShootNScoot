@@ -1,5 +1,6 @@
 #include "EnemyController.h"
 #include "Enemies.h"
+#include "Utilities.h"
 #include <type_traits>
 
 namespace sns
@@ -11,16 +12,17 @@ namespace sns
 			using type = std::decay_t<decltype( enemy_ )>;
 			constexpr auto minSqrDistFromWaypoint = sqr( type::aabb.Width() / 2.f );
 
-			const auto delta = type::waypoints[ model.waypoint_index ] - model.position;
-			if( delta.LengthSq() < minSqrDistFromWaypoint )
+			if( const auto delta = model.waypoints[ model.waypoint_index ] - model.position; 
+				delta.LengthSq() < minSqrDistFromWaypoint )
 			{
 				++model.waypoint_index;
-				model.velocity = ( type::waypoints[ model.waypoint_index ] - model.position ).Normalize();
 			}
 
-			if( model.waypoint_index >= type::waypoints.size() )
+			if( model.waypoint_index < model.waypoints.Count() )
 			{
-				model.health = 0.f;
+				model.velocity = 
+					( model.waypoints[ model.waypoint_index ] - model.position ).Normalize();
+				model.angle = std::atan2( -model.velocity.y, model.velocity.x );
 			}
 		};
 
@@ -32,7 +34,7 @@ namespace sns
 		model.health -= amount;
 	}
 
-	RectF EnemyController::AABB( Enemy& model ) const noexcept
+	RectF EnemyController::AABB( Enemy const& model ) noexcept
 	{
 		return std::visit( [ & ]( auto const& enemy_ )
 		{
@@ -41,16 +43,22 @@ namespace sns
 		}, model.variant );
 	}
 
-	float EnemyController::Health( Enemy& model ) const noexcept
+	float EnemyController::Health( Enemy const& model ) noexcept
 	{
 		return model.health;
 	}
 
-	float EnemyController::Damage( Enemy& model ) const noexcept
+	float EnemyController::Damage( Enemy const& model ) noexcept
 	{
 		return std::visit( [ & ]( auto const& enemy_ ) {
 			using type = std::decay_t<decltype( enemy_ )>;
 			return type::damage;
 		}, model.variant );
+	}
+
+	bool EnemyController::IsAlive( Enemy const& model ) noexcept
+	{
+		return model.waypoint_index < int( model.waypoints.Count() ) ||
+			model.health <= 0.f;
 	}
 }

@@ -28,6 +28,9 @@
 #include "Rect.h"
 #include "Mat3.h"
 #include "Vec2.h"
+
+#include "Pipeline.h"
+
 #include <cassert>
 #include <d3d11.h>
 #include <wrl.h>
@@ -92,6 +95,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11SamplerState>			pSamplerState;
 	D3D11_MAPPED_SUBRESOURCE							mappedSysBufferTexture;
 	Color*                                              pSysBuffer = nullptr;
+	Pipeline											pl;
 public:
 	static RectI GetScreenRect();
 };

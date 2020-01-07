@@ -2,37 +2,9 @@
 #include "Shield.h"
 #include <algorithm>
 
-Surface make_shield_sprite()
-{
-	constexpr auto radius = int( sns::Shield::radius );
-	
-	auto sprite = Surface( radius * 2, radius * 2 );
-	constexpr auto sqrRadius = sqr( sns::Shield::radius );
-
-	for( int y = -radius; y < radius; ++y )
-	{
-		for( int x = -radius; x < radius; ++x )
-		{
-			const auto sqrDist = sqr( x ) + sqr( y );
-			
-			const auto alpha = sqrDist < sqrRadius ? 
-				uint8_t( ( sqrDist * 255 ) / sqrRadius ) : 0;
-
-			const auto color = ( sqrDist < sqrRadius ) ?
-				Color( Colors::White, alpha ) : Colors::Magenta;
-
-			sprite.PutPixel( x + radius, y + radius, color );
-		}
-	}
-
-	return sprite;
-}
-
 namespace sns
 {
-	const Surface ShieldView::sprite = make_shield_sprite();
-
-	void ShieldView::Draw( Vec2 const& position, Shield const& model, Graphics & gfx ) const noexcept
+	void ShieldView::Draw( Shield const& model, Vec2 const& position, Graphics & gfx )noexcept
 	{
 		const auto t = uint32_t( 255.f * model.health / Shield::recharge_max );
 		const auto r = uint8_t( 255u - t );
@@ -44,6 +16,6 @@ namespace sns
 			Shield::radius,
 			Shield::radius
 		};
-		gfx.DrawSprite( rect + position, Radian{ 0.f }, sprite, Color( r, g, b ) );
+		gfx.DrawSprite( rect + position, Radian{ 0.f }, Shield::sprite, Color( r, g, b ) );
 	}
 }

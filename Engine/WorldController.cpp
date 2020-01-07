@@ -3,27 +3,33 @@
 #include "World.h"
 #include "Game.h"
 
+#include "AmmoController.h"
+#include "AsteroidController.h"
+#include "BossController.h"
+#include "EnemyController.h"
+#include "GameController.h"
+#include "HeroController.h"
+#include "ShieldController.h"
+#include "StarController.h"
+
 namespace sns
 {
 	void WorldController::Update( World& model, Keyboard& kbd, Game& game, float dt )
 	{
-		for( auto& star : model.stars ) star_controller.Update( star );
+		for( auto& star : model.stars ) StarController::Update( star );
 
-		hero_controller.Update( model.hero, model, kbd, dt );
+		HeroController::Update( model.hero, model, kbd, dt );
 
-		for( auto& ammo : model.hero_bullets ) ammo_controller.Update( ammo, dt );
+		for( auto& ammo : model.hero_bullets ) AmmoController::Update( ammo, dt );
 
-		for( auto& ammo : model.enemy_bullets ) ammo_controller.Update( ammo, dt );
+		for( auto& ammo : model.enemy_bullets ) AmmoController::Update( ammo, dt );
 
 		switch( model.state )
 		{
 			case WorldState::Arena:
 			{
-				astro_spawner.Update( model, dt );
-				enemy_spawner.Update( model, dt );
-
-				for( auto& enemy : model.enemies ) enemy_controller.Update( enemy, dt );
-				for( auto& astro : model.asteroids ) asteroid_controller.Update( astro, dt );
+				for( auto& enemy : model.enemies ) EnemyController::Update( enemy, dt );
+				for( auto& astro : model.asteroids ) AsteroidController::Update( astro, dt );
 
 				for( auto& enemy : model.enemies ) DoEnemyCollision( model, enemy, game );
 				for( auto& bullet : model.enemy_bullets ) DoEnemyAmmoCollision( model, bullet );
@@ -33,26 +39,36 @@ namespace sns
 				RemoveDeadEnemies( model );
 				RemoveDeadAsteroids( model );
 
-				if( astro_spawner.state == AsteroidSpawner::State::Complete &&
-					enemy_spawner.state == EnemySpawner::State::Complete )
+				if( model.astro_spawner.GetState() == AsteroidSpawner::State::Complete &&
+					model.enemy_spawner.GetState() == EnemySpawner::State::Complete )
 				{
 					model.state = WorldState::Boss;
+					switch( model.level )
+					{
+						case 1:
+							model.boss = { Boss1{} };
+							break;
+						case 2:
+							model.boss = { Boss2{} };
+							break;
+					}
+					++model.level;
 				}
 
 				break;
 			}
 			case WorldState::Boss:
 			{
-				boss_controller.Update( model.boss, model, dt );
+				BossController::Update( model.boss, model, dt );
 
 				DoBossCollision( model, game );
 				for( auto& bullet : model.enemy_bullets ) DoBossAmmoCollision( model, bullet );
 
-				if( model.boss.health <= 0.f )
+				if( BossController::Health( model.boss ) <= 0.f )
 				{
 					model.state = WorldState::LevelComplete;
-					astro_spawner.Reset();
-					enemy_spawner.Reset();
+					model.astro_spawner.Reset();
+					model.enemy_spawner.Reset();
 				}
 				break;
 			}
@@ -61,13 +77,19 @@ namespace sns
 
 	void WorldController::RemoveDeadBullets( World& model ) noexcept
 	{
-		erase_if( model.hero_bullets, [ & ]( Ammo const& bullet ) { return !bullet.isAlive; } );
-		erase_if( model.enemy_bullets, [ & ]( Ammo const& bullet ) { return !bullet.isAlive; } );
+		auto ammo_is_dead = 
+			[ & ]( Ammo const& bullet ) { return !AmmoController::IsAlive( bullet ); };
+
+		erase_if( model.hero_bullets, ammo_is_dead );
+		erase_if( model.enemy_bullets, ammo_is_dead );
 	}
 
 	void WorldController::RemoveDeadEnemies( World& model ) noexcept
 	{
-		erase_if( model.enemies, [ & ]( Enemy const& enemy_ ) { return enemy_.health <= 0.f; } );
+		auto enemy_is_dead =
+			[ & ]( Enemy const& enemy_ ) { return !EnemyController::IsAlive( enemy_ ); };
+
+		erase_if( model.enemies, enemy_is_dead );
 	}
 
 	void WorldController::RemoveDeadAsteroids( World& model ) noexcept
@@ -95,7 +117,7 @@ namespace sns
 
 		auto spawn = [ & ]( const auto& position, const auto& direction ) {
 			const auto spawn_pos = position + ( direction * BigAsteroid::radius );
-			model.SpawnAsteroid( Asteroid{ SmallAsteroid{}, spawn_pos, direction } );
+			model.SpawnAsteroid( Asteroid{ spawn_pos, direction, SmallAsteroid{} } );
 		};
 
 		for( auto const& position : positions )
@@ -109,33 +131,32 @@ namespace sns
 
 	void WorldController::DoEnemyCollision( World& model, Enemy& enemy, Game& game ) noexcept
 	{
-		const auto enemy_aabb = enemy_controller.AABB( enemy );
+		const auto enemy_aabb = EnemyController::AABB( enemy );
 
 		// Enemy vs Hero
-		auto& shield = hero_controller.GetShield( model.hero );
-		auto shield_controller = ShieldController{};
-		if( shield_controller.Health( shield ) > 0.f )
+		auto& shield = HeroController::GetShield( model.hero );
+		if( ShieldController::Health( shield ) > 0.f )
 		{
-			if( enemy_aabb.Overlaps( shield_controller.AABB( shield, model.hero.position ) ) )
+			if( enemy_aabb.Overlaps( ShieldController::AABB( shield, model.hero.position ) ) )
 			{
-				enemy_controller.TakeDamage( enemy, Hero::damage );
-				shield_controller.TakeDamage( shield, enemy_controller.Damage( enemy ) );
-				if( enemy_controller.Health( enemy ) <= 0.f )
+				EnemyController::TakeDamage( enemy, Hero::damage );
+				ShieldController::TakeDamage( shield, EnemyController::Damage( enemy ) );
+				if( EnemyController::Health( enemy ) <= 0.f )
 				{
-					game.IncrementScore( Enemy::score_value );
+					GameController::IncrementScore( game, Enemy::score_value );
 					return;
 				}
 			}
 		}
 		else
 		{
-			if( enemy_aabb.Overlaps( hero_controller.AABB( model.hero ) ) )
+			if( enemy_aabb.Overlaps( HeroController::AABB( model.hero ) ) )
 			{
-				enemy_controller.TakeDamage( enemy, Hero::damage );
-				hero_controller.TakeDamage( model.hero, enemy_controller.Damage( enemy ) );
-				if( enemy_controller.Health( enemy ) <= 0.f )
+				EnemyController::TakeDamage( enemy, Hero::damage );
+				HeroController::TakeDamage( model.hero, EnemyController::Damage( enemy ) );
+				if( EnemyController::Health( enemy ) <= 0.f )
 				{
-					game.IncrementScore( Enemy::score_value );
+					GameController::IncrementScore( game, Enemy::score_value );
 					return;
 				}
 			}
@@ -144,15 +165,15 @@ namespace sns
 		// Enemy vs HeroAmmo
 		for( auto& bullet : model.hero_bullets )
 		{
-			if( ammo_controller.IsAlive( bullet ) )
+			if( AmmoController::IsAlive( bullet ) )
 			{
-				if( enemy_aabb.Overlaps( ammo_controller.AABB( bullet ) ) )
+				if( enemy_aabb.Overlaps( AmmoController::AABB( bullet ) ) )
 				{
-					enemy_controller.TakeDamage( enemy, ammo_controller.Damage( bullet ) );
-					ammo_controller.TakeDamage( bullet, enemy_controller.Damage( enemy ) );
-					if( enemy_controller.Health( enemy ) <= 0.f )
+					EnemyController::TakeDamage( enemy, AmmoController::Damage( bullet ) );
+					AmmoController::TakeDamage( bullet, EnemyController::Damage( enemy ) );
+					if( EnemyController::Health( enemy ) <= 0.f )
 					{
-						game.IncrementScore( Enemy::score_value );
+						GameController::IncrementScore( game, Enemy::score_value );
 						return;
 					}
 				}
@@ -163,17 +184,17 @@ namespace sns
 		// Enemy vs Asteroid
 		for( auto& astro : model.asteroids )
 		{
-			if( asteroid_controller.Health( astro ) <= 0.f )continue;
+			if( AsteroidController::Health( astro ) <= 0.f )continue;
 
-			if( enemy_aabb.Overlaps( asteroid_controller.AABB( astro ) ) )
+			if( enemy_aabb.Overlaps( AsteroidController::AABB( astro ) ) )
 			{
-				enemy_controller.TakeDamage( enemy, asteroid_controller.Damage( astro ) );
-				asteroid_controller.TakeDamage( astro, enemy_controller.Damage( enemy ) );
-				if( asteroid_controller.Health( astro ) <= 0.f )
+				EnemyController::TakeDamage( enemy, AsteroidController::Damage( astro ) );
+				AsteroidController::TakeDamage( astro, EnemyController::Damage( enemy ) );
+				if( AsteroidController::Health( astro ) <= 0.f )
 				{
-					asteroid_controller.Reason( astro, AsteroidDeathReason::AffectedByEnemy );
+					AsteroidController::Reason( astro, AsteroidDeathReason::AffectedByEnemy );
 				}
-				if( enemy_controller.Health( enemy ) <= 0.f )
+				if( EnemyController::Health( enemy ) <= 0.f )
 				{
 					return;
 				}
@@ -183,92 +204,90 @@ namespace sns
 
 	void WorldController::DoEnemyAmmoCollision( World& model, Ammo& ammo ) noexcept
 	{
-		if( !ammo_controller.IsAlive( ammo ) )return;
-		const auto ammo_aabb = ammo_controller.AABB( ammo );
+		if( !AmmoController::IsAlive( ammo ) )return;
+		const auto ammo_aabb = AmmoController::AABB( ammo );
 
 		// EnemyAmmo vs Hero
 		auto& shield = model.hero.shield;
-		auto shield_controller = ShieldController{};
-		if( shield_controller.Health( shield ) > 0.f )
+		if( ShieldController::Health( shield ) > 0.f )
 		{
-			if( ammo_aabb.Overlaps( shield_controller.AABB( shield, model.hero.position ) ) )
+			if( ammo_aabb.Overlaps( ShieldController::AABB( shield, model.hero.position ) ) )
 			{
-				ammo_controller.TakeDamage( ammo, Hero::damage );
-				shield_controller.TakeDamage( shield, ammo_controller.Damage( ammo ) );
+				AmmoController::TakeDamage( ammo, Hero::damage );
+				ShieldController::TakeDamage( shield, AmmoController::Damage( ammo ) );
 			}
 		}
 		else
 		{
-			if( ammo_aabb.Overlaps( hero_controller.AABB( model.hero ) ) )
+			if( ammo_aabb.Overlaps( HeroController::AABB( model.hero ) ) )
 			{
-				ammo_controller.TakeDamage( ammo, Hero::damage );
-				hero_controller.TakeDamage( model.hero, ammo_controller.Damage( ammo ) );
+				AmmoController::TakeDamage( ammo, Hero::damage );
+				HeroController::TakeDamage( model.hero, AmmoController::Damage( ammo ) );
 			}
 		}
 
-		if( !ammo_controller.IsAlive( ammo ) )return;
+		if( !AmmoController::IsAlive( ammo ) )return;
 
 		// EnemyAmmo vs Asteroid
 		for( auto& astro : model.asteroids )
 		{
-			if( ammo_aabb.Overlaps( asteroid_controller.AABB( astro ) ) )
+			if( ammo_aabb.Overlaps( AsteroidController::AABB( astro ) ) )
 			{
-				ammo_controller.TakeDamage( ammo, asteroid_controller.Damage( astro ) );
-				asteroid_controller.TakeDamage( astro, ammo_controller.Damage( ammo ) );
-				if( asteroid_controller.Health( astro ) <= 0.f )
-					asteroid_controller.Reason( astro, AsteroidDeathReason::AffectedByEnemy );
+				AmmoController::TakeDamage( ammo, AsteroidController::Damage( astro ) );
+				AsteroidController::TakeDamage( astro, AmmoController::Damage( ammo ) );
+				if( AsteroidController::Health( astro ) <= 0.f )
+					AsteroidController::Reason( astro, AsteroidDeathReason::AffectedByEnemy );
 			}
 		}
 	}
 
 	void WorldController::DoAsteroidCollision( World& model, Asteroid& asteroid, Game& game ) noexcept
 	{
-		const auto asteroid_aabb = asteroid_controller.AABB( asteroid );
+		const auto asteroid_aabb = AsteroidController::AABB( asteroid );
 
 		// Asteroid vs Hero
 		auto& shield = model.hero.shield;
-		auto shield_controller = ShieldController{};
-		if( shield_controller.Health( shield ) > 0.f )
+		if( ShieldController::Health( shield ) > 0.f )
 		{
-			if( asteroid_aabb.Overlaps( shield_controller.AABB( shield, model.hero.position ) ) )
+			if( asteroid_aabb.Overlaps( ShieldController::AABB( shield, model.hero.position ) ) )
 			{
-				shield_controller.TakeDamage( shield, asteroid_controller.Damage( asteroid ) );
-				asteroid_controller.TakeDamage( asteroid, Hero::damage );
-				if( asteroid_controller.Health( asteroid ) <= 0.f )
+				ShieldController::TakeDamage( shield, AsteroidController::Damage( asteroid ) );
+				AsteroidController::TakeDamage( asteroid, Hero::damage );
+				if( AsteroidController::Health( asteroid ) <= 0.f )
 				{
-					game.IncrementScore( asteroid_controller.ScoreValue( asteroid ) );
-					asteroid_controller.Reason( asteroid, AsteroidDeathReason::AffectedByPlayer );
+					GameController::IncrementScore( game, AsteroidController::ScoreValue( asteroid ) );
+					AsteroidController::Reason( asteroid, AsteroidDeathReason::AffectedByPlayer );
 				}
 			}
 		}
 		else
 		{
-			if( asteroid_aabb.Overlaps( hero_controller.AABB( model.hero ) ) )
+			if( asteroid_aabb.Overlaps( HeroController::AABB( model.hero ) ) )
 			{
-				hero_controller.TakeDamage( model.hero, asteroid_controller.Damage(asteroid) );
-				asteroid_controller.TakeDamage( asteroid, Hero::damage );
-				if( asteroid_controller.Health( asteroid ) <= 0.f )
+				HeroController::TakeDamage( model.hero, AsteroidController::Damage(asteroid) );
+				AsteroidController::TakeDamage( asteroid, Hero::damage );
+				if( AsteroidController::Health( asteroid ) <= 0.f )
 				{
-					game.IncrementScore( asteroid_controller.ScoreValue( asteroid ) );
-					asteroid_controller.Reason( asteroid, AsteroidDeathReason::AffectedByPlayer );
+					GameController::IncrementScore( game, AsteroidController::ScoreValue( asteroid ) );
+					AsteroidController::Reason( asteroid, AsteroidDeathReason::AffectedByPlayer );
 				}
 			}
 		}
 
-		if( asteroid_controller.Health( asteroid ) <= 0.f )return;
+		if( AsteroidController::Health( asteroid ) <= 0.f )return;
 
 		// Asteroid vs HeroAmmo
 		for( auto& bullet : model.hero_bullets )
 		{
-			if( ammo_controller.IsAlive( bullet ) && 
-				ammo_controller.AABB( bullet ).Overlaps( asteroid_aabb ) )
+			if( AmmoController::IsAlive( bullet ) &&
+				AmmoController::AABB( bullet ).Overlaps( asteroid_aabb ) )
 			{
-				asteroid_controller.TakeDamage( asteroid, ammo_controller.Damage( bullet ) );
-				ammo_controller.TakeDamage( bullet, asteroid_controller.Damage( asteroid ) );
-				if( asteroid_controller.Health( asteroid ) <= 0.f )
+				AsteroidController::TakeDamage( asteroid, AmmoController::Damage( bullet ) );
+				AmmoController::TakeDamage( bullet, AsteroidController::Damage( asteroid ) );
+				if( AsteroidController::Health( asteroid ) <= 0.f )
 				{
-					game.IncrementScore( asteroid_controller.ScoreValue( asteroid ) );
-					asteroid_controller.Reason( asteroid, AsteroidDeathReason::AffectedByPlayer );
+					GameController::IncrementScore( game, AsteroidController::ScoreValue( asteroid ) );
+					AsteroidController::Reason( asteroid, AsteroidDeathReason::AffectedByPlayer );
 				}
 			}
 		}
@@ -278,16 +297,16 @@ namespace sns
 		{
 			if( std::addressof( astro ) != std::addressof( asteroid ) )
 			{
-				if( asteroid_controller.Health(astro) <= 0.f )continue;
+				if( AsteroidController::Health(astro) <= 0.f )continue;
 
-				if( asteroid_aabb.Overlaps( asteroid_controller.AABB(astro) ) )
+				if( asteroid_aabb.Overlaps( AsteroidController::AABB(astro) ) )
 				{
-					asteroid_controller.TakeDamage( astro, asteroid_controller.Damage( asteroid ) );
-					asteroid_controller.TakeDamage( asteroid, asteroid_controller.Damage( astro ) );
-					if( asteroid_controller.Health( astro ) <= 0.f )
-						asteroid_controller.Reason( astro, AsteroidDeathReason::AffectedByAsteroid );
-					if( asteroid_controller.Health( asteroid ) <= 0.f )
-						asteroid_controller.Reason( asteroid, AsteroidDeathReason::AffectedByAsteroid );
+					AsteroidController::TakeDamage( astro, AsteroidController::Damage( asteroid ) );
+					AsteroidController::TakeDamage( asteroid, AsteroidController::Damage( astro ) );
+					if( AsteroidController::Health( astro ) <= 0.f )
+						AsteroidController::Reason( astro, AsteroidDeathReason::AffectedByAsteroid );
+					if( AsteroidController::Health( asteroid ) <= 0.f )
+						AsteroidController::Reason( asteroid, AsteroidDeathReason::AffectedByAsteroid );
 				}
 			}
 		}
@@ -295,38 +314,38 @@ namespace sns
 
 	void WorldController::DoBossCollision( World& model, Game& game ) noexcept
 	{
-		const auto boss_aabb = boss_controller.AABB( model.boss );
+		const auto boss_aabb = BossController::AABB( model.boss );
 		
-		if( boss_aabb.Overlaps( hero_controller.AABB( model.hero ) ) )
+		if( boss_aabb.Overlaps( HeroController::AABB( model.hero ) ) )
 		{
-			boss_controller.TakeDamage( model.boss, hero_controller.Damage( model.hero ) );
-			hero_controller.TakeDamage( model.hero, boss_controller.Damage( model.boss ) );
+			BossController::TakeDamage( model.boss, HeroController::Damage( model.hero ) );
+			HeroController::TakeDamage( model.hero, BossController::Damage( model.boss ) );
 		}
 
 		for( auto& bullet : model.hero_bullets )
 		{
-			if( !ammo_controller.IsAlive( bullet ) )continue;
+			if( !AmmoController::IsAlive( bullet ) )continue;
 
-			if( boss_aabb.Overlaps( ammo_controller.AABB( bullet ) ) )
+			if( boss_aabb.Overlaps( AmmoController::AABB( bullet ) ) )
 			{
-				boss_controller.TakeDamage( model.boss, ammo_controller.Damage( bullet ) );
-				ammo_controller.TakeDamage( bullet, boss_controller.Damage( model.boss ) );
+				BossController::TakeDamage( model.boss, AmmoController::Damage( bullet ) );
+				AmmoController::TakeDamage( bullet, BossController::Damage( model.boss ) );
 			}
 		}
 
-		if( boss_controller.Health( model.boss ) <= 0.f )
+		if( BossController::Health( model.boss ) <= 0.f )
 		{
-			game.IncrementScore( 1000 );
+			GameController::IncrementScore( game, 1000 );
 			model.state = WorldState::Arena;
 		}
 	}
 
 	void WorldController::DoBossAmmoCollision( World& model, Ammo& ammo ) noexcept
 	{
-		if( ammo_controller.AABB( ammo ).Overlaps( hero_controller.AABB( model.hero ) ) )
+		if( AmmoController::AABB( ammo ).Overlaps( HeroController::AABB( model.hero ) ) )
 		{
-			hero_controller.TakeDamage( model.hero, ammo_controller.Damage( ammo ) );
-			ammo_controller.TakeDamage( ammo, hero_controller.Damage( model.hero) );
+			HeroController::TakeDamage( model.hero, AmmoController::Damage( ammo ) );
+			AmmoController::TakeDamage( ammo, HeroController::Damage( model.hero) );
 		}
 	}
 
@@ -338,8 +357,15 @@ namespace sns
 		model.asteroids = std::vector<Asteroid>{};
 		model.hero.Reset();
 		model.state = WorldState::Arena;
-		astro_spawner.Reset();
-		enemy_spawner.Reset();
+		model.astro_spawner.Reset();
+		model.enemy_spawner.Reset();
+		model.boss.Reset();
+		model.level = 1;
+	}
+
+	bool WorldController::IsGameOver( World & model ) noexcept
+	{
+		return HeroController::Health( model.hero ) <= 0.f || model.level > 2;
 	}
 
 }

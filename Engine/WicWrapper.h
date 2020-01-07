@@ -11,13 +11,26 @@ class Wic
 public:
 	Wic()
 	{
-		ThrowSystemErrorIf( CoCreateInstance(
+		if( auto hr = CoCreateInstance(
 			CLSID_WICImagingFactory,
 			nullptr,
 			CLSCTX_INPROC_SERVER,
 			IID_PPV_ARGS( &m_factory )
-		) );
+			); FAILED( hr ) )
+		{
+			if( result = CoInitialize( nullptr ); result != S_FALSE )
+				ThrowSystemErrorIf( result );
+		}
 	}
+	Wic( Wic&& ) = default;
+	Wic( Wic const& ) = default;
+	Wic& operator=( Wic&& ) = default;
+	Wic& operator=( Wic const& ) = default;
+	~Wic()noexcept
+	{
+		if( result == S_FALSE ) CoUninitialize();
+	}
+
 	auto create_stream( std::wstring filename )
 	{
 		assert( !filename.empty() );
@@ -186,4 +199,5 @@ private:
 
 private:
 	Microsoft::WRL::ComPtr<IWICImagingFactory> m_factory;
+	HRESULT result = S_OK;
 };

@@ -54,11 +54,11 @@ namespace sns
 			}
 		}
 	}
-	RectF ShieldController::AABB( Shield& model, Vec2 position ) const noexcept
+	RectF ShieldController::AABB( Shield const& model, Vec2 position )noexcept
 	{
 		return RectF{ -Shield::radius, -Shield::radius, Shield::radius, Shield::radius } + position;
 	}
-	float ShieldController::Health( Shield& model ) const noexcept
+	float ShieldController::Health( Shield const& model )noexcept
 	{
 		return model.health;
 	}

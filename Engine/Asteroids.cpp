@@ -2,8 +2,19 @@
 #include "ChiliMath.h"
 #include <algorithm>
 
-void sns::Asteroid::Update( float dt ) noexcept
+namespace sns
 {
-	position += ( direction * ( dt * Asteroid::speed ) );
-}
+	Asteroid::Asteroid( Vec2 const & position_, Vec2 const & direction_, AsteroidType type ) noexcept
+		:
+		position( position_ ),
+		direction( direction_ ),
+		variant( type )
+	{
+	}
 
+	void Asteroid::Update( float dt ) noexcept
+	{
+		position += ( direction * ( dt * Asteroid::speed ) );
+	}
+
+}

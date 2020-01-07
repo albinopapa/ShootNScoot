@@ -1,6 +1,8 @@
 #include "GameController.h"
 #include "Game.h"
+#include "HeroController.h"
 #include "MainWindow.h"
+#include "WorldController.h"
 
 void GameController::Update( Game& model, float dt )
 {
@@ -22,6 +24,11 @@ void GameController::Update( Game& model, float dt )
 			DoGameoverState( model );
 			break;
 	}
+}
+
+void GameController::IncrementScore( Game & model, int amount ) noexcept
+{
+	model.score += amount;
 }
 
 void GameController::DoIntroState( Game& model )
@@ -85,10 +92,9 @@ void GameController::DoPlayState( Game& model, float dt )
 		}
 	}
 
-	world.Update( model.world, model.wnd.kbd, model, dt );
+	sns::WorldController::Update( model.world, model.wnd.kbd, model, dt );
 
-	if( model.world.hero.health <= 0.f ||
-		model.world.state == WorldState::LevelComplete )
+	if( sns::WorldController::IsGameOver( model.world ) )
 	{
 		model.TransitionState( GameState::Gameover );
 	}
@@ -139,7 +145,7 @@ void GameController::DoGameoverState( Game& model )
 			event.IsPress() && ( event.GetCode() == VK_RETURN ) )
 		{
 			model.TransitionState( GameState::MainMenu );
-			world.Reset( model.world );
+			sns::WorldController::Reset( model.world );
 		}
 	}
 }

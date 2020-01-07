@@ -3,12 +3,14 @@
 
 namespace sns
 {
-	void EnemyView::Draw( Enemy const& model, Graphics& gfx ) const noexcept
+	void EnemyView::Draw( Enemy const& model, Graphics& gfx )noexcept
 	{
 		std::visit( [ & ]( auto const& enemy )
 		{
 			using type = std::decay_t<decltype( enemy )>;
-			gfx.DrawSprite( type::aabb + model.position, Radian{ 0.f }, sprite );
+			const auto angle_offset = Radian{ Degree{ 90.f } };
+			const auto angle = Radian{ model.angle };
+			gfx.DrawSprite( type::aabb + model.position, angle_offset + angle, type::sprite );
 		}, model.variant );
 	}
 }

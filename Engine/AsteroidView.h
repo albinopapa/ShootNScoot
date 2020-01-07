@@ -9,7 +9,7 @@ namespace sns
 	class AsteroidView
 	{
 	public:
-		void Draw( Asteroid const& model, Graphics& gfx )const noexcept;
+		static void Draw( Asteroid const& model, Graphics& gfx )noexcept;
 	private:
 		static constexpr Color color = Color{ 200, 100, 50 };
 	};

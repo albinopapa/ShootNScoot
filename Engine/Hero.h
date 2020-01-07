@@ -1,18 +1,15 @@
 #pragma once
 
-#include "ChiliWin.h"
-#include "Graphics.h"
-#include "Weapon.h"
-#include "Keyboard.h"
+#include "Bullet.h"
 #include "Rect.h"
 #include "Shield.h"
 #include "SpriteEffect.h"
-#include <algorithm>
+#include "Surface.h"
+#include "Vec2.h"
+#include "Weapon.h"
 
 namespace sns
 {
-	class World;
-
 	class Hero
 	{
 	public:
@@ -20,15 +17,15 @@ namespace sns
 		void Reset()noexcept;
 
 	public:
-		static constexpr auto aabb		= RectF{ -16.f, -16.f, 16.f, 16.f };
-		static constexpr auto max_speed = 120.f;
-		static constexpr auto damage	= 20.f;
-
+		Surface	sprite = "Images/HeroShip.png";
 		Shield shield;
 		Weapon weapon = Weapon{ Gun{} };
 		Vec2 position = { 400.f, 300.f };
 		Vec2 velocity = { 0.f, 0.f };
 		float health = 100.f;
+		static constexpr auto aabb		= RectF{ -16.f, -16.f, 16.f, 16.f };
+		static constexpr auto max_speed = 120.f;
+		static constexpr auto damage	= 20.f;
 	};
 
 }

@@ -37,9 +37,13 @@ namespace sns
 		static const Surface sprite;
 	};
 
-	class Ammo
+	struct Ammo
 	{
 	public:
+		using AmmoType = std::variant<Bullet, PlasmaBall, Missile>;
+
+	public:
+		Ammo( Vec2 const& position_, Vec2 const& direction_, AmmoOwner owner_, AmmoType type );
 		void Update( float delta_time )noexcept;
 
 	public:
@@ -47,9 +51,8 @@ namespace sns
 		Vec2 velocity;
 		float energy = 0.f;
 		AmmoOwner owner = AmmoOwner::Hero;
-		std::variant<Bullet, PlasmaBall, Missile> variant;
+		AmmoType variant;
 		bool isAlive = true;
-		
 	};
 }
 

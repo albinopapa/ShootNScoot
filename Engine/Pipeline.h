@@ -1,109 +1,140 @@
 #pragma once
 
-#include "Graphics.h"
 #include "Triangle.h"
-#include <algorithm>
+#include "PointSampler.h"
+#include "ColorKeyTextureEffect.h"
+#include "DiscFillEffect.h"
+#include "NullPixelShader.h"
+#include "RectFillEffect.h"
 
-template<typename Effect>
+#include <algorithm>
+#include <array>
+#include <variant>
+
 struct Pipeline
 {
 public:
-	using Vertex = typename Effect::Vertex;
-	using VSConstantBuffer = typename Effect::VertexShader::ConstantBuffer;
-	using PSConstantBuffer = typename Effect::PixelShader::ConstantBuffer;
-public:
-	Pipeline( Effect const& effect_, Graphics& gfx_ )
+	Pipeline( Color* pixels_, int stride_ )noexcept
 		:
-		effect( effect_ ),
-		gfx( gfx_ )
+		pixels( pixels_ ),
+		stride( stride_ )
 	{}
 
-	void PSSetConstantBuffer( PSConstantBuffer const& buffer_ )noexcept
+	template<typename Effect, typename ConstantBuffer = typename Effect::VertexShader::ConstantBuffer>
+	void VSSetConstantBuffer( Effect& effect, ConstantBuffer const& buffer_ )const noexcept
+	{
+		effect.vs.buffer = buffer_;
+	}
+
+	template<typename Effect, typename ConstantBuffer = typename Effect::PixelShader::ConstantBuffer>
+	void PSSetConstantBuffer( Effect& effect, ConstantBuffer const& buffer_ )const noexcept
 	{
 		effect.ps.buffer = buffer_;
 	}
-	void PSSetTexture( Surface const& sprite_ )noexcept
+
+	template<typename Effect>
+	void PSSetTexture( Effect& effect, Surface const& sprite_ )const noexcept
 	{
 		effect.ps.sprite = std::addressof( sprite_ );
 	}
 
-	void Draw( RectF const& dst, Radian angle )noexcept
+	template<typename Effect>
+	void Draw(
+		Effect& effect,
+		std::array<typename Effect::Vertex, 4> const& vertices)noexcept
 	{
-		VSSetConstantBuffer( {
-				Mat3F::Rotate( angle ) *
-				Mat3F::Scale( dst.Width(), dst.Height() ) *
-				Mat3F::Translation( dst.Center() ) 
-			} );
+		// Run vertex shader
+		const auto tvertices = DoVertexShader( effect, vertices );
 
-		const Vertex tvertices[] = {
+		// Run geometry shader to create triangles
+		const auto triangles = DoGeometryShader( effect, tvertices );
+
+		for( auto const& triangle : triangles )
+		{
+			Rasterize( effect, triangle );
+		}
+	}
+
+private:
+	template<typename Effect>
+	std::array<typename Effect::Vertex, 4> DoVertexShader(
+		Effect const& effect,
+		std::array<typename Effect::Vertex, 4> const& vertices )const noexcept
+	{
+		return std::array{
 			effect.vs( vertices[ 0 ] ),
 			effect.vs( vertices[ 1 ] ),
 			effect.vs( vertices[ 2 ] ),
 			effect.vs( vertices[ 3 ] )
 		};
+	}
 
-		auto xLess = []( const Vertex& left, const Vertex& right )
-		{
-			return left.position.x < right.position.x;
+	template<typename Vertex>
+	RectF RasterBounds( Triangle<Vertex> const& triangle )const noexcept
+	{
+		// Find min and max vertices
+		const auto[ xMin, xMax ] = std::minmax_element(
+			triangle.v.begin(),
+			triangle.v.end(),
+			[]( const Vertex& left, const Vertex& right ) { return left.position.x < right.position.x; }
+		);
+		const auto[ yMin, yMax ] = std::minmax_element(
+			triangle.v.begin(),
+			triangle.v.end(),
+			[]( const Vertex& left, const Vertex& right ) { return left.position.y < right.position.y; }
+		);
+
+		// Clamp to screen boundaries
+		return {
+			std::floor( std::max( xMin->position.x, 0.f ) ),
+			std::floor( std::max( yMin->position.y, 0.f ) ),
+			std::ceil( std::min( xMax->position.x, screenRect.Width() ) ),
+			std::ceil( std::min( yMax->position.y, screenRect.Height() ) )
 		};
-		auto yLess = []( const Vertex& left, const Vertex& right )
-		{
-			return left.position.y < right.position.y;
+	}
+
+	template<typename Effect>
+	std::array<Triangle<typename Effect::Vertex>, 2> DoGeometryShader(
+		Effect const& effect,
+		std::array<typename Effect::Vertex, 4> const& vertices )const noexcept
+	{
+		return{
+			effect.gs( vertices[ 0 ], vertices[ 1 ], vertices[ 2 ] ),
+			effect.gs( vertices[ 3 ], vertices[ 2 ], vertices[ 1 ] )
 		};
+	}
 
-		const auto[ xMin, xMax ] = 
-			std::minmax_element( &tvertices[ 0 ], &tvertices[ 3 ], xLess );
-		const auto[ yMin, yMax ] = 
-			std::minmax_element( &tvertices[ 0 ], &tvertices[ 3 ], yLess );
+	template<typename Effect>
+	void Rasterize(
+		Effect& effect,
+		Triangle<typename Effect::Vertex> const& triangle )
+	{
+		// Get bounding box around transformed quad
+		const auto bounds = RasterBounds( triangle );
 
-		const auto xStart = std::floor( std::max( xMin->position.x, 0.f ) );
-		const auto yStart = std::floor( std::max( yMin->position.y, 0.f ) );
-		const auto xEnd = std::ceil( std::min( xMax->position.x, screenRect.Width() ) );
-		const auto yEnd = std::ceil( std::min( yMax->position.y, screenRect.Height() ) );
-		
-		const auto triangle0 =
-			effect.gs( tvertices[ 0 ], tvertices[ 1 ], tvertices[ 2 ] );
-		const auto triangle1 =
-			effect.gs( tvertices[ 3 ], tvertices[ 2 ], tvertices[ 1 ] );
+		// Early out if not in view at all
+		if( !bounds.Overlaps( screenRect ) ) return;
 
-		for( float y = yStart; y < yEnd; ++y )
+		// Rasterize if point is in either triangle
+		for( float y = bounds.top; y < bounds.bottom; ++y )
 		{
-			for( float x = xStart; x < xEnd; ++x )
+			for( float x = bounds.left; x < bounds.right; ++x )
 			{
-				const auto p = Vec2{ x, y };
-				if( !Rasterize( p, triangle0 ) )
+				// Check if point is in triangle
+				if( const auto coords = triangle.Contains( { x, y } ); coords.has_value() )
 				{
-					Rasterize( p, triangle1 );
+					auto& pixel = pixels[ int( x ) + int( y ) * stride ];
+
+					// Interpolate between the vertices of the triangle
+					const auto vertex = triangle.Interpolate( *coords );
+
+					pixel = AlphaBlend( effect.ps( vertex ), pixel );
 				}
 			}
 		}
 	}
 
 private:
-	bool Rasterize( Vec2 const& p, Triangle<Vertex> const& triangle )noexcept
-	{
-		auto coords				= triangle.Contains( p );
-
-		if( !coords.has_value() ) return false;
-
-		const auto ix			= int( p.x );
-		const auto iy			= int( p.y );
-		const auto vertex		= triangle.Interpolate( *coords );
-		const auto effect_color = effect.ps( vertex );
-		const auto bg_color		= gfx.GetPixel( ix, iy );
-		const auto dst_color	= AlphaBlend( effect_color, bg_color );
-
-		gfx.PutPixel( ix, iy, dst_color );
-
-		return true;
-	}
-	void VSSetConstantBuffer( VSConstantBuffer const& buffer_ )noexcept
-	{
-		effect.vs.buffer = buffer_;
-	}
-
-public:
-	Graphics& gfx;
-	Effect effect;
-	Vertex vertices[ 4 ];
+	Color* pixels = nullptr;
+	int stride = 0;
 };

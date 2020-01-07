@@ -9,11 +9,12 @@ namespace sns
 	class EnemyController
 	{
 	public:
-		void Update( Enemy& model, float dt )noexcept;
+		static void Update( Enemy& model, float dt )noexcept;
+		static void TakeDamage( Enemy& model, float amount )noexcept;
 
-		void TakeDamage( Enemy& model, float amount )noexcept;
-		RectF AABB( Enemy& model )const noexcept;
-		float Health( Enemy& model )const noexcept;
-		float Damage( Enemy& model )const noexcept;
+		static RectF AABB( Enemy const& model )noexcept;
+		static float Health( Enemy const& model )noexcept;
+		static float Damage( Enemy const& model )noexcept;
+		static bool IsAlive( Enemy const& model )noexcept;
 	};
 }

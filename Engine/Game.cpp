@@ -42,8 +42,3 @@ void Game::TransitionState( GameState newState )noexcept
 	wnd.kbd.FlushKey();
 	menu_choice = 0;
 }
-
-void Game::IncrementScore( int amount ) noexcept
-{
-	score += amount;
-}

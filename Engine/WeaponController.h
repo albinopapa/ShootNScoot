@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Enumerations.h"
 #include "Vec2.h"
-#include "Bullet.h"
 
 namespace sns
 {
@@ -11,9 +11,9 @@ namespace sns
 	class WeaponController
 	{
 	public:
-		void Update( Weapon& model, float dt );
-		bool CanFire( Weapon& model )const noexcept;
-		void Fire( 
+		static void Update( Weapon& model, float dt )noexcept;
+		static bool CanFire( Weapon const& model )noexcept;
+		static void Fire( 
 			Weapon& model,
 			Vec2 const & position, 
 			Vec2 const & direction,

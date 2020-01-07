@@ -1,21 +1,17 @@
 #pragma once
 
-#include "WorldController.h"
-
 class Game;
 
 class GameController
 {
 public:
-	void Update( Game& model_, float dt );
+	static void Update( Game& model_, float dt );
+	static void IncrementScore( Game& model, int amount )noexcept;
 
 private:
-	void DoIntroState( Game& model );
-	void DoMainMenuState( Game& model );
-	void DoPlayState( Game& model, float dt );
-	void DoPauseMenuState( Game& model );
-	void DoGameoverState( Game& model );
-
-private:
-	sns::WorldController world;
+	static void DoIntroState( Game& model );
+	static void DoMainMenuState( Game& model );
+	static void DoPlayState( Game& model, float dt );
+	static void DoPauseMenuState( Game& model );
+	static void DoGameoverState( Game& model );
 };

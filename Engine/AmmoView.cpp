@@ -4,7 +4,7 @@
 
 namespace sns
 {
-	void AmmoView::Draw( Ammo const& model, Graphics& gfx ) const noexcept
+	void AmmoView::Draw( Ammo const& model, Graphics& gfx )noexcept
 	{
 		std::visit( [ & ]( auto const& ammo )
 		{

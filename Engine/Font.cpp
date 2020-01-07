@@ -67,31 +67,32 @@ void Font::DrawText( const std::string& text, const Vei2& pos, Color color, Grap
 	for( auto c : text )
 	{
 		// only draw characters that are on the font sheet
-		// start at firstChar + 1 because might as well skip ' ' as well
-		// on a newline character, reset x position and move down by 1 glyph height
-		if( c >= firstChar + 1 && c <= lastChar )
+		if( c >= firstChar && c <= lastChar )
 		{
-			const auto index = c - ' ';
-			gfx.DrawSprite( glyph_rect + Vec2( curPos ), Radian{ 0.f }, glyphs[ index ], color );
+			// start at firstChar + 1 because might as well skip ' ' as well
+			if( c > firstChar )
+			{
+				const auto index = c - ' ';
+				gfx.DrawSprite( glyph_rect + Vec2( curPos ), Radian{ 0.f }, glyphs[ index ], color );
+			}
+		
+			// advance screen pos for next character
+			curPos = { curPos.x + int( glyph_rect.Width() ), curPos.y };
 		}
-		else if( c == '\n' )
+		else
 		{
-			// carriage return
-			curPos.x = pos.x;
-			
-			// line feed
-			curPos.y += glyph_rect.Height();
+			// on a newline character, reset x position and move down by 1 glyph height
+			// on a tab character, move x position over 4 spaces
+			if( c == '\n' )
+			{
+				curPos = { pos.x, curPos.y + int( glyph_rect.Height() ) };
+			}
+			else if( c == '\t' )
+			{
+				curPos = { curPos.x + ( int( glyph_rect.Width() ) * 4 ), curPos.y };
+			}
+		}
 
-			// we don't want to advance the character position right for a newline
-			continue;
-		}
-		else if( c == '\t' )
-		{
-			curPos.x += ( glyph_rect.Width() * 4 );
-		}
-
-		// advance screen pos for next character
-		curPos.x += glyph_rect.Width();
 	}
 }
 

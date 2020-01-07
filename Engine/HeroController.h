@@ -1,33 +1,34 @@
 #pragma once
 
 #include "Keyboard.h"
-#include "ShieldController.h"
-#include "WeaponController.h"
+#include "Rect.h"
 
 namespace sns
 {
 	class Hero;
+	class Shield;
 	class World;
 
 	class HeroController
 	{
 	public:
-		void Update(
+		static void Update(
 			Hero& model,
 			World& world,
 			Keyboard const& kbd,
 			float dt )noexcept;
 
-		void TakeDamage( Hero& model, float amount )noexcept;
+		static void TakeDamage( Hero& model, float amount )noexcept;
 
-		float Damage( Hero& model )const noexcept;
-		RectF AABB( Hero& model )const noexcept;
-		Shield& GetShield( Hero& model )noexcept;
-		Shield const& GetShield( Hero& model )const noexcept;
-		
+		static RectF AABB( Hero const& model )noexcept;
+		static float Damage( Hero const& model )noexcept;
+		static Shield& GetShield( Hero& model )noexcept;
+		static Shield const& GetShield( Hero const& model )noexcept;
+		static float Health( Hero const& model )noexcept;
+		static Vec2 const& Position( Hero const& model )noexcept;
+
 	private:
-		void UpdateVelocity( Hero& model, Keyboard const& kbd )noexcept;
-		void ChangeWeapon( Hero& model, Keyboard const& kbd )noexcept;
-
+		static void UpdateVelocity( Hero& model, Keyboard const& kbd )noexcept;
+		static void ChangeWeapon( Hero& model, Keyboard const& kbd )noexcept;
 	};
 }

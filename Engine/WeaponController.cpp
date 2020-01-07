@@ -1,10 +1,11 @@
 #include "WeaponController.h"
+#include "Bullet.h"
 #include "Weapon.h"
 #include "World.h"
 
 namespace sns
 {
-	void WeaponController::Update( Weapon& model, float dt )
+	void WeaponController::Update( Weapon& model, float dt )noexcept
 	{
 		if( model.state == WeaponState::Recharge )
 		{
@@ -14,7 +15,7 @@ namespace sns
 			}
 		}
 	}
-	bool WeaponController::CanFire( Weapon& model ) const noexcept
+	bool WeaponController::CanFire( Weapon const& model )noexcept
 	{
 		return model.state == WeaponState::Idle;
 	}
@@ -29,8 +30,7 @@ namespace sns
 		{
 			std::visit( [ & ]( auto& weapon ) {
 				using type = std::decay_t<decltype( weapon )>;
-				using ammo_type = type::ammo_type;
-				world.SpawnAmmo( Ammo{ position, direction, ammo_type::max_energy, ammo_owner, ammo_type{} } );
+				world.SpawnAmmo( Ammo{ position, direction, ammo_owner, type::ammo_type{} } );
 
 				model.state = WeaponState::Recharge;
 

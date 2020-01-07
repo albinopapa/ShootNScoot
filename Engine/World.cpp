@@ -13,6 +13,9 @@ namespace sns
 		switch( state )
 		{
 			case WorldState::Arena:
+				astro_spawner.Update( *this, dt );
+				enemy_spawner.Update( *this, dt );
+
 				for( auto& enemy : enemies ) enemy.Update( dt );
 				for( auto& astro : asteroids ) astro.Update( dt );
 				break;
@@ -27,9 +30,9 @@ namespace sns
 		asteroids.emplace_back( asteroid );
 	}
 
-	void World::SpawnEnemy( Enemy const & enemy_ )
+	void World::SpawnEnemy( Enemy enemy_ )
 	{
-		enemies.emplace_back( enemy_ );
+		enemies.emplace_back( std::move( enemy_ ) );
 	}
 
 	void World::SpawnAmmo( Ammo const & ammo )

@@ -9,9 +9,6 @@ namespace sns
 	class EnemyView
 	{
 	public:
-		void Draw( Enemy const& model, Graphics& gfx )const noexcept;
-
-	private:
-		Surface	sprite = "Images/Enemy1Ship.png";
+		static void Draw( Enemy const& model, Graphics& gfx )noexcept;
 	};
 }

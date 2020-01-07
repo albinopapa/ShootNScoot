@@ -2,7 +2,12 @@
 
 namespace sns
 {
-	void Weapon::Update( float dt ) noexcept 
+	Weapon::Weapon( WeaponType type ) noexcept
+		:
+		variant( type )
+	{}
+
+	void Weapon::Update( float dt ) noexcept
 	{
 		if( state == WeaponState::Recharge )
 		{

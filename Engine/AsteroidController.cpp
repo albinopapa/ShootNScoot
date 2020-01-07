@@ -35,7 +35,7 @@ namespace sns
 		model.reason = reason;
 	}
 
-	RectF AsteroidController::AABB( Asteroid& model ) const noexcept
+	RectF AsteroidController::AABB( Asteroid const& model )noexcept
 	{
 		return std::visit( [ & ]( auto const& astro ) {
 			using type = std::decay_t<decltype( astro )>;
@@ -43,7 +43,7 @@ namespace sns
 		}, model.variant );
 	}
 
-	float AsteroidController::Damage( Asteroid& model ) const noexcept
+	float AsteroidController::Damage( Asteroid const& model )noexcept
 	{
 		return std::visit( [ & ]( auto const& astro ) {
 			using type = std::decay_t<decltype( astro )>;
@@ -51,17 +51,17 @@ namespace sns
 		}, model.variant );
 	}
 
-	float AsteroidController::Health( Asteroid& model ) const noexcept
+	float AsteroidController::Health( Asteroid const& model )noexcept
 	{
 		return model.health;
 	}
 
-	AsteroidDeathReason AsteroidController::Reason( Asteroid& model ) const noexcept
+	AsteroidDeathReason AsteroidController::Reason( Asteroid const& model )noexcept
 	{
 		return model.reason;
 	}
 
-	int AsteroidController::ScoreValue( Asteroid& model ) const noexcept
+	int AsteroidController::ScoreValue( Asteroid const& model )noexcept
 	{
 		return std::visit( [ & ]( auto const& astro ) {
 			using type = std::decay_t<decltype( astro )>;

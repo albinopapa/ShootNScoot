@@ -10,10 +10,10 @@ namespace sns
 	class ShieldController
 	{
 	public:
-		void Update( Shield& model, Vec2 const& position, float dt )noexcept;
+		static void Update( Shield& model, Vec2 const& position, float dt )noexcept;
 
-		void TakeDamage( Shield& model, float amount )noexcept;
-		RectF AABB( Shield& model, Vec2 position )const noexcept;
-		float Health( Shield& model )const noexcept;
+		static void TakeDamage( Shield& model, float amount )noexcept;
+		static RectF AABB( Shield const& model, Vec2 position )noexcept;
+		static float Health( Shield const& model )noexcept;
 	};
 }

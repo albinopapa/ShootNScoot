@@ -8,7 +8,7 @@ struct Vec3
 {
 	float x = 0.f;
 	float y = 0.f;
-	float z = 1.f;
+	float z = 0.f;
 };
 
 template<typename T>
@@ -46,28 +46,17 @@ struct Mat3
 
 	constexpr Vec2_<T> operator*( const Vec2_<T>& rhs )const noexcept
 	{
-		return { 
-			row[ 0 ].x * rhs.x + row[ 1 ].x * rhs.y + row[ 2 ].x,
-			row[ 0 ].y * rhs.x + row[ 1 ].y * rhs.y + row[ 2 ].y 
-		};
+		return rhs.x * row[ 0 ] + rhs.y * row[ 1 ] + row[ 2 ];
 	}
 	constexpr Mat3 operator*( const Mat3& rhs )const noexcept
 	{
-		const auto r0 = Vector{
-			row[ 0 ].x * rhs.row[ 0 ].x + row[ 0 ].y * rhs.row[ 1 ].x,
-			row[ 0 ].x * rhs.row[ 0 ].y + row[ 0 ].y * rhs.row[ 1 ].y
+		return { 
+			row[ 0 ].x * rhs.row[ 0 ] + row[ 0 ].y * rhs.row[ 1 ], 
+			row[ 1 ].x * rhs.row[ 0 ] + row[ 1 ].y * rhs.row[ 1 ],
+			row[ 2 ].x * rhs.row[ 0 ] + row[ 2 ].y * rhs.row[ 1 ] + rhs.row[ 2 ]
 		};
-		const auto r1 = Vector{
-			row[ 1 ].x * rhs.row[ 0 ].x + row[ 1 ].y * rhs.row[ 1 ].x,
-			row[ 1 ].x * rhs.row[ 0 ].y + row[ 1 ].y * rhs.row[ 1 ].y
-		};
-		const auto r2 = Vector{
-			row[ 2 ].x * rhs.row[ 0 ].x + row[ 2 ].y * rhs.row[ 1 ].x + rhs.row[ 2 ].x,
-			row[ 2 ].y * rhs.row[ 0 ].y + row[ 2 ].y * rhs.row[ 1 ].y + rhs.row[ 2 ].y
-		};
-
-		return { r0, r1, r2 };
 	}
+
 	Vector row[ 3 ];
 };
 

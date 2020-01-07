@@ -1,6 +1,8 @@
 #include "HeroController.h"
 #include "Hero.h"
 #include "World.h"
+#include "ShieldController.h"
+#include "WeaponController.h"
 
 namespace sns
 {
@@ -13,6 +15,8 @@ namespace sns
 		UpdateVelocity( model, kbd );
 		ChangeWeapon( model, kbd );
 		
+		ShieldController::Update( model.shield, model.position, dt );
+
 		const auto heroRect = AABB( model );
 
 		if( !heroRect.IsContainedBy( screenRect ) )
@@ -29,13 +33,11 @@ namespace sns
 			);
 		}
 
-		auto weapon_controller = WeaponController{};
+		WeaponController::Update( model.weapon, dt );
 
-		weapon_controller.Update( model.weapon, dt );
-
-		if( kbd.KeyIsPressed( VK_CONTROL ) && weapon_controller.CanFire( model.weapon ) )
+		if( kbd.KeyIsPressed( VK_CONTROL ) && WeaponController::CanFire( model.weapon ) )
 		{
-			weapon_controller.Fire(
+			WeaponController::Fire(
 				model.weapon,
 				model.position, 
 				Vec2{ 0.f, -1.f },
@@ -48,27 +50,37 @@ namespace sns
 	
 	void HeroController::TakeDamage( Hero& model, float amount )noexcept
 	{
-		if( model.shield.health > 0.f )
-			ShieldController{}.TakeDamage( model.shield, amount );
+		if( model.shield.Health() > 0.f )
+			ShieldController::TakeDamage( model.shield, amount );
 		else
 			model.health -= amount;
 
 		model.health = std::max( model.health, 0.f );
 	}
 
-	float HeroController::Damage( Hero& model ) const noexcept
+	float HeroController::Damage( Hero const& model )noexcept
 	{
 		return Hero::damage;
 	}
 
-	RectF HeroController::AABB( Hero& model ) const noexcept
+	RectF HeroController::AABB( Hero const& model )noexcept
 	{
 		return Hero::aabb + model.position;
 	}
 
-	Shield const& HeroController::GetShield( Hero& model ) const noexcept
+	Shield const& HeroController::GetShield( Hero const& model )noexcept
 	{
 		return model.shield;
+	}
+
+	float HeroController::Health( Hero const & model ) noexcept
+	{
+		return model.health;
+	}
+
+	Vec2 const & HeroController::Position( Hero const & model ) noexcept
+	{
+		return model.position;
 	}
 	
 	Shield& HeroController::GetShield( Hero& model ) noexcept

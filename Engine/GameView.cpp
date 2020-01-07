@@ -45,8 +45,10 @@ void GameView::Draw( Game const& model )noexcept
 		}
 		case GameState::Gameover:
 		{
-			if( model.world.state == WorldState::LevelComplete )
+			if( model.world.level > sns::World::max_demo_level )
 				font.DrawText( "Congratulations, you've finished the demo.", { 32, 246 }, Colors::White, gfx );
+			else if(model.world.level > sns::World::max_real_level)
+				font.DrawText( "Congratulations, you've finished the game\nThe universe is safe for now.", { 32, 246 }, Colors::White, gfx );
 
 			font.DrawText( "Press Enter/Return to go back to the main menu", { 32, 272 }, Colors::White, gfx );
 

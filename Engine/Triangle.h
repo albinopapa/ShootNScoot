@@ -1,9 +1,10 @@
 #pragma once
 
 #include "Vec2.h"
+#include <array>
 #include <optional>
 
-template<typename VertexType>
+template<typename Vertex>
 struct Triangle
 {
 	struct Barycentric
@@ -18,19 +19,17 @@ struct Triangle
 		float w = -1.f;
 	};
 
-	constexpr Triangle( VertexType const& v0_, VertexType const& v1_, VertexType const& v2_ )noexcept
+	constexpr Triangle( Vertex const& v0_, Vertex const& v1_, Vertex const& v2_ )noexcept
 		:
-		v0( v0_ ),
-		v1( v1_ ),
-		v2( v2_ ),
-		area( 1.f / ( v1.position - v0.position ).Cross( v2.position - v0.position ) )
+		v{ v0_, v1_ ,v2_ },
+		area( 1.f / ( v1_.position - v0_.position ).Cross( v2_.position - v0_.position ) )
 	{}
 
 	constexpr std::optional<Barycentric> Contains( Vec2 const& p )const noexcept
 	{
-		const auto a = ( v1.position - p ).Cross( v2.position - p ) * area;
-		const auto b = ( v2.position - p ).Cross( v0.position - p ) * area;
-		const auto c = ( v0.position - p ).Cross( v1.position - p ) * area;
+		const auto a = ( v[ 1 ].position - p ).Cross( v[ 2 ].position - p ) * area;
+		const auto b = ( v[ 2 ].position - p ).Cross( v[ 0 ].position - p ) * area;
+		const auto c = ( v[ 0 ].position - p ).Cross( v[ 1 ].position - p ) * area;
 
 		const auto contains =
 			( a >= 0.f ) & ( a <= 1.f ) &
@@ -42,12 +41,10 @@ struct Triangle
 	}
 	constexpr auto Interpolate( Barycentric const& coords )const noexcept
 	{
-		return ( v0 * coords.u ) + ( v1 * coords.v ) + ( v2 * coords.w );
+		return ( v[ 0 ] * coords.u ) + ( v[ 1 ] * coords.v ) + ( v[ 2 ] * coords.w );
 	}
-	VertexType v0;
-	VertexType v1;
-	VertexType v2;
 
+	std::array<Vertex, 3> v;
 	float area = 0.f;
 };
 

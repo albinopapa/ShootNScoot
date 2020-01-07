@@ -4,16 +4,17 @@ namespace sns
 {
 	class World;
 
-	struct EnemySpawner
+	class EnemySpawner
 	{
-	public:
-		void Update( World& world, float dt );
-		void Reset()noexcept;
-
 	public:
 		enum class State { Complete, Waiting, Spawning };
 
 	public:
+		void Update( World& world, float dt );
+		void Reset()noexcept;
+		State GetState()const noexcept;
+
+	private:
 		static constexpr float enemy_spawn_rate			= .5f;
 		static constexpr float enemy_spawn_group_delay	= 12.f;
 		static constexpr int enemy_spawn_group_max		= 5;

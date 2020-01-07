@@ -1,5 +1,4 @@
 #include "Hero.h"
-#include "World.h"
 
 namespace sns
 {
@@ -9,6 +8,16 @@ namespace sns
 
 		weapon.Update( dt );
 		shield.Update( dt );
+	}
+
+	Vec2 const & Hero::Position() const noexcept
+	{
+		return position;
+	}
+
+	float Hero::Health() const noexcept
+	{
+		return health;
 	}
 	
 	void Hero::Reset() noexcept

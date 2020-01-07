@@ -3,6 +3,7 @@
 #include "ChiliMath.h"
 #include "Graphics.h"
 #include "SpriteEffect.h"
+#include "Utilities.h"
 #include "Vec2.h"
 #include <array>
 #include <variant>
@@ -22,6 +23,8 @@ namespace sns
 			Vec2{ screenRect.Width() -aabb.Width() * .5f, aabb.Height() * .5f },
 			Vec2{ screenRect.Width() * .5f, screenRect.Height() + aabb.Height() }
 		};
+		inline static const Surface	sprite = "Images/Enemy1Ship.png";
+
 	};
 	struct Enemy2
 	{ 
@@ -34,6 +37,7 @@ namespace sns
 			Vec2{ screenRect.Width() + aabb.Width() / 2.f, -aabb.Height() / 2.f
 			}
 		};
+		inline static const Surface	sprite = "Images/Enemy1Ship.png";
 	};
 	struct Enemy3 
 	{ 
@@ -47,6 +51,7 @@ namespace sns
 				screenRect.Height() + aabb.Height() / 2.f
 			}
 		};
+		inline static const Surface	sprite = "Images/Enemy1Ship.png";
 	};
 	struct Enemy4 
 	{ 
@@ -62,6 +67,7 @@ namespace sns
 			Vec2{ screenRect.Width() / 2.f - 50.f, 500.f },
 			Vec2{ screenRect.Width() / 2.f + 50.f, 600.f }
 		};
+		inline static const Surface	sprite = "Images/Enemy1Ship.png";
 	};
 	struct Enemy5 
 	{ 
@@ -75,34 +81,27 @@ namespace sns
 			Vec2{ screenRect.Width(), screenRect.Height() / 2.f },
 			Vec2{ screenRect.Width() / 2.f + aabb.Width() / 2.f, -aabb.Height() / 2.f }
 		};
+		inline static const Surface	sprite = "Images/Enemy1Ship.png";
 	};
 
-	template<typename EnemyType> struct is_enemy {
-		static constexpr bool value = std::disjunction_v<
-			std::is_same<EnemyType, Enemy1>,
-			std::is_same<EnemyType, Enemy2>,
-			std::is_same<EnemyType, Enemy3>,
-			std::is_same<EnemyType, Enemy4>,
-			std::is_same<EnemyType, Enemy5>
-		>;
-	};
-
-	template<typename T>
-	constexpr bool is_enemy_v = is_enemy<T>::value;
-
-	class Enemy
+	struct Enemy
 	{
 	public:
+		using EnemyType = std::variant<Enemy1, Enemy2, Enemy3, Enemy4, Enemy5>;
+
+	public:
+		Enemy( EnemyType const& variant_ )noexcept;
 		void Update( float dt );
 		
 	public:
-		static constexpr int score_value = 10;
-
-		std::variant<Enemy1, Enemy2, Enemy3, Enemy4, Enemy5> variant;
+		Bezier<Vec2> waypoints;
 		Vec2 position = { 0.f, -16.f };
 		Vec2 velocity = { 0.f, 0.f };
 		float health = 100.f;
+		float angle = 0.f;
 		int waypoint_index = 0;
+		EnemyType variant;
+		static constexpr int score_value = 10;
 	};
 
 

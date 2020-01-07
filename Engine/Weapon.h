@@ -27,14 +27,18 @@ namespace sns
 		static constexpr float fire_delay = 30.f / 60.f;
 	};
 
-	class Weapon
+	struct Weapon
 	{
 	public:
+		using WeaponType = std::variant<Gun, MachineGun, PlasmaGun, MissileLauncher>;
+
+	public:
+		Weapon( WeaponType type )noexcept;
 		void Update( float dt )noexcept;
 		void Reset()noexcept;
 
 	public:
-		std::variant<Gun, MachineGun, PlasmaGun, MissileLauncher> variant;
+		WeaponType variant;
 		float fire_timer = 0.f;
 		WeaponState state = WeaponState::Idle;
 	};

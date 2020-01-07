@@ -10,6 +10,6 @@ namespace sns
 	class WorldView
 	{
 	public:
-		void Draw( World const& model, Graphics& gfx )const noexcept;
+		static void Draw( World const& model, Graphics& gfx )noexcept;
 	};
 }

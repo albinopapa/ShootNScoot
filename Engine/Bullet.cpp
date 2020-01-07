@@ -14,7 +14,7 @@ namespace sns
 	Surface make_plasma_ball_sprite() {
 		auto sprite = Surface{ int( PlasmaBall::aabb.Width() ), int( PlasmaBall::aabb.Height() ) };
 
-		constexpr auto radius = PlasmaBall::aabb.Width() * .5f;
+		constexpr auto radius = int( PlasmaBall::aabb.Width() * .5f );
 		constexpr auto sqrRadius = sqr( radius );
 
 		for( int y = -radius; y < radius; ++y )
@@ -24,9 +24,9 @@ namespace sns
 				const auto sqrDist = sqr( x ) + sqr( y );
 				if( sqrDist < sqrRadius )
 				{
-					const auto alpha = uint8_t( 255.f * ( 1.f - ( sqrDist / sqrRadius ) ) );
+					const auto alpha = uint8_t( 255.f * ( 1.f - ( float( sqrDist ) / float( sqrRadius ) ) ) );
 					const auto glow = AlphaBlend( Color( Colors::White, alpha ), PlasmaBall::color);
-
+					
 					sprite.PutPixel( x + radius, y + radius, Color( glow, alpha ) );
 				}
 			}
@@ -51,6 +51,19 @@ namespace sns
 	const Surface Bullet::sprite = make_bullet_sprite();
 	const Surface PlasmaBall::sprite = make_plasma_ball_sprite();
 	const Surface Missile::sprite = make_missile_sprite();
+
+	Ammo::Ammo( Vec2 const & position_, Vec2 const & direction_, AmmoOwner owner_, AmmoType type )
+		:
+		position( position_ ),
+		velocity( direction_ ),
+		owner( owner_ ),
+		variant( type )
+	{
+		std::visit( [ & ]( auto& ammo )
+		{
+			energy = std::decay_t<decltype( ammo )>::max_energy;
+		}, type );
+	}
 
 	void Ammo::Update( float delta_time ) noexcept
 	{

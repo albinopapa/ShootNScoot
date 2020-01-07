@@ -9,7 +9,7 @@ namespace sns
 	class StarView
 	{
 	public:
-		void Draw( Star const& model, Graphics& gfx )const noexcept;
+		static void Draw( Star const& model, Graphics& gfx )noexcept;
 	};
 
 }

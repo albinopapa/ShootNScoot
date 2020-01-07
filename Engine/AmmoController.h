@@ -9,11 +9,11 @@ namespace sns
 	class AmmoController
 	{
 	public:
-		void Update( Ammo& model, float dt )noexcept;
+		static void Update( Ammo& model, float dt )noexcept;
+		static void TakeDamage( Ammo& model, float amount )noexcept;
 
-		void TakeDamage( Ammo& model, float amount )noexcept;
-		float Damage( Ammo const& model )const noexcept;
-		RectF AABB( Ammo const& model )const noexcept;
-		bool IsAlive( Ammo const& model )const noexcept;
+		static float Damage( Ammo const& model )noexcept;
+		static RectF AABB( Ammo const& model )noexcept;
+		static bool IsAlive( Ammo const& model )noexcept;
 	};
 }

@@ -8,12 +8,16 @@ namespace sns
 {
 	class World;
 
-	struct AsteroidSpawner
+	class AsteroidSpawner
 	{
+	public:
+		enum class State { Idle, Spawning, Complete };
+
+	public:
 		void Update( World& world, float dt );
 		void Reset()noexcept;
-
-		enum class State { Idle, Spawning, Complete };
+		State GetState()const noexcept;
+	private:
 
 		static constexpr int spawn_max		= 20;
 		static constexpr float spawn_delay	= 4.f;
