@@ -1,14 +1,14 @@
 #pragma once
 
+#include "EntityController.h"
 #include "Rect.h"
 
 namespace sns
 {
 	class Enemy;
 
-	class EnemyController
+	template<> struct EntityController<Enemy>
 	{
-	public:
 		static void Update( Enemy& model, float dt )noexcept;
 		static void TakeDamage( Enemy& model, float amount )noexcept;
 
@@ -16,5 +16,6 @@ namespace sns
 		static float Health( Enemy const& model )noexcept;
 		static float Damage( Enemy const& model )noexcept;
 		static bool IsAlive( Enemy const& model )noexcept;
+		static Vec2 const& Position( Enemy const& model )noexcept;
 	};
 }

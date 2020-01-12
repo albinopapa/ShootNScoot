@@ -1,8 +1,9 @@
 #pragma once
 
 #include "ChiliMath.h"
+#include "EntityController.h"
 #include "Graphics.h"
-#include "SpriteEffect.h"
+#include "Surface.h"
 #include "Utilities.h"
 #include "Vec2.h"
 #include <array>
@@ -84,9 +85,10 @@ namespace sns
 		inline static const Surface	sprite = "Images/Enemy1Ship.png";
 	};
 
-	struct Enemy
+	class Enemy
 	{
 	public:
+		using Controller = EntityController<Enemy>;
 		using EnemyType = std::variant<Enemy1, Enemy2, Enemy3, Enemy4, Enemy5>;
 
 	public:
@@ -94,6 +96,9 @@ namespace sns
 		void Update( float dt );
 		
 	public:
+		static constexpr int score_value = 10;
+	private:
+		friend struct EntityController<Enemy>;
 		Bezier<Vec2> waypoints;
 		Vec2 position = { 0.f, -16.f };
 		Vec2 velocity = { 0.f, 0.f };
@@ -101,7 +106,6 @@ namespace sns
 		float angle = 0.f;
 		int waypoint_index = 0;
 		EnemyType variant;
-		static constexpr int score_value = 10;
 	};
 
 

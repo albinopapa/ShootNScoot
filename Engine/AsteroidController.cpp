@@ -1,10 +1,9 @@
 #include "AsteroidController.h"
-#include "Asteroids.h"
 #include "Graphics.h"
 
 namespace sns
 {
-	void AsteroidController::Update( Asteroid& model, float dt ) noexcept
+	void EntityController<Asteroid>::Update( Asteroid& model, float dt ) noexcept
 	{
 		const auto radius = std::visit( [ & ]( auto& astro )
 		{
@@ -21,21 +20,21 @@ namespace sns
 		if( is_leaving )
 		{
 			model.health = 0.f;
-			model.reason = AsteroidDeathReason::LeftScreen;
+			model.reason = Asteroid::DeathReason::LeftScreen;
 		}
 	}
 
-	void AsteroidController::TakeDamage( Asteroid& model, float amount ) noexcept
+	void EntityController<Asteroid>::TakeDamage( Asteroid& model, float amount ) noexcept
 	{
 		model.health -= amount;
 	}
 
-	void AsteroidController::Reason( Asteroid& model, AsteroidDeathReason reason ) noexcept
+	void EntityController<Asteroid>::Reason( Asteroid& model, Asteroid::DeathReason reason ) noexcept
 	{
 		model.reason = reason;
 	}
 
-	RectF AsteroidController::AABB( Asteroid const& model )noexcept
+	RectF EntityController<Asteroid>::AABB( Asteroid const& model )noexcept
 	{
 		return std::visit( [ & ]( auto const& astro ) {
 			using type = std::decay_t<decltype( astro )>;
@@ -43,7 +42,12 @@ namespace sns
 		}, model.variant );
 	}
 
-	float AsteroidController::Damage( Asteroid const& model )noexcept
+	Vec2 const & EntityController<Asteroid>::Position( Asteroid const & model ) noexcept
+	{
+		return model.position;
+	}
+
+	float EntityController<Asteroid>::Damage( Asteroid const& model )noexcept
 	{
 		return std::visit( [ & ]( auto const& astro ) {
 			using type = std::decay_t<decltype( astro )>;
@@ -51,17 +55,22 @@ namespace sns
 		}, model.variant );
 	}
 
-	float AsteroidController::Health( Asteroid const& model )noexcept
+	float EntityController<Asteroid>::Health( Asteroid const& model )noexcept
 	{
 		return model.health;
 	}
 
-	AsteroidDeathReason AsteroidController::Reason( Asteroid const& model )noexcept
+	bool EntityController<Asteroid>::IsBigAsteroid( Asteroid const & model ) noexcept
+	{
+		return std::holds_alternative<BigAsteroid>( model.variant );
+	}
+
+	Asteroid::DeathReason EntityController<Asteroid>::Reason( Asteroid const& model )noexcept
 	{
 		return model.reason;
 	}
 
-	int AsteroidController::ScoreValue( Asteroid const& model )noexcept
+	int EntityController<Asteroid>::ScoreValue( Asteroid const& model )noexcept
 	{
 		return std::visit( [ & ]( auto const& astro ) {
 			using type = std::decay_t<decltype( astro )>;

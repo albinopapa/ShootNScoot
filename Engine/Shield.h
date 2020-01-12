@@ -1,18 +1,25 @@
 #pragma once
 
-#include "Enumerations.h"
 #include "Surface.h"
 
 namespace sns
 {
-	struct Shield
+	class Shield
 	{
+	public:
+		using Controller = ShieldController;
+		enum class State { Full, Recharging, Depleted };
 	public:
 		void Update( float delta_time )noexcept;
 		void Reset()noexcept;
 
-	public:
-		ShieldState state = ShieldState::Full;
+	private:
+		static Surface MakeSprite();
+
+	private:
+		friend class ShieldController;
+
+		State state = State::Full;
 		float recharge_delay_timer = recharge_delay;
 		float health = 100.f;
 		static const Surface sprite;

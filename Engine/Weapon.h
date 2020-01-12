@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Bullet.h"
-#include "Enumerations.h"
 #include <variant>
 
 namespace sns
@@ -27,19 +26,22 @@ namespace sns
 		static constexpr float fire_delay = 30.f / 60.f;
 	};
 
-	struct Weapon
+	class Weapon
 	{
 	public:
+		using Controller = WeaponController;
 		using WeaponType = std::variant<Gun, MachineGun, PlasmaGun, MissileLauncher>;
+		enum class State { Idle, Recharge };
 
 	public:
 		Weapon( WeaponType type )noexcept;
 		void Update( float dt )noexcept;
 		void Reset()noexcept;
 
-	public:
+	private:
+		friend struct WeaponController;
 		WeaponType variant;
 		float fire_timer = 0.f;
-		WeaponState state = WeaponState::Idle;
+		State state = State::Idle;
 	};
 }

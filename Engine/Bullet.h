@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Colors.h"
-#include "Enumerations.h"
+#include "EntityController.h"
 #include "Surface.h"
 #include "Vec2.h"
 #include <variant>
@@ -37,20 +37,25 @@ namespace sns
 		static const Surface sprite;
 	};
 
-	struct Ammo
+	class Ammo
 	{
 	public:
+		enum class Owner { Hero, Enemy };
+
+	public:
+		using Controller = EntityController<Ammo>;
 		using AmmoType = std::variant<Bullet, PlasmaBall, Missile>;
 
 	public:
-		Ammo( Vec2 const& position_, Vec2 const& direction_, AmmoOwner owner_, AmmoType type );
+		Ammo( Vec2 const& position_, Vec2 const& direction_, Owner owner_, AmmoType type );
 		void Update( float delta_time )noexcept;
 
-	public:
+	private:
+		friend struct EntityController<Ammo>;
 		Vec2 position;
 		Vec2 velocity;
 		float energy = 0.f;
-		AmmoOwner owner = AmmoOwner::Hero;
+		Owner owner = Owner::Hero;
 		AmmoType variant;
 		bool isAlive = true;
 	};

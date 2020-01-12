@@ -1,6 +1,9 @@
 #include "GameView.h"
 #include "Game.h"
+#include "World.h"
+#include "WorldController.h"
 #include "WorldView.h"
+#include "GameController.h"
 
 GameView::GameView( MainWindow& wnd )
 	:
@@ -11,25 +14,25 @@ void GameView::Draw( Game const& model )noexcept
 {
 	gfx.BeginFrame();
 
-	switch( model.state )
+	switch( Game::Controller::State( model ) )
 	{
-		case GameState::Intro:
+		case Game::State::Intro:
 		{
 			font.DrawText( "Press Enter/Return to start", { 176, 286 }, Colors::White, gfx );
 			break;
 		}
-		case GameState::MainMenu:
+		case Game::State::MainMenu:
 		{
-			font.DrawText( "Start game", { 200, 272 }, model.menu_choice == 0 ? Colors::Magenta : Colors::White, gfx );
-			font.DrawText( "Quit game", { 200, 328 }, model.menu_choice == 1 ? Colors::Magenta : Colors::White, gfx );
+			const auto menu_choice = Game::Controller::MenuChoice( model );
+			font.DrawText( "Start game", { 200, 272 }, menu_choice == 0 ? Colors::Magenta : Colors::White, gfx );
+			font.DrawText( "Quit game", { 200, 328 }, menu_choice == 1 ? Colors::Magenta : Colors::White, gfx );
 			break;
 		}
-		case GameState::Play:
+		case Game::State::Play:
 		{
-			auto world_view = sns::WorldView{};
-			world_view.Draw( model.world, gfx );
+			sns::WorldView::Draw( Game::Controller::World( model ), gfx );
 
-			const auto score_str = std::to_string( model.score );
+			const auto score_str = std::to_string( Game::Controller::Score( model ) );
 			const auto pixel_length = ( int( score_str.size() ) * font.GlyphWidth() );
 			const auto x = Graphics::ScreenWidth - pixel_length;
 			const auto y = font.GlyphHeight() / 2;
@@ -37,14 +40,16 @@ void GameView::Draw( Game const& model )noexcept
 
 			break;
 		}
-		case GameState::PauseMenu:
+		case Game::State::PauseMenu:
 		{
-			font.DrawText( "Resume game", { 200, 272 }, model.menu_choice == 0 ? Colors::Magenta : Colors::White, gfx );
-			font.DrawText( "Quit game", { 200, 328 }, model.menu_choice == 1 ? Colors::Magenta : Colors::White, gfx );
+			const auto menu_choice = Game::Controller::MenuChoice( model );
+			font.DrawText( "Resume game", { 200, 272 }, menu_choice == 0 ? Colors::Magenta : Colors::White, gfx );
+			font.DrawText( "Quit game", { 200, 328 }, menu_choice == 1 ? Colors::Magenta : Colors::White, gfx );
 			break;
 		}
-		case GameState::Gameover:
+		case Game::State::Gameover:
 		{
+			
 			if( model.world.level > sns::World::max_demo_level )
 				font.DrawText( "Congratulations, you've finished the demo.", { 32, 246 }, Colors::White, gfx );
 			else if(model.world.level > sns::World::max_real_level)

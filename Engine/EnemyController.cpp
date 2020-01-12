@@ -5,7 +5,7 @@
 
 namespace sns
 {
-	void EnemyController::Update( Enemy& model, float dt ) noexcept
+	void EntityController<Enemy>::Update( Enemy& model, float dt ) noexcept
 	{
 		auto do_update = [ & ]( auto& enemy_ )
 		{
@@ -29,12 +29,12 @@ namespace sns
 		std::visit( do_update, model.variant );
 	}
 
-	void EnemyController::TakeDamage( Enemy& model, float amount ) noexcept
+	void EntityController<Enemy>::TakeDamage( Enemy& model, float amount ) noexcept
 	{
 		model.health -= amount;
 	}
 
-	RectF EnemyController::AABB( Enemy const& model ) noexcept
+	RectF EntityController<Enemy>::AABB( Enemy const& model ) noexcept
 	{
 		return std::visit( [ & ]( auto const& enemy_ )
 		{
@@ -43,12 +43,12 @@ namespace sns
 		}, model.variant );
 	}
 
-	float EnemyController::Health( Enemy const& model ) noexcept
+	float EntityController<Enemy>::Health( Enemy const& model ) noexcept
 	{
 		return model.health;
 	}
 
-	float EnemyController::Damage( Enemy const& model ) noexcept
+	float EntityController<Enemy>::Damage( Enemy const& model ) noexcept
 	{
 		return std::visit( [ & ]( auto const& enemy_ ) {
 			using type = std::decay_t<decltype( enemy_ )>;
@@ -56,9 +56,14 @@ namespace sns
 		}, model.variant );
 	}
 
-	bool EnemyController::IsAlive( Enemy const& model ) noexcept
+	bool EntityController<Enemy>::IsAlive( Enemy const& model ) noexcept
 	{
 		return model.waypoint_index < int( model.waypoints.Count() ) ||
 			model.health <= 0.f;
+	}
+
+	Vec2 const & EntityController<Enemy>::Position( Enemy const & model ) noexcept
+	{
+		return model.position;
 	}
 }

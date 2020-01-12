@@ -8,19 +8,19 @@ void GameController::Update( Game& model, float dt )
 {
 	switch( model.state )
 	{
-		case GameState::Intro:
+		case Game::State::Intro:
 			DoIntroState( model );
 			break;
-		case GameState::MainMenu:
+		case Game::State::MainMenu:
 			DoMainMenuState( model );
 			break;
-		case GameState::Play:
+		case Game::State::Play:
 			DoPlayState( model, dt );
 			break;
-		case GameState::PauseMenu:
+		case Game::State::PauseMenu:
 			DoPauseMenuState( model );
 			break;
-		case GameState::Gameover:
+		case Game::State::Gameover:
 			DoGameoverState( model );
 			break;
 	}
@@ -31,6 +31,33 @@ void GameController::IncrementScore( Game & model, int amount ) noexcept
 	model.score += amount;
 }
 
+Game::State GameController::State( Game const & model ) noexcept
+{
+	return model.state;
+}
+
+int GameController::MenuChoice( Game const & model ) noexcept
+{
+	return model.menu_choice;
+}
+
+sns::World const & GameController::World( Game const & model ) noexcept
+{
+	return model.world;
+}
+
+int GameController::Score( Game const & model ) noexcept
+{
+	return model.score;
+}
+
+void GameController::TransitionState( Game& model, Game::State newState )noexcept
+{
+	model.nextState = newState;
+	model.wnd.kbd.FlushKey();
+	model.menu_choice = 0;
+}
+
 void GameController::DoIntroState( Game& model )
 {
 	while( !model.wnd.kbd.KeyIsEmpty() )
@@ -38,7 +65,7 @@ void GameController::DoIntroState( Game& model )
 		if( const auto event = model.wnd.kbd.ReadKey();
 			event.IsPress() && ( event.GetCode() == VK_RETURN ) )
 		{
-			model.TransitionState( GameState::MainMenu );
+			TransitionState( model, Game::State::MainMenu );
 		}
 	}
 }
@@ -67,7 +94,7 @@ void GameController::DoMainMenuState( Game& model )
 			{
 				if( menu_choice == 0 )
 				{
-					model.TransitionState( GameState::Play );
+					TransitionState( model, Game::State::Play );
 				}
 				else
 				{
@@ -87,16 +114,17 @@ void GameController::DoPlayState( Game& model, float dt )
 		if( const auto event = model.wnd.kbd.ReadKey();
 			event.IsPress() && ( event.GetCode() == VK_ESCAPE ) )
 		{
-			model.TransitionState( GameState::PauseMenu );
+			TransitionState( model, Game::State::PauseMenu );
 			return;
 		}
 	}
 
-	sns::WorldController::Update( model.world, model.wnd.kbd, model, dt );
+	sns::World::Controller::Update( model.world, model.wnd.kbd, model, dt );
 
-	if( sns::WorldController::IsGameOver( model.world ) )
+	if( sns::World::Controller::HeroLost( model.world ) ||
+		sns::World::Controller::HeroWon( model.world ) )
 	{
-		model.TransitionState( GameState::Gameover );
+		TransitionState( model, Game::State::Gameover );
 	}
 }
 
@@ -120,7 +148,7 @@ void GameController::DoPauseMenuState( Game& model )
 			{
 				if( menu_choice == 0 )
 				{
-					model.TransitionState( GameState::Play );
+					TransitionState( model, Game::State::Play );
 				}
 				else
 				{
@@ -129,7 +157,7 @@ void GameController::DoPauseMenuState( Game& model )
 			}
 			else if( event.GetCode() == VK_ESCAPE )
 			{
-				model.TransitionState( GameState::Play );
+				TransitionState( model, Game::State::Play );
 			}
 		}
 	}
@@ -144,8 +172,9 @@ void GameController::DoGameoverState( Game& model )
 		if( const auto event = model.wnd.kbd.ReadKey();
 			event.IsPress() && ( event.GetCode() == VK_RETURN ) )
 		{
-			model.TransitionState( GameState::MainMenu );
+			TransitionState( model, Game::State::MainMenu );
 			sns::WorldController::Reset( model.world );
 		}
 	}
 }
+

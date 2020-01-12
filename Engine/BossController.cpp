@@ -8,7 +8,7 @@
 
 namespace sns
 {
-	void BossController::Update( Boss& model, World& world, float dt ) noexcept
+	void EntityController<Boss>::Update( Boss& model, World& world, float dt ) noexcept
 	{
 		std::visit( [ & ]( auto& boss )
 		{
@@ -16,12 +16,12 @@ namespace sns
 		}, model.variant );
 	}
 
-	void BossController::TakeDamage( Boss& model, float amount ) noexcept
+	void EntityController<Boss>::TakeDamage( Boss& model, float amount ) noexcept
 	{
 		model.health -= amount;
 	}
 
-	float BossController::Damage( Boss const& model )noexcept
+	float EntityController<Boss>::Damage( Boss const& model )noexcept
 	{
 		return std::visit( [ & ]( auto const& boss )
 		{
@@ -29,12 +29,12 @@ namespace sns
 		}, model.variant );
 	}
 
-	float BossController::Health( Boss const& model )noexcept
+	float EntityController<Boss>::Health( Boss const& model )noexcept
 	{
 		return model.health;
 	}
 
-	RectF BossController::AABB( Boss const& model )noexcept
+	RectF EntityController<Boss>::AABB( Boss const& model )noexcept
 	{
 		return std::visit( [ & ]( auto const& boss )
 		{
@@ -42,7 +42,7 @@ namespace sns
 		}, model.variant );
 	}
 
-	void BossController::Update( Boss1& model, World& world, Boss& parent, float dt )noexcept
+	void EntityController<Boss>::Update( Boss1& model, World& world, Boss& parent, float dt )noexcept
 	{
 		switch( model.state )
 		{
@@ -52,7 +52,7 @@ namespace sns
 				if( WeaponController::CanFire( model.weapon ) )
 				{
 					const auto missile_dir =
-						( HeroController::Position( world.hero ) - parent.position ).Normalize();
+						( EntityController<Hero>::Position( world.hero ) - parent.position ).Normalize();
 
 					WeaponController::Fire(
 						model.weapon,
@@ -88,7 +88,7 @@ namespace sns
 		}
 	}
 
-	void BossController::Update( Boss2& model, World& world, Boss& parent, float dt )noexcept
+	void EntityController<Boss>::Update( Boss2& model, World& world, Boss& parent, float dt )noexcept
 	{
 		switch( model.state )
 		{
@@ -142,4 +142,21 @@ namespace sns
 				break;
 		}
 	}
+
+	void EntityController<Boss>::Update( Boss3& model, World& world, Boss& parent, float dt )noexcept
+	{}
+	void EntityController<Boss>::Update( Boss4& model, World& world, Boss& parent, float dt )noexcept
+	{}
+	void EntityController<Boss>::Update( Boss5& model, World& world, Boss& parent, float dt )noexcept
+	{}
+	void EntityController<Boss>::Update( Boss6& model, World& world, Boss& parent, float dt )noexcept
+	{}
+	void EntityController<Boss>::Update( Boss7& model, World& world, Boss& parent, float dt )noexcept
+	{}
+	void EntityController<Boss>::Update( Boss8& model, World& world, Boss& parent, float dt )noexcept
+	{}
+	void EntityController<Boss>::Update( Boss9& model, World& world, Boss& parent, float dt )noexcept
+	{}
+	void EntityController<Boss>::Update( Boss10& model, World& world, Boss& parent, float dt )noexcept
+	{}
 }

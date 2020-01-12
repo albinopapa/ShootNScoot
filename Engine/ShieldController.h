@@ -15,5 +15,6 @@ namespace sns
 		static void TakeDamage( Shield& model, float amount )noexcept;
 		static RectF AABB( Shield const& model, Vec2 position )noexcept;
 		static float Health( Shield const& model )noexcept;
+
 	};
 }

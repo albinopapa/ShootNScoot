@@ -6,7 +6,7 @@
 
 namespace sns
 {
-	void HeroController::Update( 
+	void EntityController<Hero>::Update(
 		Hero& model,
 		World& world,
 		Keyboard const& kbd,
@@ -15,7 +15,7 @@ namespace sns
 		UpdateVelocity( model, kbd );
 		ChangeWeapon( model, kbd );
 		
-		ShieldController::Update( model.shield, model.position, dt );
+		Shield::Controller::Update( model.shield, model.position, dt );
 
 		const auto heroRect = AABB( model );
 
@@ -33,62 +33,55 @@ namespace sns
 			);
 		}
 
-		WeaponController::Update( model.weapon, dt );
+		Weapon::Controller::Update( model.weapon, dt );
 
-		if( kbd.KeyIsPressed( VK_CONTROL ) && WeaponController::CanFire( model.weapon ) )
+		if( kbd.KeyIsPressed( VK_CONTROL ) && Weapon::Controller::CanFire( model.weapon ) )
 		{
-			WeaponController::Fire(
+			Weapon::Controller::Fire(
 				model.weapon,
 				model.position, 
 				Vec2{ 0.f, -1.f },
 				world,
-				AmmoOwner::Hero
+				Ammo::Owner::Hero
 			);
 		}
 	}
 	
 	
-	void HeroController::TakeDamage( Hero& model, float amount )noexcept
+	void EntityController<Hero>::TakeDamage( Hero& model, float amount )noexcept
 	{
-		if( model.shield.Health() > 0.f )
-			ShieldController::TakeDamage( model.shield, amount );
+		if( Shield::Controller::Health( model.shield ) > 0.f )
+			Shield::Controller::TakeDamage( model.shield, amount );
 		else
 			model.health -= amount;
 
 		model.health = std::max( model.health, 0.f );
 	}
 
-	float HeroController::Damage( Hero const& model )noexcept
+	float EntityController<Hero>::Damage( Hero const& model )noexcept
 	{
 		return Hero::damage;
 	}
 
-	RectF HeroController::AABB( Hero const& model )noexcept
+	RectF EntityController<Hero>::AABB( Hero const& model )noexcept
 	{
-		return Hero::aabb + model.position;
+		if( Shield::Controller::Health( model.shield ) > 0.f )
+			return Shield::Controller::AABB( model.shield, model.position );
+		else
+			return Hero::aabb + model.position;
 	}
 
-	Shield const& HeroController::GetShield( Hero const& model )noexcept
-	{
-		return model.shield;
-	}
-
-	float HeroController::Health( Hero const & model ) noexcept
+	float EntityController<Hero>::Health( Hero const & model ) noexcept
 	{
 		return model.health;
 	}
 
-	Vec2 const & HeroController::Position( Hero const & model ) noexcept
+	Vec2 const & EntityController<Hero>::Position( Hero const & model ) noexcept
 	{
 		return model.position;
 	}
 	
-	Shield& HeroController::GetShield( Hero& model ) noexcept
-	{
-		return model.shield;
-	}
-
-	void HeroController::UpdateVelocity( Hero& model, Keyboard const & kbd ) noexcept
+	void EntityController<Hero>::UpdateVelocity( Hero& model, Keyboard const & kbd ) noexcept
 	{
 		Vec2 direction = { 0.f, 0.f };
 		if( kbd.KeyIsPressed( VK_UP ) )
@@ -112,7 +105,7 @@ namespace sns
 		model.velocity = direction.Normalize();
 	}
 
-	void HeroController::ChangeWeapon( Hero& model, Keyboard const & kbd ) noexcept
+	void EntityController<Hero>::ChangeWeapon( Hero& model, Keyboard const & kbd ) noexcept
 	{
 		if( kbd.KeyIsPressed( '1' ) )
 		{

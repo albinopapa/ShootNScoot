@@ -1,46 +1,41 @@
 #pragma once
 
 #include "Asteroids.h"
-#include "AsteroidSpawner.h"
-#include "Bosses.h"
 #include "Bullet.h"
+#include "Bosses.h"
 #include "Enemies.h"
-#include "EnemySpawner.h"
-#include "Enumerations.h"
+#include "Grid.h"
 #include "Hero.h"
+#include "Levels.h"
 #include "Star.h"
 #include "Starfield.h"
-#include <vector>
 
 namespace sns
 {
-	struct World
+	class World
 	{
+	public:
+		using Controller = struct WorldController;
+		enum class State
+		{
+			Arena, Boss, LevelComplete, HeroWon, HeroLost
+		};
 	public:
 		void Update( float dt );
 
-		void SpawnAsteroid( Asteroid const& asteroid );
-		void SpawnEnemy( Enemy enemy );
-		void SpawnAmmo( Ammo const& ammo );
-
-	public:
+	private:
+		friend struct WorldController;
+		std::vector<Star> stars = Starfield::generate( screenRect, { 1.f, 2.f }, 250 );
 		std::vector<Asteroid> asteroids;
 		std::vector<Enemy> enemies;
 		std::vector<Ammo> enemy_bullets;
 		std::vector<Ammo> hero_bullets;
 
-		std::vector<Star> stars = Starfield::generate( screenRect, { 1.f, 2.f }, 250 );
-
 		Hero hero;
 		Boss boss = Boss{ Boss1{} };
-		WorldState state = WorldState::Arena;
-
-		AsteroidSpawner astro_spawner;
-		EnemySpawner enemy_spawner;
-
-		int level = 1;
-		static constexpr auto max_demo_level = 2;
-		static constexpr auto max_real_level = 10;
+		Level level = Level{ Level1{} };
+		Grid grid;
+		State state = State::Arena;
 	};
 
 }

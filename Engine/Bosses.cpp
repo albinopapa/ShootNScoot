@@ -32,13 +32,13 @@ namespace sns
 	{
 		switch( state )
 		{
-			case Boss1State::Attack:
+			case State::Attack:
 				weapon.Update( dt );
 				break;
-			case Boss1State::Regen:
+			case State::Regen:
 				regen_timer -= dt;
 				break;
-			case Boss1State::Idle:
+			case State::Idle:
 				position += ( direction * ( Boss1::speed * dt ) );
 				break;
 			default:

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Bullet.h"
+#include "EntityController.h"
 #include "Rect.h"
 #include "Shield.h"
 #include "SpriteEffect.h"
@@ -13,10 +14,13 @@ namespace sns
 	class Hero
 	{
 	public:
+		using Controller = EntityController<Hero>;
+	public:
 		void Update( float dt );
 		void Reset()noexcept;
 
-	public:
+	private:
+		friend struct EntityController<Hero>;
 		Surface	sprite = "Images/HeroShip.png";
 		Shield shield;
 		Weapon weapon = Weapon{ Gun{} };

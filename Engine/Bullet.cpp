@@ -52,7 +52,7 @@ namespace sns
 	const Surface PlasmaBall::sprite = make_plasma_ball_sprite();
 	const Surface Missile::sprite = make_missile_sprite();
 
-	Ammo::Ammo( Vec2 const & position_, Vec2 const & direction_, AmmoOwner owner_, AmmoType type )
+	Ammo::Ammo( Vec2 const & position_, Vec2 const & direction_, Owner owner_, AmmoType type )
 		:
 		position( position_ ),
 		velocity( direction_ ),

@@ -5,31 +5,35 @@
 
 namespace sns
 {
-	void AmmoController::Update( Ammo& model, float dt ) noexcept
+	void EntityController<Ammo>::Update( Ammo& model, float dt ) noexcept
 	{	
 		model.isAlive = Graphics::IsVisible( RectI( AABB( model ) ) ) && model.energy > 0.f;
 	}
 
-	void  AmmoController::TakeDamage( Ammo& model, float amount ) noexcept
+	void  EntityController<Ammo>::TakeDamage( Ammo& model, float amount ) noexcept
 	{
 		model.energy -= amount;
 		model.energy = std::max( model.energy, 0.f );
 	}
-	float AmmoController::Damage( Ammo const& model )noexcept
+	Ammo::Owner EntityController<Ammo>::GetOwner( Ammo const & model ) noexcept
+	{
+		return model.owner;
+	}
+	float EntityController<Ammo>::Damage( Ammo const& model )noexcept
 	{
 		return std::visit( [ & ]( const auto& ammo_ ) {
 			using type = std::decay_t<decltype( ammo_ )>;
 			return type::damage * ( model.energy / type::max_energy );
 		}, model.variant );
 	}
-	RectF AmmoController::AABB( Ammo const& model )noexcept
+	RectF EntityController<Ammo>::AABB( Ammo const& model )noexcept
 	{
 		return std::visit( [ & ]( const auto& ammo ) {
 			return std::decay_t<decltype( ammo )>::aabb + model.position;
 		}, model.variant );
 	}
 
-	bool AmmoController::IsAlive( Ammo const& model )noexcept
+	bool EntityController<Ammo>::IsAlive( Ammo const& model )noexcept
 	{
 		return model.isAlive;
 	}

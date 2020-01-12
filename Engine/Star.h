@@ -5,12 +5,15 @@
 
 namespace sns
 {
-	struct Star
+	class Star
 	{
+	public:
+		using Controller = struct StarController;
 	public:
 		void Update()noexcept;
 
-	public:
+	private:
+		friend struct StarController;
 		Vec2 position;
 		float speed;
 		static constexpr float radius = 1.f;

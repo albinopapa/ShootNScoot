@@ -2,50 +2,19 @@
 #include "Asteroids.h"
 #include "World.h"
 
+
 namespace sns
 {
-	void AsteroidSpawner::Update( World& world, float dt )
+	std::mt19937 AsteroidSpawner::rng = {};
+
+	Asteroid AsteroidSpawner::Spawn()
 	{
-		switch( state )
-		{
-			case State::Idle:
-				spawn_timer -= dt;
-				if( spawn_timer <= 0.f )
-				{
-					if( spawn_count < AsteroidSpawner::spawn_max )
-						state = State::Spawning;
-					else
-						state = State::Complete;
-				}
-				break;
-			case State::Spawning:
-			{
-				constexpr auto cx = screenRect.Center().x;
-				constexpr auto cy = screenRect.Center().y;
-				const auto pos = Vec2{ xDist( rng ), -50.f };
-				const auto dir = Vec2{ pos.x > cx ? -vxDist( rng ) : vxDist( rng ), 1.f }.Normalize();
-				spawn_timer = AsteroidSpawner::spawn_delay;
+		constexpr auto cx = screenRect.Center().x;
+		constexpr auto cy = screenRect.Center().y;
 
-				world.SpawnAsteroid( Asteroid{ pos, dir, BigAsteroid{} } );
+		const auto px = xDist( rng );
+		const auto vx = px > cx ? -vxDist( rng ) : vxDist( rng );
 
-				++spawn_count;
-				state = State::Idle;
-				break;
-			}
-			default:
-				break;
-		}
-	}
-
-	void AsteroidSpawner::Reset() noexcept
-	{
-		spawn_timer				= AsteroidSpawner::spawn_delay;
-		spawn_count				= 0;
-		state					= State::Idle;
-	}
-
-	AsteroidSpawner::State AsteroidSpawner::GetState() const noexcept
-	{
-		return state;
+		return Asteroid{ Vec2{ px, -50.f }, Vec2{ vx, 1.f }.Normalize(), BigAsteroid{} };
 	}
 }

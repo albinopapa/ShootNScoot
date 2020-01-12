@@ -1,5 +1,6 @@
 #pragma once
 
+#include "EntityController.h"
 #include "Keyboard.h"
 #include "Rect.h"
 
@@ -9,9 +10,8 @@ namespace sns
 	class Shield;
 	class World;
 
-	class HeroController
+	template<> struct EntityController<Hero>
 	{
-	public:
 		static void Update(
 			Hero& model,
 			World& world,
@@ -22,8 +22,6 @@ namespace sns
 
 		static RectF AABB( Hero const& model )noexcept;
 		static float Damage( Hero const& model )noexcept;
-		static Shield& GetShield( Hero& model )noexcept;
-		static Shield const& GetShield( Hero const& model )noexcept;
 		static float Health( Hero const& model )noexcept;
 		static Vec2 const& Position( Hero const& model )noexcept;
 

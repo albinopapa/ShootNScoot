@@ -9,7 +9,7 @@ namespace sns
 
 	void Weapon::Update( float dt ) noexcept
 	{
-		if( state == WeaponState::Recharge )
+		if( state == State::Recharge )
 		{
 			fire_timer -= dt;
 		}
@@ -19,6 +19,6 @@ namespace sns
 	{
 		variant = Gun{};
 		fire_timer = 0.f;
-		state = WeaponState::Idle;
+		state = State::Idle;
 	}
 }

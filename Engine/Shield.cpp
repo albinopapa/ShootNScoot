@@ -9,28 +9,22 @@ namespace sns
 	{
 		switch( state )
 		{
-			case ShieldState::Recharging:
+			case State::Recharging:
 				health += ( delta_time * Shield::recharge_rate );
 				break;
-			case ShieldState::Depleted:
+			case State::Depleted:
 				recharge_delay_timer -= delta_time;
 				break;
 		}
 	}
-	float Shield::Radius() const noexcept
-	{
-		return radius;
-	}
-	float Shield::Health() const noexcept
-	{
-		return health;
-	}
+
 	void Shield::Reset() noexcept
 	{
 		health = 100.f;
-		state = ShieldState::Full;
+		state = State::Full;
 		recharge_delay_timer = 0.f;
 	}
+
 	Surface Shield::MakeSprite()
 	{
 		constexpr auto iRadius = int( radius );
