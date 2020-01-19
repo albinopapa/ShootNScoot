@@ -7,17 +7,14 @@ namespace sns
 	class Shield
 	{
 	public:
-		using Controller = ShieldController;
 		enum class State { Full, Recharging, Depleted };
-	public:
-		void Update( float delta_time )noexcept;
-		void Reset()noexcept;
 
 	private:
 		static Surface MakeSprite();
 
 	private:
 		friend class ShieldController;
+		friend class ShieldView;
 
 		State state = State::Full;
 		float recharge_delay_timer = recharge_delay;

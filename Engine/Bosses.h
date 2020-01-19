@@ -1,9 +1,12 @@
 #pragma once
 
 #include "EntityController.h"
-#include "Graphics.h"		// For screenRect
+#include "Rect.h"
+#include "RectController.h"
+#include "Settings.h"
 #include "Shield.h"
 #include "Surface.h"
+#include "SurfaceController.h"
 #include "Weapon.h"
 #include <variant>
 
@@ -13,16 +16,15 @@ namespace sns
 	{
 	public:
 		enum class State { Idle, Attack, Regen };
-	public:
-		void Update( Vec2& position, Vec2& direction, float dt );
 
+	public:
 		static constexpr auto aabb = RectF{ -16.f, -16.f, 16.f, 16.f };
 		static constexpr auto damage = 50.f;
 		static constexpr auto regen_delay = 3.f;
 		static constexpr auto max_missiles = 10;
 		static constexpr auto max_health = 200.f;
 		static constexpr auto speed = 160.f;
-		inline static const Surface sprite = { "Images/Enemy1Ship.png" };
+		inline static const Surface sprite = SurfaceController::CreateSurface( "Images/Enemy1Ship.png" );
 
 		Shield shield;
 		Weapon weapon = { MissileLauncher{} };
@@ -37,16 +39,13 @@ namespace sns
 		enum class State { Idle, Signaling, Ramming, Recharging };
 
 	public:
-		void Update( Vec2& position, Vec2& direction, float dt )noexcept;
-
-	public:
 		static constexpr auto aabb = RectF{ -16.f, -16.f, 16.f, 16.f };
 		static constexpr auto damage = 50.f;
 		static constexpr auto speed = 720.f;
 		static constexpr auto max_health = 200.f;
 		static constexpr auto signal_delay = .25f;
 		static constexpr auto cool_down_delay = 3.f;
-		inline static const Surface sprite = { "Images/Boss2Ship.png" };
+		inline static const Surface sprite = SurfaceController::CreateSurface( "Images/Boss2Ship.png"  );
 
 		Vec2 waypoint;
 		State state = State::Idle;
@@ -58,16 +57,15 @@ namespace sns
 	{
 	public:
 		enum class State { Idle, Attack, Regen };
-	public:
-		void Update( Vec2& position, Vec2& direction, float dt );
 
+	public:
 		static constexpr auto aabb = RectF{ -16.f, -16.f, 16.f, 16.f };
 		static constexpr auto damage = 50.f;
 		static constexpr auto regen_delay = 3.f;
 		static constexpr auto max_missiles = 10;
 		static constexpr auto max_health = 200.f;
 		static constexpr auto speed = 160.f;
-		inline static const Surface sprite = { "Images/Enemy1Ship.png" };
+		inline static const Surface sprite = SurfaceController::CreateSurface( "Images/Enemy1Ship.png" );
 
 		Shield shield;
 		Weapon weapon = { MissileLauncher{} };
@@ -82,16 +80,13 @@ namespace sns
 		enum class State { Idle, Signaling, Ramming, Recharging };
 
 	public:
-		void Update( Vec2& position, Vec2& direction, float dt )noexcept;
-
-	public:
 		static constexpr auto aabb = RectF{ -16.f, -16.f, 16.f, 16.f };
 		static constexpr auto damage = 50.f;
 		static constexpr auto speed = 720.f;
 		static constexpr auto max_health = 200.f;
 		static constexpr auto signal_delay = .25f;
 		static constexpr auto cool_down_delay = 3.f;
-		inline static const Surface sprite = { "Images/Boss2Ship.png" };
+		inline static const Surface sprite = SurfaceController::CreateSurface( "Images/Boss2Ship.png" );
 
 		Vec2 waypoint;
 		State state = State::Idle;
@@ -103,16 +98,15 @@ namespace sns
 	{
 	public:
 		enum class State { Idle, Attack, Regen };
-	public:
-		void Update( Vec2& position, Vec2& direction, float dt );
 
+	public:
 		static constexpr auto aabb = RectF{ -16.f, -16.f, 16.f, 16.f };
 		static constexpr auto damage = 50.f;
 		static constexpr auto regen_delay = 3.f;
 		static constexpr auto max_missiles = 10;
 		static constexpr auto max_health = 200.f;
 		static constexpr auto speed = 160.f;
-		inline static const Surface sprite = { "Images/Enemy1Ship.png" };
+		inline static const Surface sprite = SurfaceController::CreateSurface( "Images/Enemy1Ship.png" );
 
 		Shield shield;
 		Weapon weapon = { MissileLauncher{} };
@@ -127,16 +121,13 @@ namespace sns
 		enum class State { Idle, Signaling, Ramming, Recharging };
 
 	public:
-		void Update( Vec2& position, Vec2& direction, float dt )noexcept;
-
-	public:
 		static constexpr auto aabb = RectF{ -16.f, -16.f, 16.f, 16.f };
 		static constexpr auto damage = 50.f;
 		static constexpr auto speed = 720.f;
 		static constexpr auto max_health = 200.f;
 		static constexpr auto signal_delay = .25f;
 		static constexpr auto cool_down_delay = 3.f;
-		inline static const Surface sprite = { "Images/Boss2Ship.png" };
+		inline static const Surface sprite = SurfaceController::CreateSurface( "Images/Boss2Ship.png" );
 
 		Vec2 waypoint;
 		State state = State::Idle;
@@ -148,16 +139,15 @@ namespace sns
 	{
 	public:
 		enum class State { Idle, Attack, Regen };
-	public:
-		void Update( Vec2& position, Vec2& direction, float dt );
 
+	public:
 		static constexpr auto aabb = RectF{ -16.f, -16.f, 16.f, 16.f };
 		static constexpr auto damage = 50.f;
 		static constexpr auto regen_delay = 3.f;
 		static constexpr auto max_missiles = 10;
 		static constexpr auto max_health = 200.f;
 		static constexpr auto speed = 160.f;
-		inline static const Surface sprite = { "Images/Enemy1Ship.png" };
+		inline static const Surface sprite = SurfaceController::CreateSurface( "Images/Enemy1Ship.png" );
 
 		Shield shield;
 		Weapon weapon = { MissileLauncher{} };
@@ -172,16 +162,13 @@ namespace sns
 		enum class State { Idle, Signaling, Ramming, Recharging };
 
 	public:
-		void Update( Vec2& position, Vec2& direction, float dt )noexcept;
-
-	public:
 		static constexpr auto aabb = RectF{ -16.f, -16.f, 16.f, 16.f };
 		static constexpr auto damage = 50.f;
 		static constexpr auto speed = 720.f;
 		static constexpr auto max_health = 200.f;
 		static constexpr auto signal_delay = .25f;
 		static constexpr auto cool_down_delay = 3.f;
-		inline static const Surface sprite = { "Images/Boss2Ship.png" };
+		inline static const Surface sprite = SurfaceController::CreateSurface( "Images/Boss2Ship.png" );
 
 		Vec2 waypoint;
 		State state = State::Idle;
@@ -193,16 +180,15 @@ namespace sns
 	{
 	public:
 		enum class State { Idle, Attack, Regen };
-	public:
-		void Update( Vec2& position, Vec2& direction, float dt );
 
+	public:
 		static constexpr auto aabb = RectF{ -16.f, -16.f, 16.f, 16.f };
 		static constexpr auto damage = 50.f;
 		static constexpr auto regen_delay = 3.f;
 		static constexpr auto max_missiles = 10;
 		static constexpr auto max_health = 200.f;
 		static constexpr auto speed = 160.f;
-		inline static const Surface sprite = { "Images/Enemy1Ship.png" };
+		inline static const Surface sprite = SurfaceController::CreateSurface( "Images/Enemy1Ship.png" );
 
 		Shield shield;
 		Weapon weapon = { MissileLauncher{} };
@@ -217,16 +203,13 @@ namespace sns
 		enum class State { Idle, Signaling, Ramming, Recharging };
 
 	public:
-		void Update( Vec2& position, Vec2& direction, float dt )noexcept;
-
-	public:
 		static constexpr auto aabb = RectF{ -16.f, -16.f, 16.f, 16.f };
 		static constexpr auto damage = 50.f;
 		static constexpr auto speed = 720.f;
 		static constexpr auto max_health = 200.f;
 		static constexpr auto signal_delay = .25f;
 		static constexpr auto cool_down_delay = 3.f;
-		inline static const Surface sprite = { "Images/Boss2Ship.png" };
+		inline static const Surface sprite = SurfaceController::CreateSurface( "Images/Boss2Ship.png" );
 
 		Vec2 waypoint;
 		State state = State::Idle;
@@ -237,7 +220,6 @@ namespace sns
 	class Boss
 	{
 	public:
-		using Controller = EntityController<Boss>;
 		using BossType = std::variant<
 			Boss1, 
 			Boss2,
@@ -253,15 +235,13 @@ namespace sns
 
 	public:
 		Boss( BossType type )noexcept;
-		void Update( float dt );
-		void Reset()noexcept;
 
 	private:
-		friend struct EntityController<Boss>;
+		friend class EntityController<Boss>;
 		friend class BossView;
 
 		BossType variant;
-		Vec2 position = { screenRect.Center().x, -32.f };
+		Vec2 position = { RectController::Center( world_rect ).x, world_rect.top };
 		Vec2 direction = { 0.f, 1.f };
 		float angle = 0.f;
 		float health = 0.f;

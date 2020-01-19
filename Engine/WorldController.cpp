@@ -6,8 +6,10 @@
 #include "AmmoController.h"
 #include "AsteroidController.h"
 #include "BossController.h"
+#include "CellController.h"
 #include "EnemyController.h"
 #include "GameController.h"
+#include "GridController.h"
 #include "HeroController.h"
 #include "ShieldController.h"
 #include "StarController.h"
@@ -17,23 +19,23 @@ namespace sns
 {
 	void WorldController::Update( World& model, Keyboard& kbd, Game& game, float dt )
 	{
-		Grid::Controller::ClearCells( model.grid );
+		GridController::ClearCells( model.grid );
 
-		for( auto& star : model.stars ) Star::Controller::Update( star );
-		
-		Hero::Controller::Update( model.hero, model, kbd, dt );
-		Grid::Controller::AddObject( model.grid, model.hero );
+		for( auto& star : model.stars ) StarController::Update( star );
+
+		EntityController<Hero>::Update( model.hero, model, kbd, dt );
+		GridController::AddObject( model.grid, &model.hero );
 
 		for( auto& ammo : model.hero_bullets )
 		{
-			Ammo::Controller::Update( ammo, dt );
-			Grid::Controller::AddObject( model.grid, ammo );
+			EntityController<Ammo>::Update( ammo, dt );
+			GridController::AddObject( model.grid, &ammo );
 		}
 
 		for( auto& ammo : model.enemy_bullets )
 		{
-			Ammo::Controller::Update( ammo, dt );
-			Grid::Controller::AddObject( model.grid, ammo );
+			EntityController<Ammo>::Update( ammo, dt );
+			GridController::AddObject( model.grid, &ammo );
 		}
 
 		DoCollisions( model, game );
@@ -46,36 +48,36 @@ namespace sns
 		{
 			case World::State::Arena:
 			{
-				for( auto& enemy : model.enemies ) 
+				for( auto& enemy : model.enemies )
 				{
-					Enemy::Controller::Update( enemy, dt );
-					Grid::Controller::AddObject( model.grid, enemy );
+					EntityController<Enemy>::Update( enemy, dt );
+					GridController::AddObject( model.grid, &enemy );
 				}
 
-				for( auto& astro : model.asteroids ) 
+				for( auto& astro : model.asteroids )
 				{
-					Asteroid::Controller::Update( astro, dt );
-					Grid::Controller::AddObject( model.grid, astro );
+					EntityController<Asteroid>::Update( astro, dt );
+					GridController::AddObject( model.grid, &astro );
 				}
 
-				if( Level::Controller::AsteroidSpawnerComplete( model.level ) &&
-					Level::Controller::EnemySpawnerComplete( model.level ) )
+				if( LevelController::AsteroidSpawnerComplete( model.level ) &&
+					LevelController::EnemySpawnerComplete( model.level ) )
 				{
 					model.state = World::State::Boss;
-					model.boss = Level::Controller::SpawnBoss( model.level );
-					Grid::Controller::AddObject( model.grid, model.boss );
+					model.boss = LevelController::SpawnBoss( model.level );
+					GridController::AddObject( model.grid, &model.boss );
 				}
 
-				if( Hero::Controller::Health( model.hero ) <= 0.f )
+				if( EntityController<Hero>::Health( model.hero ) <= 0.f )
 					model.state = World::State::HeroLost;
 
 				break;
 			}
 			case World::State::LevelComplete:
 			{
-				if( !Level::Controller::IsFinal( model.level ) )
+				if( !LevelController::IsFinal( model.level ) )
 				{
-					Level::Controller::Advance( model.level );
+					LevelController::Advance( model.level );
 					model.state = World::State::Arena;
 				}
 				else
@@ -86,12 +88,13 @@ namespace sns
 			}
 			case World::State::Boss:
 			{
-				Boss::Controller::Update( model.boss, model, dt );
-				Grid::Controller::AddObject( model.grid, model.boss );
+				auto& hero_pos = EntityController<Hero>::Position( model.hero );
+				EntityController<Boss>::Update( model.boss, model, hero_pos, dt );
+				GridController::AddObject( model.grid, &model.boss );
 
-				if( Boss::Controller::Health( model.boss ) <= 0.f )
+				if( EntityController<Boss>::Health( model.boss ) <= 0.f )
 				{
-					Game::Controller::IncrementScore( game, 1000 );
+					GameController::IncrementScore( game, 1000 );
 					model.state = World::State::LevelComplete;
 				}
 				break;
@@ -105,15 +108,15 @@ namespace sns
 		model.enemies = std::vector<Enemy>{};
 		model.hero_bullets = std::vector<Ammo>{};
 		model.asteroids = std::vector<Asteroid>{};
-		model.hero.Reset();
+		EntityController<Hero>::Reset( model.hero );
 		model.state = World::State::Arena;
-		model.level.Reset();
-		model.boss.Reset();
+		LevelController::Reset( model.level );
+		EntityController<Boss>::Reset( model.boss );
 	}
 
 	int WorldController::CurrentLevelIndex( World const & model ) noexcept
 	{
-		return Level::Controller::CurrentLevelIndex( model.level ) - 1;
+		return LevelController::CurrentLevelIndex( model.level ) - 1;
 	}
 
 	void WorldController::DoCollisions( World & model, Game & game ) noexcept
@@ -123,12 +126,13 @@ namespace sns
 			DoCollision( *objectA, *objectB, game );
 		};
 
-		for( auto& cell : Grid::Controller::Cells( model.grid ) )
+		for( auto& cell : GridController::Cells( model.grid ) )
 		{
-			auto& variants = cell.Objects();
+			auto& variants = CellController::Objects( cell );
+
 			for( int i = 0; i < variants.size(); ++i )
 			{
-				for( int j = i + 1; i < variants.size(); ++j )
+				for( int j = i + 1; j < variants.size(); ++j )
 				{
 					std::visit( dispatch, variants[ i ], variants[ j ] );
 				}
@@ -148,9 +152,9 @@ namespace sns
 
 	void WorldController::SpawnAmmo( World& model, Ammo const & ammo )
 	{
-		Ammo::Controller::AABB( ammo );
+		EntityController<Ammo>::AABB( ammo );
 
-		if( Ammo::Controller::GetOwner( ammo ) == Ammo::Owner::Enemy )
+		if( EntityController<Ammo>::GetOwner( ammo ) == Ammo::Owner::Enemy )
 			model.enemy_bullets.emplace_back( ammo );
 		else
 			model.hero_bullets.emplace_back( ammo );
@@ -168,8 +172,10 @@ namespace sns
 
 	void WorldController::RemoveDeadBullets( World& model ) noexcept
 	{
-		auto ammo_is_dead = 
-			[ & ]( Ammo const& bullet ) { return !Ammo::Controller::IsAlive( bullet ); };
+		auto ammo_is_dead = [ & ]( Ammo const& bullet )
+		{
+			return !EntityController<Ammo>::IsAlive( bullet );
+		};
 
 		erase_if( model.hero_bullets, ammo_is_dead );
 		erase_if( model.enemy_bullets, ammo_is_dead );
@@ -177,8 +183,10 @@ namespace sns
 
 	void WorldController::RemoveDeadEnemies( World& model ) noexcept
 	{
-		auto enemy_is_dead =
-			[ & ]( Enemy const& enemy_ ) { return !Enemy::Controller::IsAlive( enemy_ ); };
+		auto enemy_is_dead = [ & ]( Enemy const& enemy_ )
+		{
+			return !EntityController<Enemy>::IsAlive( enemy_ );
+		};
 
 		erase_if( model.enemies, enemy_is_dead );
 	}
@@ -188,24 +196,24 @@ namespace sns
 		std::vector<Vec2> positions;
 		positions.reserve( model.asteroids.size() );
 
-		erase_if( model.asteroids, [ & ]( Asteroid const& astro ) 
+		erase_if( model.asteroids, [ & ]( Asteroid const& astro )
 		{
-			if( Asteroid::Controller::Health( astro ) > 0.f ) return false;
-			
-			if( Asteroid::Controller::Reason( astro ) != 
+			if( EntityController<Asteroid>::Health( astro ) > 0.f ) return false;
+
+			if( EntityController<Asteroid>::Reason( astro ) !=
 				Asteroid::DeathReason::LeftScreen ) return false;
 
-			if( !Asteroid::Controller::IsBigAsteroid( astro ) ) return false;
+			if( !EntityController<Asteroid>::IsBigAsteroid( astro ) ) return false;
 
-			positions.push_back( Asteroid::Controller::Position( astro ) );
+			positions.push_back( EntityController<Asteroid>::Position( astro ) );
 
 			return true;
 		} );
 
 		constexpr auto nw = Vec2{ -.707f, -.707f };
-		constexpr auto ne = Vec2{  .707f, -.707f };
+		constexpr auto ne = Vec2{ .707f, -.707f };
 		constexpr auto sw = Vec2{ -.707f,  .707f };
-		constexpr auto se = Vec2{  .707f,  .707f };
+		constexpr auto se = Vec2{ .707f,  .707f };
 
 		auto spawn = [ & ]( const auto& position, const auto& direction ) {
 			const auto spawn_pos = position + ( direction * BigAsteroid::radius );
@@ -223,246 +231,246 @@ namespace sns
 
 	void WorldController::DoCollision( Asteroid& lhs, Asteroid& rhs, Game& game )noexcept
 	{
-		const auto lRect = Asteroid::Controller::AABB( lhs );
-		const auto rRect = Asteroid::Controller::AABB( rhs );
+		const auto lRect = EntityController<Asteroid>::AABB( lhs );
+		const auto rRect = EntityController<Asteroid>::AABB( rhs );
 
-		if( !lRect.Overlaps( rRect ) ) return;
+		if( !RectController::Overlaps( lRect, rRect ) ) return;
 
-		Asteroid::Controller::TakeDamage( lhs, Asteroid::Controller::Damage( rhs ) );
-		Asteroid::Controller::TakeDamage( rhs, Asteroid::Controller::Damage( lhs ) );
+		EntityController<Asteroid>::TakeDamage( lhs, EntityController<Asteroid>::Damage( rhs ) );
+		EntityController<Asteroid>::TakeDamage( rhs, EntityController<Asteroid>::Damage( lhs ) );
 
-		if( Asteroid::Controller::Health( lhs ) <= 0.f )
-			Asteroid::Controller::Reason( lhs, Asteroid::DeathReason::AffectedByAsteroid );
-		if( Asteroid::Controller::Health( rhs ) <= 0.f )
-			Asteroid::Controller::Reason( rhs, Asteroid::DeathReason::AffectedByAsteroid );
+		if( EntityController<Asteroid>::Health( lhs ) <= 0.f )
+			EntityController<Asteroid>::Reason( lhs, Asteroid::DeathReason::AffectedByAsteroid );
+		if( EntityController<Asteroid>::Health( rhs ) <= 0.f )
+			EntityController<Asteroid>::Reason( rhs, Asteroid::DeathReason::AffectedByAsteroid );
 	}
 	void WorldController::DoCollision( Asteroid& lhs, Ammo& rhs, Game& game )noexcept
 	{
-		const auto lRect = Asteroid::Controller::AABB( lhs );
-		const auto rRect = Ammo::Controller::AABB( rhs );
+		const auto lRect = EntityController<Asteroid>::AABB( lhs );
+		const auto rRect = EntityController<Ammo>::AABB( rhs );
 
-		if( !lRect.Overlaps( rRect ) ) return;
+		if( !RectController::Overlaps( lRect, rRect ) ) return;
 
-		Asteroid::Controller::TakeDamage( lhs, Ammo::Controller::Damage( rhs ) );
-		Ammo::Controller::TakeDamage( rhs, Asteroid::Controller::Damage( lhs ) );
+		EntityController<Asteroid>::TakeDamage( lhs, EntityController<Ammo>::Damage( rhs ) );
+		EntityController<Ammo>::TakeDamage( rhs, EntityController<Asteroid>::Damage( lhs ) );
 
-		if( Asteroid::Controller::Health( lhs ) > 0.f ) return;
+		if( EntityController<Asteroid>::Health( lhs ) > 0.f ) return;
 
-		const auto reason = Ammo::Controller::GetOwner( rhs ) == Ammo::Owner::Hero ?
+		const auto reason = EntityController<Ammo>::GetOwner( rhs ) == Ammo::Owner::Hero ?
 			Asteroid::DeathReason::AffectedByPlayer :
 			Asteroid::DeathReason::AffectedByEnemy;
 
-		Asteroid::Controller::Reason( lhs, reason );
+		EntityController<Asteroid>::Reason( lhs, reason );
 
-		if( Ammo::Controller::GetOwner( rhs ) == Ammo::Owner::Hero )
-			GameController::IncrementScore( game, Asteroid::Controller::ScoreValue( lhs ) );
+		if( EntityController<Ammo>::GetOwner( rhs ) == Ammo::Owner::Hero )
+			GameController::IncrementScore( game, EntityController<Asteroid>::ScoreValue( lhs ) );
 	}
 	void WorldController::DoCollision( Asteroid& lhs, Enemy& rhs, Game& game )noexcept
 	{
-		const auto lRect = Asteroid::Controller::AABB( lhs );
-		const auto rRect = Enemy::Controller::AABB( rhs );
+		const auto lRect = EntityController<Asteroid>::AABB( lhs );
+		const auto rRect = EntityController<Enemy>::AABB( rhs );
 
-		if( !lRect.Overlaps( rRect ) ) return;
+		if( !RectController::Overlaps( lRect, rRect ) ) return;
 
-		Asteroid::Controller::TakeDamage( lhs, Enemy::Controller::Damage( rhs ) );
-		Enemy::Controller::TakeDamage( rhs, Asteroid::Controller::Damage( lhs ) );
+		EntityController<Asteroid>::TakeDamage( lhs, EntityController<Enemy>::Damage( rhs ) );
+		EntityController<Enemy>::TakeDamage( rhs, EntityController<Asteroid>::Damage( lhs ) );
 
-		if( Asteroid::Controller::Health( lhs ) > 0.f ) return;
+		if( EntityController<Asteroid>::Health( lhs ) > 0.f ) return;
 
-		Asteroid::Controller::Reason( lhs, Asteroid::DeathReason::AffectedByEnemy );
+		EntityController<Asteroid>::Reason( lhs, Asteroid::DeathReason::AffectedByEnemy );
 	}
 	void WorldController::DoCollision( Asteroid& lhs, Hero& rhs, Game& game )noexcept
 	{
-		const auto lRect = Asteroid::Controller::AABB( lhs );
-		const auto rRect = Hero::Controller::AABB( rhs );
+		const auto lRect = EntityController<Asteroid>::AABB( lhs );
+		const auto rRect = EntityController<Hero>::AABB( rhs );
 
-		if( !lRect.Overlaps( rRect ) ) return;
+		if( !RectController::Overlaps( lRect, rRect ) ) return;
 
-		Asteroid::Controller::TakeDamage( lhs, Hero::Controller::Damage( rhs ) );
-		Hero::Controller::TakeDamage( rhs, Asteroid::Controller::Damage( lhs ) );
-		if( Asteroid::Controller::Health( lhs ) > 0.f ) return;
+		EntityController<Asteroid>::TakeDamage( lhs, EntityController<Hero>::Damage( rhs ) );
+		EntityController<Hero>::TakeDamage( rhs, EntityController<Asteroid>::Damage( lhs ) );
+		if( EntityController<Asteroid>::Health( lhs ) > 0.f ) return;
 
-		GameController::IncrementScore( game, Asteroid::Controller::ScoreValue( lhs ) );
-		Asteroid::Controller::Reason( lhs, Asteroid::DeathReason::AffectedByPlayer );
+		GameController::IncrementScore( game, EntityController<Asteroid>::ScoreValue( lhs ) );
+		EntityController<Asteroid>::Reason( lhs, Asteroid::DeathReason::AffectedByPlayer );
 	}
 	void WorldController::DoCollision( Ammo& lhs, Asteroid& rhs, Game& game )noexcept
 	{
-		const auto lRect = Ammo::Controller::AABB( lhs );
-		const auto rRect = Asteroid::Controller::AABB( rhs );
+		const auto lRect = EntityController<Ammo>::AABB( lhs );
+		const auto rRect = EntityController<Asteroid>::AABB( rhs );
 
-		if( !lRect.Overlaps( rRect ) ) return;
+		if( !RectController::Overlaps( lRect, rRect ) ) return;
 
-		Asteroid::Controller::TakeDamage( rhs, Ammo::Controller::Damage( lhs ) );
-		Ammo::Controller::TakeDamage( lhs, Asteroid::Controller::Damage( rhs ) );
+		EntityController<Asteroid>::TakeDamage( rhs, EntityController<Ammo>::Damage( lhs ) );
+		EntityController<Ammo>::TakeDamage( lhs, EntityController<Asteroid>::Damage( rhs ) );
 
-		if( Asteroid::Controller::Health( rhs ) > 0.f ) return;
+		if( EntityController<Asteroid>::Health( rhs ) > 0.f ) return;
 
-		auto reason = ( Ammo::Controller::GetOwner( lhs ) == Ammo::Owner::Hero ?
+		auto reason = ( EntityController<Ammo>::GetOwner( lhs ) == Ammo::Owner::Hero ?
 			Asteroid::DeathReason::AffectedByPlayer :
 			Asteroid::DeathReason::AffectedByEnemy );
 
-		Asteroid::Controller::Reason( rhs, reason );
+		EntityController<Asteroid>::Reason( rhs, reason );
 
-		if( Ammo::Controller::GetOwner( lhs ) == Ammo::Owner::Hero )
+		if( EntityController<Ammo>::GetOwner( lhs ) == Ammo::Owner::Hero )
 		{
-			Game::Controller::IncrementScore( game, Asteroid::Controller::ScoreValue( rhs ) );
+			GameController::IncrementScore( game, EntityController<Asteroid>::ScoreValue( rhs ) );
 		}
 	}
 	void WorldController::DoCollision( Ammo& lhs, Boss& rhs, Game& game )noexcept
 	{
-		if( Ammo::Controller::GetOwner( lhs ) == Ammo::Owner::Enemy )return;
+		if( EntityController<Ammo>::GetOwner( lhs ) == Ammo::Owner::Enemy )return;
 
-		const auto lRect = Ammo::Controller::AABB( lhs );
-		const auto rRect = Boss::Controller::AABB( rhs );
+		const auto lRect = EntityController<Ammo>::AABB( lhs );
+		const auto rRect = EntityController<Boss>::AABB( rhs );
 
-		if( !lRect.Overlaps( rRect ) ) return;
+		if( !RectController::Overlaps( lRect, rRect ) ) return;
 
-		Ammo::Controller::TakeDamage( lhs, Boss::Controller::Damage( rhs ) );
-		Boss::Controller::TakeDamage( rhs, Ammo::Controller::Damage( lhs ) );
+		EntityController<Ammo>::TakeDamage( lhs, EntityController<Boss>::Damage( rhs ) );
+		EntityController<Boss>::TakeDamage( rhs, EntityController<Ammo>::Damage( lhs ) );
 	}
 	void WorldController::DoCollision( Ammo& lhs, Enemy& rhs, Game& game )noexcept
 	{
-		if( Ammo::Controller::GetOwner( lhs ) == Ammo::Owner::Enemy )return;
+		if( EntityController<Ammo>::GetOwner( lhs ) == Ammo::Owner::Enemy )return;
 
-		const auto lRect = Ammo::Controller::AABB( lhs );
-		const auto rRect = Enemy::Controller::AABB( rhs );
+		const auto lRect = EntityController<Ammo>::AABB( lhs );
+		const auto rRect = EntityController<Enemy>::AABB( rhs );
 
-		if( !lRect.Overlaps( rRect ) ) return;
+		if( !RectController::Overlaps( lRect, rRect ) ) return;
 
-		Ammo::Controller::TakeDamage( lhs, Enemy::Controller::Damage( rhs ) );
-		Enemy::Controller::TakeDamage( rhs, Ammo::Controller::Damage( lhs ) );
-		
-		if( Enemy::Controller::Health( rhs ) > 0.f ) return;
+		EntityController<Ammo>::TakeDamage( lhs, EntityController<Enemy>::Damage( rhs ) );
+		EntityController<Enemy>::TakeDamage( rhs, EntityController<Ammo>::Damage( lhs ) );
 
-		Game::Controller::IncrementScore( game, Enemy::score_value );
+		if( EntityController<Enemy>::Health( rhs ) > 0.f ) return;
+
+		GameController::IncrementScore( game, Enemy::score_value );
 	}
 	void WorldController::DoCollision( Ammo& lhs, Hero& rhs, Game& game )noexcept
 	{
-		if( Ammo::Controller::GetOwner( lhs ) == Ammo::Owner::Hero )return;
+		if( EntityController<Ammo>::GetOwner( lhs ) == Ammo::Owner::Hero )return;
 
-		const auto lRect = Ammo::Controller::AABB( lhs );
-		const auto rRect = Hero::Controller::AABB( rhs );
+		const auto lRect = EntityController<Ammo>::AABB( lhs );
+		const auto rRect = EntityController<Hero>::AABB( rhs );
 
-		if( !lRect.Overlaps( rRect ) ) return;
+		if( !RectController::Overlaps( lRect, rRect ) ) return;
 
-		Ammo::Controller::TakeDamage( lhs, Hero::Controller::Damage( rhs ) );
-		Hero::Controller::TakeDamage( rhs, Ammo::Controller::Damage( lhs ) );
+		EntityController<Ammo>::TakeDamage( lhs, EntityController<Hero>::Damage( rhs ) );
+		EntityController<Hero>::TakeDamage( rhs, EntityController<Ammo>::Damage( lhs ) );
 	}
 	void WorldController::DoCollision( Boss& lhs, Ammo& rhs, Game& game )noexcept
 	{
-		if( Ammo::Controller::GetOwner( rhs ) == Ammo::Owner::Enemy ) return;
+		if( EntityController<Ammo>::GetOwner( rhs ) == Ammo::Owner::Enemy ) return;
 
-		const auto lRect = Boss::Controller::AABB( lhs );
-		const auto rRect = Ammo::Controller::AABB( rhs );
+		const auto lRect = EntityController<Boss>::AABB( lhs );
+		const auto rRect = EntityController<Ammo>::AABB( rhs );
 
-		if( !lRect.Overlaps( rRect ) ) return;
+		if( !RectController::Overlaps( lRect, rRect ) ) return;
 
-		Boss::Controller::TakeDamage( lhs, Ammo::Controller::Damage( rhs ) );
-		Ammo::Controller::TakeDamage( rhs, Boss::Controller::Damage( lhs ) );
+		EntityController<Boss>::TakeDamage( lhs, EntityController<Ammo>::Damage( rhs ) );
+		EntityController<Ammo>::TakeDamage( rhs, EntityController<Boss>::Damage( lhs ) );
 	}
 	void WorldController::DoCollision( Boss& lhs, Hero& rhs, Game& game )noexcept
 	{
-		const auto lRect = Boss::Controller::AABB( lhs );
-		const auto rRect = Hero::Controller::AABB( rhs );
+		const auto lRect = EntityController<Boss>::AABB( lhs );
+		const auto rRect = EntityController<Hero>::AABB( rhs );
 
-		if( !lRect.Overlaps( rRect ) ) return;
+		if( !RectController::Overlaps( lRect, rRect ) ) return;
 
-		Boss::Controller::TakeDamage( lhs, Hero::Controller::Damage( rhs ) );
-		Hero::Controller::TakeDamage( rhs, Boss::Controller::Damage( lhs ) );
+		EntityController<Boss>::TakeDamage( lhs, EntityController<Hero>::Damage( rhs ) );
+		EntityController<Hero>::TakeDamage( rhs, EntityController<Boss>::Damage( lhs ) );
 	}
 	void WorldController::DoCollision( Enemy& lhs, Asteroid& rhs, Game& game )noexcept
 	{
-		const auto lRect = Enemy::Controller::AABB( lhs );
-		const auto rRect = Asteroid::Controller::AABB( rhs );
+		const auto lRect = EntityController<Enemy>::AABB( lhs );
+		const auto rRect = EntityController<Asteroid>::AABB( rhs );
 
-		if( !lRect.Overlaps( rRect ) ) return;
+		if( !RectController::Overlaps( lRect, rRect ) ) return;
 
-		Enemy::Controller::TakeDamage( lhs, Asteroid::Controller::Damage( rhs ) );
-		Asteroid::Controller::TakeDamage( rhs, Enemy::Controller::Damage( lhs ) );
+		EntityController<Enemy>::TakeDamage( lhs, EntityController<Asteroid>::Damage( rhs ) );
+		EntityController<Asteroid>::TakeDamage( rhs, EntityController<Enemy>::Damage( lhs ) );
 
-		if( Asteroid::Controller::Health( rhs ) > 0.f ) return;
+		if( EntityController<Asteroid>::Health( rhs ) > 0.f ) return;
 
-		Asteroid::Controller::Reason( rhs, Asteroid::DeathReason::AffectedByEnemy );
+		EntityController<Asteroid>::Reason( rhs, Asteroid::DeathReason::AffectedByEnemy );
 	}
 	void WorldController::DoCollision( Enemy& lhs, Ammo& rhs, Game& game )noexcept
 	{
-		if( Ammo::Controller::GetOwner( rhs ) == Ammo::Owner::Enemy )return;
+		if( EntityController<Ammo>::GetOwner( rhs ) == Ammo::Owner::Enemy )return;
 
-		const auto lRect = Enemy::Controller::AABB( lhs );
-		const auto rRect = Ammo::Controller::AABB( rhs );
+		const auto lRect = EntityController<Enemy>::AABB( lhs );
+		const auto rRect = EntityController<Ammo>::AABB( rhs );
 
-		if( !lRect.Overlaps( rRect ) ) return;
+		if( !RectController::Overlaps( lRect, rRect ) ) return;
 
-		Enemy::Controller::TakeDamage( lhs, Ammo::Controller::Damage( rhs ) );
-		Ammo::Controller::TakeDamage( rhs, Enemy::Controller::Damage( lhs ) );
+		EntityController<Enemy>::TakeDamage( lhs, EntityController<Ammo>::Damage( rhs ) );
+		EntityController<Ammo>::TakeDamage( rhs, EntityController<Enemy>::Damage( lhs ) );
 
-		if( Enemy::Controller::Health( lhs ) > 0.f ) return;
+		if( EntityController<Enemy>::Health( lhs ) > 0.f ) return;
 
-		Game::Controller::IncrementScore( game, Enemy::score_value );
+		GameController::IncrementScore( game, Enemy::score_value );
 	}
 	void WorldController::DoCollision( Enemy& lhs, Hero& rhs, Game& game )noexcept
 	{
-		const auto lRect = Enemy::Controller::AABB( lhs );
-		const auto rRect = Hero::Controller::AABB( rhs );
+		const auto lRect = EntityController<Enemy>::AABB( lhs );
+		const auto rRect = EntityController<Hero>::AABB( rhs );
 
-		if( !lRect.Overlaps( rRect ) ) return;
+		if( !RectController::Overlaps( lRect, rRect ) ) return;
 
-		Enemy::Controller::TakeDamage( lhs, Hero::Controller::Damage( rhs ) );
-		Hero::Controller::TakeDamage( rhs, Enemy::Controller::Damage( lhs ) );
+		EntityController<Enemy>::TakeDamage( lhs, EntityController<Hero>::Damage( rhs ) );
+		EntityController<Hero>::TakeDamage( rhs, EntityController<Enemy>::Damage( lhs ) );
 
-		if( Enemy::Controller::Health( lhs ) > 0.f ) return;
-		
-		Game::Controller::IncrementScore( game, Enemy::score_value );
+		if( EntityController<Enemy>::Health( lhs ) > 0.f ) return;
+
+		GameController::IncrementScore( game, Enemy::score_value );
 	}
 	void WorldController::DoCollision( Hero& lhs, Asteroid& rhs, Game& game )noexcept
 	{
-		const auto lRect = Hero::Controller::AABB( lhs );
-		const auto rRect = Asteroid::Controller::AABB( rhs );
+		const auto lRect = EntityController<Hero>::AABB( lhs );
+		const auto rRect = EntityController<Asteroid>::AABB( rhs );
 
-		if( !lRect.Overlaps( rRect ) ) return;
+		if( !RectController::Overlaps( lRect, rRect ) ) return;
 
-		Hero::Controller::TakeDamage( lhs, Asteroid::Controller::Damage( rhs ) );
-		Asteroid::Controller::TakeDamage( rhs, Hero::Controller::Damage( lhs ) );
+		EntityController<Hero>::TakeDamage( lhs, EntityController<Asteroid>::Damage( rhs ) );
+		EntityController<Asteroid>::TakeDamage( rhs, EntityController<Hero>::Damage( lhs ) );
 
-		if( Asteroid::Controller::Health( rhs ) > 0.f ) return;
+		if( EntityController<Asteroid>::Health( rhs ) > 0.f ) return;
 
-		GameController::IncrementScore( game, Asteroid::Controller::ScoreValue( rhs ) );
-		Asteroid::Controller::Reason( rhs, Asteroid::DeathReason::AffectedByPlayer );
+		GameController::IncrementScore( game, EntityController<Asteroid>::ScoreValue( rhs ) );
+		EntityController<Asteroid>::Reason( rhs, Asteroid::DeathReason::AffectedByPlayer );
 	}
 	void WorldController::DoCollision( Hero& lhs, Ammo& rhs, Game& game )noexcept
 	{
-		if( Ammo::Controller::GetOwner( rhs ) == Ammo::Owner::Hero )return;
+		if( EntityController<Ammo>::GetOwner( rhs ) == Ammo::Owner::Hero )return;
 
-		const auto lrect = Hero::Controller::AABB( lhs );
-		const auto rrect = Ammo::Controller::AABB( rhs );
+		const auto lRect = EntityController<Hero>::AABB( lhs );
+		const auto rRect = EntityController<Ammo>::AABB( rhs );
 
-		if( !lrect.Overlaps( rrect ) ) return;
+		if( !RectController::Overlaps( lRect, rRect ) ) return;
 
-		Hero::Controller::TakeDamage( lhs, Ammo::Controller::Damage( rhs ) );
-		Ammo::Controller::TakeDamage( rhs, Hero::Controller::Damage( lhs ) );
+		EntityController<Hero>::TakeDamage( lhs, EntityController<Ammo>::Damage( rhs ) );
+		EntityController<Ammo>::TakeDamage( rhs, EntityController<Hero>::Damage( lhs ) );
 	}
 	void WorldController::DoCollision( Hero& lhs, Boss& rhs, Game& game )noexcept
 	{
-		const auto lRect = Hero::Controller::AABB( lhs );
-		const auto rRect = Boss::Controller::AABB( rhs );
+		const auto lRect = EntityController<Hero>::AABB( lhs );
+		const auto rRect = EntityController<Boss>::AABB( rhs );
 
-		if( !lRect.Overlaps( rRect ) ) return;
+		if( !RectController::Overlaps( lRect, rRect ) ) return;
 
-		Hero::Controller::TakeDamage( lhs, Boss::Controller::Damage( rhs ) );
-		Boss::Controller::TakeDamage( rhs, Hero::Controller::Damage( lhs ) );
+		EntityController<Hero>::TakeDamage( lhs, EntityController<Boss>::Damage( rhs ) );
+		EntityController<Boss>::TakeDamage( rhs, EntityController<Hero>::Damage( lhs ) );
 	}
 	void WorldController::DoCollision( Hero& lhs, Enemy& rhs, Game& game )noexcept
 	{
-		const auto lRect = Hero::Controller::AABB(  lhs );
-		const auto rRect = Enemy::Controller::AABB( rhs );
+		const auto lRect = EntityController<Hero>::AABB( lhs );
+		const auto rRect = EntityController<Enemy>::AABB( rhs );
 
-		if( !lRect.Overlaps( rRect ) ) return;
+		if( !RectController::Overlaps( lRect, rRect ) ) return;
 
-		Hero::Controller::TakeDamage( lhs, Enemy::Controller::Damage( rhs ) );
-		Enemy::Controller::TakeDamage( rhs, Hero::Controller::Damage( lhs ) );
+		EntityController<Hero>::TakeDamage( lhs, EntityController<Enemy>::Damage( rhs ) );
+		EntityController<Enemy>::TakeDamage( rhs, EntityController<Hero>::Damage( lhs ) );
 
-		if( Enemy::Controller::Health( rhs ) > 0.f ) return;
+		if( EntityController<Enemy>::Health( rhs ) > 0.f ) return;
 
-		Game::Controller::IncrementScore( game, Enemy::score_value );
+		GameController::IncrementScore( game, Enemy::score_value );
 	}
 }

@@ -3,9 +3,11 @@
 #include "BaseGeometryShader.h"
 #include "ColorVertex.h"
 #include "Mat3.h"
+#include <array>
 
-struct RectFillEffect
+class RectFillEffect
 {
+public:
 	using Vertex = ColorVertex;
 
 	struct VertexShader
@@ -36,6 +38,12 @@ struct RectFillEffect
 
 		ConstantBuffer buffer;
 	};
+
+private:
+	friend class EffectController;
+	friend class EffectView;
+
+	std::array<Vertex, 4> vertices;
 
 	VertexShader vs;
 	GeometryShader gs;

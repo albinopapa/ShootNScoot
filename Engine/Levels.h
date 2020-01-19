@@ -2,26 +2,27 @@
 
 #include "AsteroidSpawner.h"
 #include "EnemySpawner.h"
-#include "Graphics.h"
+#include "RectController.h"
+#include "Settings.h"
 #include <variant>
 
 namespace sns
 {
-	class Boss1;
-	class Boss2;
-	class Boss3;
-	class Boss4;
-	class Boss5;
-	class Boss6;
-	class Boss7;
-	class Boss8;
-	class Boss9;
-	class Boss10;
+	struct Boss1;
+	struct Boss2;
+	struct Boss3;
+	struct Boss4;
+	struct Boss5;
+	struct Boss6;
+	struct Boss7;
+	struct Boss8;
+	struct Boss9;
+	struct Boss10;
 
 	struct Level1
 	{
 		using BossType = Boss1;
-		static constexpr Vec2	hero_start_pos			= screenRect.Center();
+		static constexpr Vec2	hero_start_pos			= RectController::Center( world_rect );
 		static constexpr int	asteroid_spawn_max		= 20;
 		static constexpr float	asteroid_spawn_delay	= 6.f;
 
@@ -35,7 +36,7 @@ namespace sns
 	struct Level2
 	{
 		using BossType = Boss2;
-		static constexpr Vec2	hero_start_pos = screenRect.Center();
+		static constexpr Vec2	hero_start_pos = RectController::Center( world_rect );
 		static constexpr int	asteroid_spawn_max = 20;
 		static constexpr float	asteroid_spawn_delay = 4.f;
 
@@ -49,7 +50,7 @@ namespace sns
 	struct Level3 
 	{
 		using BossType = Boss3;
-		static constexpr Vec2	hero_start_pos = screenRect.Center();
+		static constexpr Vec2	hero_start_pos = RectController::Center( world_rect );
 		static constexpr int	asteroid_spawn_max = 20;
 		static constexpr float	asteroid_spawn_delay = 4.f;
 
@@ -63,7 +64,7 @@ namespace sns
 	struct Level4 // Asteroid field level
 	{
 		using BossType = Boss4;
-		static constexpr Vec2	hero_start_pos = { screenRect.Center().x, screenRect.Height() };
+		static constexpr Vec2	hero_start_pos = RectController::Center( world_rect );
 		static constexpr int	asteroid_spawn_max = 200;
 		static constexpr float	asteroid_spawn_delay = 4.f;
 
@@ -77,7 +78,7 @@ namespace sns
 	struct Level5 
 	{
 		using BossType = Boss5;
-		static constexpr Vec2	hero_start_pos = screenRect.Center();
+		static constexpr Vec2	hero_start_pos = RectController::Center( world_rect );
 		static constexpr int	asteroid_spawn_max = 20;
 		static constexpr float	asteroid_spawn_delay = 4.f;
 
@@ -91,7 +92,7 @@ namespace sns
 	struct Level6 
 	{
 		using BossType = Boss6;
-		static constexpr Vec2	hero_start_pos = screenRect.Center();
+		static constexpr Vec2	hero_start_pos = RectController::Center( world_rect );
 		static constexpr int	asteroid_spawn_max = 20;
 		static constexpr float	asteroid_spawn_delay = 4.f;
 
@@ -105,7 +106,7 @@ namespace sns
 	struct Level7 
 	{
 		using BossType = Boss7;
-		static constexpr Vec2	hero_start_pos = screenRect.Center();
+		static constexpr Vec2	hero_start_pos = RectController::Center( world_rect );
 		static constexpr int	asteroid_spawn_max = 20;
 		static constexpr float	asteroid_spawn_delay = 4.f;
 
@@ -119,7 +120,7 @@ namespace sns
 	struct Level8 
 	{
 		using BossType = Boss8;
-		static constexpr Vec2	hero_start_pos = screenRect.Center();
+		static constexpr Vec2	hero_start_pos = RectController::Center( world_rect );
 		static constexpr int	asteroid_spawn_max = 20;
 		static constexpr float	asteroid_spawn_delay = 4.f;
 
@@ -133,7 +134,7 @@ namespace sns
 	struct Level9 
 	{
 		using BossType = Boss9;
-		static constexpr Vec2	hero_start_pos = screenRect.Center();
+		static constexpr Vec2	hero_start_pos = RectController::Center( world_rect );
 		static constexpr int	asteroid_spawn_max = 20;
 		static constexpr float	asteroid_spawn_delay = 4.f;
 
@@ -147,7 +148,7 @@ namespace sns
 	struct Level10 
 	{
 		using BossType = Boss10;
-		static constexpr Vec2	hero_start_pos = screenRect.Center();
+		static constexpr Vec2	hero_start_pos = RectController::Center( world_rect );
 		static constexpr int	asteroid_spawn_max = 20;
 		static constexpr float	asteroid_spawn_delay = 4.f;
 
@@ -175,18 +176,11 @@ namespace sns
 		>;
 
 	public:
-		using Controller = struct LevelController;
 		enum class State { Idle, Spawning, Complete };
 
 	public:
 		Level( LevelType type )noexcept;
 
-		void Update( float dt );
-		void Reset()noexcept;
-
-	private:
-		void DoAsteroidSpawn( float dt );
-		void DoEnemySpawnUpdate( float dt );
 	private:
 		friend class LevelController;
 

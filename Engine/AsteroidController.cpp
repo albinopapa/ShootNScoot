@@ -1,27 +1,28 @@
 #include "AsteroidController.h"
-#include "Graphics.h"
+#include "RectController.h"
+#include "Settings.h"
 
 namespace sns
 {
 	void EntityController<Asteroid>::Update( Asteroid& model, float dt ) noexcept
 	{
-		const auto radius = std::visit( [ & ]( auto& astro )
+		std::visit( [ & ]( auto& astro )
 		{
 			using type = std::decay_t<decltype( astro )>;
-			return type::radius;
+
+			model.position += ( model.direction * ( dt * Asteroid::speed ) );
+			const auto aabb = type::aabb + model.position;
+			
+			if( ( ( aabb.bottom < 0.f				) && ( model.direction.y < 0.f ) ) ||
+				( ( aabb.top	> world_rect.bottom ) && ( model.direction.y > 0.f ) ) ||
+				( ( aabb.left   < 0.f				) && ( model.direction.x < 0.f ) ) ||
+				( ( aabb.right  > world_rect.right  ) && ( model.direction.y > 0.f ) ) )
+			{
+				model.health = 0.f;
+				model.reason = Asteroid::DeathReason::LeftScreen;
+			}
+
 		}, model.variant );
-
-		const auto is_leaving =
-			( model.position.y + radius < 0.f && model.direction.y < 0.f ) ||
-			( model.position.y - radius > screenRect.bottom && model.direction.y > 0.f ) ||
-			( model.position.x + radius < 0.f && model.direction.x < 0.f ) ||
-			( model.position.x - radius > screenRect.right && model.direction.y > 0.f );
-
-		if( is_leaving )
-		{
-			model.health = 0.f;
-			model.reason = Asteroid::DeathReason::LeftScreen;
-		}
 	}
 
 	void EntityController<Asteroid>::TakeDamage( Asteroid& model, float amount ) noexcept
@@ -38,7 +39,7 @@ namespace sns
 	{
 		return std::visit( [ & ]( auto const& astro ) {
 			using type = std::decay_t<decltype( astro )>;
-			return RectF{ -type::radius, -type::radius, type::radius, type::radius } + model.position;
+			return type::aabb + model.position;
 		}, model.variant );
 	}
 

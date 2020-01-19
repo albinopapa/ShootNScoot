@@ -1,10 +1,11 @@
 #pragma once
 
-#include "ChiliWin.h"
-
+#include "COMInitializer.h"
 #include <cassert>
 #include <cstdint>
 #include <memory>
+#include <Windows.h>
+#include <wincodec.h>
 
 class Wic
 {
@@ -18,17 +19,8 @@ public:
 			IID_PPV_ARGS( &m_factory )
 			); FAILED( hr ) )
 		{
-			if( result = CoInitialize( nullptr ); result != S_FALSE )
-				ThrowSystemErrorIf( result );
+			ThrowSystemErrorIf( hr );
 		}
-	}
-	Wic( Wic&& ) = default;
-	Wic( Wic const& ) = default;
-	Wic& operator=( Wic&& ) = default;
-	Wic& operator=( Wic const& ) = default;
-	~Wic()noexcept
-	{
-		if( result == S_FALSE ) CoUninitialize();
 	}
 
 	auto create_stream( std::wstring filename )
@@ -198,6 +190,6 @@ private:
 	}
 
 private:
+	COMInitializer coms;
 	Microsoft::WRL::ComPtr<IWICImagingFactory> m_factory;
-	HRESULT result = S_OK;
 };

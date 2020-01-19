@@ -1,105 +1,25 @@
 #include "Surface.h"
-#include "ChiliWin.h"
-#include "WicWrapper.h"
-#include <cassert>
-#include <fstream>
-#include <algorithm>
-
-Surface::Surface( const std::string& filename )
-{
-	auto wic = Wic{};
-	auto decoder = wic.create_decoder( std::wstring( filename.begin(), filename.end() ) );
-	auto frame = wic.create_frame_decode( decoder.Get() );
-	auto converter = wic.create_format_converter( frame.Get() );
-
-	converter->GetSize(
-		reinterpret_cast< UINT* >( &width ),
-		reinterpret_cast< UINT* >( &height )
-	);
-	auto data = wic.copy_pixels_to_buffer( width, height, converter.Get() );
-
-	pixels.resize( width * height );
-	memcpy( pixels.data(), data.get(), width * height * sizeof( Color ) );
-}
-
-Surface::Surface( int width,int height )
-	:
-	width( width ),
-	height( height ),
-	pixels( width * height )
-{}
+#include <utility>
 
 Surface::Surface( Surface&& donor )
+	:
+	width( donor.width ),
+	height( donor.height ),
+	pixels( std::move( donor.pixels ) )
 {
-	*this = std::move( donor );
 }
 
 Surface& Surface::operator=( Surface&& rhs )
 {
-	width = rhs.width;
-	height = rhs.height;
-	pixels = std::move( rhs.pixels );
-	rhs.width = 0;
-	rhs.height = 0;
+	if( this != std::addressof( rhs ) )
+	{
+		width = rhs.width;
+		height = rhs.height;
+		pixels = std::move( rhs.pixels );
+
+		rhs.width = 0;
+		rhs.height = 0;
+	}
+
 	return *this;
-}
-
-void Surface::PutPixel( int x, int y, Color c )
-{
-	assert( x >= 0 );
-	assert( y >= 0 );
-	assert( x < width );
-	assert( y < height );
-	pixels[ x + ( y * width ) ] = c;
-}
-
-Color Surface::GetPixel( int x, int y ) const
-{
-	assert( x >= 0 );
-	assert( y >= 0 );
-	assert( x < width );
-	assert( y < height );
-	return pixels[ x + ( y * width ) ];
-}
-
-int Surface::GetWidth() const
-{
-	return width;
-}
-
-int Surface::GetHeight() const
-{
-	return height;
-}
-
-RectI Surface::GetRect() const
-{
-	return{ 0, 0, width, height };
-}
-
-void Surface::Fill( Color c )
-{
-	if( c.GetA() == 0 )
-	{
-		memset( pixels.data(), 0, sizeof( Color ) * width * height );
-	}
-	else if( c.GetB() == c.GetG() && c.GetB() == c.GetR() )
-	{
-		memset( pixels.data(), c.GetB(), sizeof( Color ) * width * height );
-	}
-	else
-	{
-		for( int y = 0; y < height; ++y )
-		{
-			for( int x = 0; x < width; ++x )
-			{
-				PutPixel( x, y, c );
-			}
-		}
-	}
-}
-
-const Color* Surface::Data() const
-{
-	return pixels.data();
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Vec2.h"
+#include "Vec2Controller.h"
 #include <array>
 #include <optional>
 
@@ -22,22 +23,21 @@ struct Triangle
 	constexpr Triangle( Vertex const& v0_, Vertex const& v1_, Vertex const& v2_ )noexcept
 		:
 		v{ v0_, v1_ ,v2_ },
-		area( 1.f / ( v1_.position - v0_.position ).Cross( v2_.position - v0_.position ) )
+		area( 1.f / Vec2Controller::Cross( v1_.position - v0_.position, v2_.position - v0_.position ) )
 	{}
 
 	constexpr std::optional<Barycentric> Contains( Vec2 const& p )const noexcept
 	{
-		const auto a = ( v[ 1 ].position - p ).Cross( v[ 2 ].position - p ) * area;
-		const auto b = ( v[ 2 ].position - p ).Cross( v[ 0 ].position - p ) * area;
-		const auto c = ( v[ 0 ].position - p ).Cross( v[ 1 ].position - p ) * area;
+		const auto a = Vec2Controller::Cross( v[ 1 ].position - p, v[ 2 ].position - p ) * area;
+		if( ( a < 0.f ) && ( a > 1.f ) )return std::optional<Barycentric>{};
 
-		const auto contains =
-			( a >= 0.f ) & ( a <= 1.f ) &
-			( b >= 0.f ) & ( b <= 1.f ) &
-			( c >= 0.f ) & ( c <= 1.f );
+		const auto b = Vec2Controller::Cross( v[ 2 ].position - p, v[ 0 ].position - p ) * area;
+		if( ( b < 0.f ) && ( b > 1.f ) )return std::optional<Barycentric>{};
 
-		return contains != 0 ? 
-			std::optional<Barycentric>{std::in_place_t{}, a, b, c} : std::optional<Barycentric>{};
+		//const auto c = ( v[ 0 ].position - p ).Cross( v[ 1 ].position - p ) * area;
+		//if( ( c < 0.f ) && ( c > 1.f ) )return std::optional<Barycentric>{};
+		const auto c = 1.f - a - b;
+		return std::optional<Barycentric>{std::in_place_t{}, a, b, c};
 	}
 	constexpr auto Interpolate( Barycentric const& coords )const noexcept
 	{

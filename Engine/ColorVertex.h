@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Colors.h"
+#include "ColorController.h"
 #include "Vec2.h"
 
 struct ColorVertex
@@ -8,10 +9,10 @@ struct ColorVertex
 	constexpr ColorVertex operator+( ColorVertex const& rhs )const noexcept
 	{
 		const auto newColor = Color{
-			uint8_t( color.GetA() + rhs.color.GetA() ),
-			uint8_t( color.GetR() + rhs.color.GetR() ),
-			uint8_t( color.GetG() + rhs.color.GetG() ),
-			uint8_t( color.GetB() + rhs.color.GetB() )
+			uint8_t( ColorController::GetA( color ) + ColorController::GetA( rhs.color ) ),
+			uint8_t( ColorController::GetR( color ) + ColorController::GetR( rhs.color ) ),
+			uint8_t( ColorController::GetG( color ) + ColorController::GetG( rhs.color ) ),
+			uint8_t( ColorController::GetB( color ) + ColorController::GetB( rhs.color ) )
 		};
 		const auto newPosition = position + rhs.position;
 		return { newPosition, newColor };
@@ -19,28 +20,28 @@ struct ColorVertex
 	constexpr ColorVertex operator-( ColorVertex const& rhs )const noexcept
 	{
 		return{ position - rhs.position, Color{
-			uint8_t( color.GetA() - rhs.color.GetA() ),
-			uint8_t( color.GetR() - rhs.color.GetR() ),
-			uint8_t( color.GetG() - rhs.color.GetG() ),
-			uint8_t( color.GetB() - rhs.color.GetB() )
+			uint8_t( ColorController::GetA( color ) - ColorController::GetA( rhs.color ) ),
+			uint8_t( ColorController::GetR( color ) - ColorController::GetR( rhs.color ) ),
+			uint8_t( ColorController::GetG( color ) - ColorController::GetG( rhs.color ) ),
+			uint8_t( ColorController::GetB( color ) - ColorController::GetB( rhs.color ) )
 		} };
 	}
 	constexpr ColorVertex operator*( float rhs )const noexcept
 	{
 		return{ position * rhs, Color{
-			uint8_t( float( color.GetA() ) * rhs ),
-			uint8_t( float( color.GetR() ) * rhs ),
-			uint8_t( float( color.GetG() ) * rhs ),
-			uint8_t( float( color.GetB() ) * rhs )
+			uint8_t( float( ColorController::GetA( color ) ) * rhs ),
+			uint8_t( float( ColorController::GetR( color ) ) * rhs ),
+			uint8_t( float( ColorController::GetG( color ) ) * rhs ),
+			uint8_t( float( ColorController::GetB( color ) ) * rhs )
 		} };
 	}
 	friend constexpr ColorVertex operator*( float lhs, ColorVertex const& rhs )noexcept
 	{
 		return{ lhs * rhs.position, Color{
-			uint8_t( lhs * float( rhs.color.GetA() ) ),
-			uint8_t( lhs * float( rhs.color.GetR() ) ),
-			uint8_t( lhs * float( rhs.color.GetG() ) ),
-			uint8_t( lhs * float( rhs.color.GetB() ) )
+			uint8_t( lhs * float( ColorController::GetA( rhs.color ) ) ),
+			uint8_t( lhs * float( ColorController::GetR( rhs.color ) ) ),
+			uint8_t( lhs * float( ColorController::GetG( rhs.color ) ) ),
+			uint8_t( lhs * float( ColorController::GetB( rhs.color ) ) )
 		} };
 	}
 

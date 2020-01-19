@@ -5,12 +5,13 @@
 #include "Surface.h"
 #include "Triangle.h"
 #include "TextureVertex.h"
-
+#include <array>
 #include <cassert>
 
 template<typename SamplerType>
-struct SolidTextureEffect
+class SolidTextureEffect
 {
+public:
 	using Vertex = TextureVertex;
 
 	struct VertexShader
@@ -44,7 +45,14 @@ struct SolidTextureEffect
 
 		Surface const* sprite = nullptr;
 		SamplerType sampler;
+		ConstantBuffer buffer;
 	};
+
+private:
+	friend class EffectController;
+	friend class EffectView;
+
+	std::array<Vertex, 4> vertices;
 
 	VertexShader vs;
 	GeometryShader gs;

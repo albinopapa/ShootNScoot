@@ -2,6 +2,8 @@
 
 #include "Colors.h"
 #include "EntityController.h"
+#include "Mat3.h"
+#include "Settings.h"
 #include "Surface.h"
 #include "Vec2.h"
 #include <variant>
@@ -43,15 +45,15 @@ namespace sns
 		enum class Owner { Hero, Enemy };
 
 	public:
-		using Controller = EntityController<Ammo>;
 		using AmmoType = std::variant<Bullet, PlasmaBall, Missile>;
 
 	public:
 		Ammo( Vec2 const& position_, Vec2 const& direction_, Owner owner_, AmmoType type );
-		void Update( float delta_time )noexcept;
 
 	private:
-		friend struct EntityController<Ammo>;
+		friend class EntityController<Ammo>;
+		friend class AmmoView;
+
 		Vec2 position;
 		Vec2 velocity;
 		float energy = 0.f;

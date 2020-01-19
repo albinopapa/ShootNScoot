@@ -19,19 +19,38 @@
  *	along with this source code.  If not, see <http://www.gnu.org/licenses/>.			  *
  ******************************************************************************************/
 #pragma once
-#include "ChiliWin.h"
-#include <memory>
-#include <vector>
-#include <mutex>
-#include <condition_variable>
-#include <thread>
+
 #include "ChiliException.h"
-#include <wrl\client.h>
+#include "ChiliWin.h"
 #include "COMInitializer.h"
+#include <condition_variable>
+#include <memory>
+#include <mutex>
+#include <thread>
+#include <vector>
+#include <wrl\client.h>
 
 // forward declare WAVEFORMATEX so we don't have to include bullshit headers
 struct tWAVEFORMATEX;
 typedef tWAVEFORMATEX WAVEFORMATEX;
+
+class Sound;
+class SoundSystem;
+
+class Channel
+{
+	friend class Sound;
+	friend class SoundChannelController;
+	friend class VoiceCallback;
+public:
+	Channel( SoundSystem& sys );
+	Channel( const Channel& ) = delete;
+	~Channel();
+private:
+	std::unique_ptr<struct XAUDIO2_BUFFER> xaBuffer;
+	struct IXAudio2SourceVoice* pSource = nullptr;
+	class Sound* pSound = nullptr;
+};
 
 class SoundSystem
 {
@@ -39,7 +58,7 @@ public:
 	class APIException : public ChiliException
 	{
 	public:
-		APIException( HRESULT hr,const wchar_t * file,unsigned int line,const std::wstring& note );
+		APIException( HRESULT hr, const wchar_t * file, unsigned int line, const std::wstring& note );
 		std::wstring GetErrorName() const;
 		std::wstring GetErrorDescription() const;
 		virtual std::wstring GetFullMessage() const override;
@@ -57,77 +76,19 @@ public:
 		std::wstring filename;
 	};
 private:
-	class MFInitializer
-	{
-	public:
-		MFInitializer();
-		~MFInitializer();
-	private:
-		HRESULT hr;
-	};
-	class XAudioDll
-	{
-	private:
-		enum class LoadType
-		{
-			Folder,
-			Local,
-			System,
-			Invalid
-		};
-	public:
-		XAudioDll();
-		~XAudioDll();
-		operator HMODULE() const;
-	private:
-		static const wchar_t* GetDllPath( LoadType type );
-	private:
-		HMODULE hModule = 0;
-		static constexpr wchar_t* systemPath = L"XAudio2_7.dll";
-#ifdef _M_X64
-		static constexpr wchar_t* folderPath = L"XAudio\\XAudio2_7_64.dll";
-		static constexpr wchar_t* localPath = L"XAudio2_7_64.dll";
-#else
-		static constexpr wchar_t* folderPath = L"XAudio\\XAudio2_7_32.dll";
-		static constexpr wchar_t* localPath = L"XAudio2_7_32.dll";
-#endif
-	};
-public:
-	class Channel
-	{
-		friend class Sound;
-	public:
-		Channel( SoundSystem& sys );
-		Channel( const Channel& ) = delete;
-		~Channel();
-		void PlaySoundBuffer( class Sound& s,float freqMod,float vol );
-		void Stop();
-	private:
-		void RetargetSound( const Sound* pOld,Sound* pNew );
-	private:
-		std::unique_ptr<struct XAUDIO2_BUFFER> xaBuffer;
-		struct IXAudio2SourceVoice* pSource = nullptr;
-		class Sound* pSound = nullptr;
-	};
-public:
 	SoundSystem( const SoundSystem& ) = delete;
-	static SoundSystem& Get();
-	static void SetMasterVolume( float vol = 1.0f );
-	static const WAVEFORMATEX& GetFormat();
-	void PlaySoundBuffer( class Sound& s,float freqMod,float vol );
-private:
 	SoundSystem();
-	void DeactivateChannel( Channel& channel );
 private:
-	COMInitializer comInit;
-	MFInitializer mfInit;
-	XAudioDll xaudio_dll;
+	friend class Channel;
+	friend class SoundSystemController;
+
+	std::vector<std::unique_ptr<Channel>> idleChannelPtrs;
+	std::vector<std::unique_ptr<Channel>> activeChannelPtrs;
 	Microsoft::WRL::ComPtr<struct IXAudio2> pEngine;
 	struct IXAudio2MasteringVoice* pMaster = nullptr;
 	std::unique_ptr<WAVEFORMATEX> format;
 	std::mutex mutex;
-	std::vector<std::unique_ptr<Channel>> idleChannelPtrs;
-	std::vector<std::unique_ptr<Channel>> activeChannelPtrs;
+	COMInitializer comInit;
 private:
 	// change these values to match the format of the wav files you are loading
 	// all wav files must have the same format!! (no mixing and matching)
@@ -140,7 +101,6 @@ private:
 
 class Sound
 {
-	friend SoundSystem::Channel;
 public:
 	enum class LoopType
 	{
@@ -161,18 +121,17 @@ public:
 	Sound( const std::wstring& fileName,float loopStart,float loopEnd );
 	Sound( Sound&& donor );
 	Sound& operator=( Sound&& donor );
-	void Play( float freqMod = 1.0f,float vol = 1.0f );
-	void StopOne();
-	void StopAll();
 	~Sound();
 private:
-	static Sound LoadNonWav( const std::wstring& fileName,LoopType loopType,
-							 unsigned int loopStartSample,unsigned int loopEndSample,
-							 float loopStartSeconds,float loopEndSeconds );
 	Sound( const std::wstring& fileName,LoopType loopType,
 		unsigned int loopStartSample,unsigned int loopEndSample,
 		float loopStartSeconds,float loopEndSeconds );
 private:
+	friend class Channel;
+	friend class SoundController;
+	friend class SoundChannelController;
+	friend class VoiceCallback;
+
 	UINT32 nBytes = 0u;
 	bool looping = false;
 	unsigned int loopStart;
@@ -180,7 +139,7 @@ private:
 	std::unique_ptr<BYTE[]> pData;
 	std::mutex mutex;
 	std::condition_variable cvDeath;
-	std::vector<SoundSystem::Channel*> activeChannelPtrs;
-	static constexpr unsigned int nullSample = 0xFFFFFFFFu;
-	static constexpr float nullSeconds = -1.0f;
+	std::vector<Channel*> activeChannelPtrs;
+	static constexpr auto nullSample = 0xFFFFFFFFu;
+	static constexpr auto nullSeconds = -1.0f;
 };

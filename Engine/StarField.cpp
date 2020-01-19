@@ -1,4 +1,5 @@
 #include "Starfield.h"
+#include "Settings.h"
 
 namespace sns
 {
@@ -24,10 +25,13 @@ namespace sns
 
 	Star Starfield::generate_star( std::mt19937& rng, std::pair<float, float> width_bounds, std::pair<float, float> speed_bounds )noexcept
 	{
-		auto xDist = std::uniform_real_distribution<float>{ width_bounds.first, width_bounds.second };
-		auto spdDist = std::uniform_real_distribution<float>{ speed_bounds.first, speed_bounds.second };
+		const auto[ xMin, xMax ] = width_bounds;
+		auto xDist = std::uniform_real_distribution<float>{ xMin, xMax };
 
-		return Star{ Vec2{xDist( rng ), 0.f}, spdDist( rng ) };
+		const auto[ spdMin, spdMax ] = speed_bounds;
+		auto spdDist = std::uniform_real_distribution<float>{ spdMin, spdMax };
+
+		return Star{ Vec2{xDist( rng ), -viewport_size.height * .5f }, spdDist( rng ) };
 	}
 
 }

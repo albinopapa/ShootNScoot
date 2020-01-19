@@ -1,6 +1,8 @@
 #include "Star.h"
 
-void sns::Star::Update() noexcept
+sns::Star::Star( Vec2 const & position_, float speed_ ) noexcept
+	:
+	position( position_ ),
+	speed( speed_ )
 {
-	position += {0.f, speed };
 }

@@ -1,13 +1,20 @@
+#include "Ammo.h"
 #include "AmmoController.h"
-#include "Bullet.h"
-#include "Graphics.h"
+#include "RectController.h"
+#include "Settings.h"
 #include <algorithm>
+#include <type_traits>
 
 namespace sns
 {
 	void EntityController<Ammo>::Update( Ammo& model, float dt ) noexcept
 	{	
-		model.isAlive = Graphics::IsVisible( RectI( AABB( model ) ) ) && model.energy > 0.f;
+		std::visit( [ & ]( const auto& ammo_ ) 
+		{
+			using type = std::decay_t<decltype( ammo_ )>;
+
+			model.position += ( model.velocity * ( type::speed * dt ) );
+		}, model.variant );
 	}
 
 	void  EntityController<Ammo>::TakeDamage( Ammo& model, float amount ) noexcept
@@ -35,6 +42,8 @@ namespace sns
 
 	bool EntityController<Ammo>::IsAlive( Ammo const& model )noexcept
 	{
-		return model.isAlive;
+		return 
+			RectController::IsContainedBy( AABB( model ), world_rect ) &&
+			model.energy > 0.f;
 	}
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Bullet.h"
+#include "Ammo.h"
 #include <variant>
 
 namespace sns
@@ -29,17 +29,16 @@ namespace sns
 	class Weapon
 	{
 	public:
-		using Controller = WeaponController;
 		using WeaponType = std::variant<Gun, MachineGun, PlasmaGun, MissileLauncher>;
+
+	public:
 		enum class State { Idle, Recharge };
 
 	public:
 		Weapon( WeaponType type )noexcept;
-		void Update( float dt )noexcept;
-		void Reset()noexcept;
 
 	private:
-		friend struct WeaponController;
+		friend class WeaponController;
 		WeaponType variant;
 		float fire_timer = 0.f;
 		State state = State::Idle;

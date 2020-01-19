@@ -1,18 +1,20 @@
-#include "BossController.h"
+#include "AngleMath.h"
 #include "Bosses.h"
+#include "BossController.h"
 #include "ChiliMath.h"
-#include "HeroController.h"
-#include "World.h"
+#include "RectController.h"
+#include "Vec2Controller.h"
 #include "WeaponController.h"
+#include "World.h"
 #include <cassert>
 
 namespace sns
 {
-	void EntityController<Boss>::Update( Boss& model, World& world, float dt ) noexcept
+	void EntityController<Boss>::Update( Boss& model, World& world, Vec2& hero_position, float dt ) noexcept
 	{
 		std::visit( [ & ]( auto& boss )
 		{
-			Update( boss, world, model, dt );
+			Update( boss, world, model, hero_position, dt );
 		}, model.variant );
 	}
 
@@ -42,59 +44,73 @@ namespace sns
 		}, model.variant );
 	}
 
-	void EntityController<Boss>::Update( Boss1& model, World& world, Boss& parent, float dt )noexcept
+	void EntityController<Boss>::Reset( Boss& model ) noexcept
+	{
+		model.position = { RectController::Center( world_rect ).x, world_rect.top };
+		model.direction = { 0.f, -1.f };
+		model.variant = Boss1{};
+
+		std::visit( [ & ]( auto& boss ) 
+		{ 
+			model.health = boss.max_health; 
+		}, model.variant );
+	}
+
+	void EntityController<Boss>::Update(  Boss1& model, World& world, Boss& parent, Vec2 const& hero_position, float dt )noexcept
 	{
 		switch( model.state )
 		{
-			case Boss1State::Attack:
+			case Boss1::State::Attack:
 				WeaponController::Update( model.weapon, dt );
 
 				if( WeaponController::CanFire( model.weapon ) )
 				{
 					const auto missile_dir =
-						( EntityController<Hero>::Position( world.hero ) - parent.position ).Normalize();
+						Vec2Controller::Normalize( hero_position - parent.position );
 
 					WeaponController::Fire(
 						model.weapon,
 						parent.position,
 						missile_dir,
 						world,
-						AmmoOwner::Enemy
+						Ammo::Owner::Enemy
 					);
 
 					++model.missile_count;
 				}
 
 				if( model.missile_count >= model.max_missiles )
-					model.state = Boss1State::Regen;
+					model.state = Boss1::State::Regen;
 
 				break;
-			case Boss1State::Regen:
+			case Boss1::State::Regen:
+				model.regen_timer -= dt;
 				if( model.regen_timer <= 0.f )
 				{
 					model.missile_count = 0;
 					model.regen_timer = model.regen_delay;
-					model.state = Boss1State::Attack;
+					model.state = Boss1::State::Attack;
 				}
 				break;
-			case Boss1State::Idle:
+			case Boss1::State::Idle:
 			{
-				if( ( model.aabb + parent.position ).IsContainedBy( screenRect ) )
-					model.state = Boss1State::Attack;
+				parent.position += ( parent.direction * ( Boss1::speed * dt ) );
+				if( RectController::IsContainedBy( Boss1::aabb + parent.position, world_rect ) )
+					model.state = Boss1::State::Attack;
 				break;
 			}
 			default:
 				assert( false );
 		}
 	}
-
-	void EntityController<Boss>::Update( Boss2& model, World& world, Boss& parent, float dt )noexcept
+	void EntityController<Boss>::Update(  Boss2& model, World& world, Boss& parent, Vec2 const& hero_position, float dt )noexcept
 	{
 		switch( model.state )
 		{
 			case Boss2::State::Idle:
 			{
-				if( ( model.aabb + parent.position ).IsContainedBy( screenRect ) )
+				parent.position += ( Vec2{ 0.f, 1.f } *( Boss2::speed * dt ) );
+				if( RectController::IsContainedBy( Boss2::aabb + parent.position, world_rect ) )
 				{
 					model.state = Boss2::State::Signaling;
 				}
@@ -102,6 +118,7 @@ namespace sns
 			}
 			case Boss2::State::Signaling:
 			{
+				model.signal_timer -= dt;
 				if( model.signal_timer <= 0.f )
 				{
 					model.signal_timer = model.signal_delay;
@@ -109,9 +126,10 @@ namespace sns
 				}
 				else
 				{
-					model.waypoint = HeroController::Position( world.hero );
+					model.waypoint = hero_position;
 
-					parent.direction = ( model.waypoint - parent.position ).Normalize();;
+					parent.direction =
+						Vec2Controller::Normalize( model.waypoint - parent.position );
 
 					parent.angle = lerp(
 						parent.angle, 
@@ -123,7 +141,8 @@ namespace sns
 			}
 			case Boss2::State::Ramming:
 			{
-				if( ( model.waypoint - parent.position ).LengthSq() < 4.f )
+				parent.position += ( parent.direction * ( Boss2::speed * dt ) );
+				if( Vec2Controller::LengthSq( model.waypoint - parent.position ) < 4.f )
 				{
 					model.state = Boss2::State::Recharging;
 				}
@@ -131,6 +150,7 @@ namespace sns
 			}
 			case Boss2::State::Recharging:
 			{
+				model.cool_down_timer -= dt;
 				if( model.cool_down_timer <= 0.f )
 				{
 					model.cool_down_timer = model.cool_down_delay;
@@ -142,21 +162,20 @@ namespace sns
 				break;
 		}
 	}
-
-	void EntityController<Boss>::Update( Boss3& model, World& world, Boss& parent, float dt )noexcept
+	void EntityController<Boss>::Update(  Boss3& model, World& world, Boss& parent, Vec2& hero_position, float dt )noexcept
 	{}
-	void EntityController<Boss>::Update( Boss4& model, World& world, Boss& parent, float dt )noexcept
+	void EntityController<Boss>::Update(  Boss4& model, World& world, Boss& parent, Vec2& hero_position, float dt )noexcept
 	{}
-	void EntityController<Boss>::Update( Boss5& model, World& world, Boss& parent, float dt )noexcept
+	void EntityController<Boss>::Update(  Boss5& model, World& world, Boss& parent, Vec2& hero_position, float dt )noexcept
 	{}
-	void EntityController<Boss>::Update( Boss6& model, World& world, Boss& parent, float dt )noexcept
+	void EntityController<Boss>::Update(  Boss6& model, World& world, Boss& parent, Vec2& hero_position, float dt )noexcept
 	{}
-	void EntityController<Boss>::Update( Boss7& model, World& world, Boss& parent, float dt )noexcept
+	void EntityController<Boss>::Update(  Boss7& model, World& world, Boss& parent, Vec2& hero_position, float dt )noexcept
 	{}
-	void EntityController<Boss>::Update( Boss8& model, World& world, Boss& parent, float dt )noexcept
+	void EntityController<Boss>::Update(  Boss8& model, World& world, Boss& parent, Vec2& hero_position, float dt )noexcept
 	{}
-	void EntityController<Boss>::Update( Boss9& model, World& world, Boss& parent, float dt )noexcept
+	void EntityController<Boss>::Update(  Boss9& model, World& world, Boss& parent, Vec2& hero_position, float dt )noexcept
 	{}
-	void EntityController<Boss>::Update( Boss10& model, World& world, Boss& parent, float dt )noexcept
+	void EntityController<Boss>::Update( Boss10& model, World& world, Boss& parent, Vec2& hero_position, float dt )noexcept
 	{}
 }

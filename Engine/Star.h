@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Mat3.h"
 #include "Rect.h"
 #include "Vec2.h"
 
@@ -8,12 +9,13 @@ namespace sns
 	class Star
 	{
 	public:
-		using Controller = struct StarController;
-	public:
-		void Update()noexcept;
+		Star() = default;
+		Star( Vec2 const& position_, float speed_ )noexcept;
 
 	private:
-		friend struct StarController;
+		friend class StarController;
+		friend class StarView;
+
 		Vec2 position;
 		float speed;
 		static constexpr float radius = 1.f;

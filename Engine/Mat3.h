@@ -3,6 +3,7 @@
 #include "AngleMath.h"
 #include "Vec2.h"
 #include <cmath>
+#include "Size.h"
 
 struct Vec3
 {
@@ -32,6 +33,15 @@ struct Mat3
 			Vector{	   0.f,    0.f }
 		};
 	}
+	static constexpr Mat3 Scale( SizeF const& scale )noexcept
+	{
+		return {
+			Vector{ scale.width,		 0.f },
+			Vector{			0.f, scale.height},
+			Vector{			0.f,		 0.f }
+		};
+	}
+
 	static Mat3 Rotate( Radian angle )noexcept
 	{
 		const auto c = Cos( angle );

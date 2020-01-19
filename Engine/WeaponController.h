@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Enumerations.h"
+#include "Weapon.h"
 #include "Vec2.h"
 
 namespace sns
@@ -18,6 +18,12 @@ namespace sns
 			Vec2 const & position, 
 			Vec2 const & direction,
 			World& world, 
-			AmmoOwner ammo_owner );
+			Ammo::Owner ammo_owner );
+		template<typename T>
+		static void SwitchWeapon( Weapon& model )noexcept
+		{
+			if( !std::holds_alternative<T>( model.variant ) ) model.variant = T{};
+		}
+		static void Reset( Weapon& model )noexcept;
 	};
 }

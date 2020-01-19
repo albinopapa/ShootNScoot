@@ -1,34 +1,44 @@
 #include "Font.h"
+#include "RectController.h"
+#include "SurfaceController.h"
 #include <cassert>
 
 Font::Font( const std::string& filename )
 {
-	auto make_temp_sprite = [ this ]( Surface const& font_sheet, char ch )
+	auto map_glyph_rect = []( int glyph_width, int glyph_height, char ch )
 	{
 		assert( ch >= firstChar && ch <= lastChar );
 		// font sheet glyphs start at ' ', calculate index into sheet
 		const int glyphIndex = ch - ' ';
 
 		// map 1d glyphIndex to 2D coordinates
-		const int yGlyph = glyphIndex / nColumns;
-		const int xGlyph = glyphIndex % nColumns;
+		const int xGlyph = ( glyphIndex % nColumns ) * glyph_width;
+		const int yGlyph = ( glyphIndex / nColumns ) * glyph_height;
 
 		// convert the sheet grid coords to pixel coords in sheet
-		const auto sheetRect = RectI(
-			Vei2{ xGlyph * int( glyph_rect.Width() ), yGlyph * int( glyph_rect.Height() ) },
-			SizeI{ int( glyph_rect.Width() ), int( glyph_rect.Height() ) }
+		return RectI( Vei2{ xGlyph, yGlyph }, SizeI{ glyph_width, glyph_height } );
+	};
+	auto make_glyph_sprite = [ & ]( Surface const& font_sheet, char ch )
+	{
+		const auto sheetRect = map_glyph_rect(
+			int( RectController::Width( glyph_rect ) ),
+			int( RectController::Height( glyph_rect ) ),
+			ch 
 		);
 
-		auto temp = Surface{ sheetRect.Width(), sheetRect.Height() };
+		auto temp = SurfaceController::CreateSurface(
+			RectController::Width( sheetRect ),
+			RectController::Height( sheetRect )
+		);
 
-		for( int y = 0; y < temp.GetHeight(); ++y )
+		for( int y = 0; y < SurfaceController::GetHeight( temp ); ++y )
 		{
-			for( int x = 0; x < temp.GetWidth(); ++x )
+			for( int x = 0; x < SurfaceController::GetWidth( temp ); ++x )
 			{
-				if( font_sheet.GetPixel( sheetRect.left + x, sheetRect.top + y ) == Colors::Black )
-					temp.PutPixel( x, y, Colors::White );
+				if( SurfaceController::GetPixel( font_sheet, { sheetRect.left + x, sheetRect.top + y } ) == Colors::Black )
+					SurfaceController::PutPixel( temp, { x, y }, Colors::White );
 				else
-					temp.PutPixel( x, y, Colors::Magenta );
+					SurfaceController::PutPixel( temp, { x, y }, Colors::Magenta );
 			}
 		}
 
@@ -36,14 +46,14 @@ Font::Font( const std::string& filename )
 	};
 
 	// holds the font sheet bitmap data
-	auto surface = Surface{ filename };
+	auto surface = SurfaceController::CreateSurface( filename );
 
-	const auto glyphWidth = surface.GetWidth() / nColumns;
-	const auto glyphHeight = surface.GetHeight() / nRows;
+	const auto glyphWidth  = SurfaceController::GetWidth( surface ) / nColumns;
+	const auto glyphHeight = SurfaceController::GetHeight( surface ) / nRows;
 
 	// verify that bitmap had valid dimensions
-	assert( glyphWidth * nColumns == surface.GetWidth() );
-	assert( glyphHeight * nRows == surface.GetHeight() );
+	assert( glyphWidth * nColumns == SurfaceController::GetWidth( surface ) );
+	assert( glyphHeight * nRows == SurfaceController::GetHeight( surface ) );
 
 	// calculate glyph dimensions from bitmap dimensions
 	glyph_rect = RectF(
@@ -55,53 +65,6 @@ Font::Font( const std::string& filename )
 	for( auto& glyph : glyphs )
 	{
 		if( ch > lastChar ) break;
-		glyph = make_temp_sprite( surface, ch++ );
+		glyph = make_glyph_sprite( surface, ch++ );
 	}
-
-}
-
-void Font::DrawText( const std::string& text, const Vei2& pos, Color color, Graphics& gfx )const
-{
-	// curPos is the pos that we are drawing to on the screen
-	auto curPos = pos;
-	for( auto c : text )
-	{
-		// only draw characters that are on the font sheet
-		if( c >= firstChar && c <= lastChar )
-		{
-			// start at firstChar + 1 because might as well skip ' ' as well
-			if( c > firstChar )
-			{
-				const auto index = c - ' ';
-				gfx.DrawSprite( glyph_rect + Vec2( curPos ), Radian{ 0.f }, glyphs[ index ], color );
-			}
-		
-			// advance screen pos for next character
-			curPos = { curPos.x + int( glyph_rect.Width() ), curPos.y };
-		}
-		else
-		{
-			// on a newline character, reset x position and move down by 1 glyph height
-			// on a tab character, move x position over 4 spaces
-			if( c == '\n' )
-			{
-				curPos = { pos.x, curPos.y + int( glyph_rect.Height() ) };
-			}
-			else if( c == '\t' )
-			{
-				curPos = { curPos.x + ( int( glyph_rect.Width() ) * 4 ), curPos.y };
-			}
-		}
-
-	}
-}
-
-int Font::GlyphWidth() const noexcept
-{
-	return int( glyph_rect.Width() );
-}
-
-int Font::GlyphHeight() const noexcept
-{
-	return int( glyph_rect.Height() );
 }

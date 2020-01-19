@@ -49,37 +49,6 @@ public:
 	{
 		return *this = *this - rhs;
 	}
-	constexpr float Cross( const Vec2_& rhs )const noexcept {
-		return ( x * rhs.y ) - ( y*rhs.x );
-	}
-	constexpr Vec2_ Cross( T rhs )const noexcept {
-		return { y * -rhs, x * rhs };
-	}
-	constexpr T Dot( const Vec2_& rhs )const noexcept {
-		return ( x * rhs.x ) + ( y * rhs.y );
-	}
-	constexpr T LengthSq() const noexcept
-	{
-		return Dot( *this );
-	}
-	T Length() const noexcept
-	{
-		return (T)std::sqrt( LengthSq() );
-	}
-
-	Vec2_ Normalize() const noexcept
-	{
-		const T lenSq = LengthSq();
-		if( lenSq == T( 0 ) )
-		{
-			return *this;
-		}
-		else
-		{
-			const auto len = std::sqrt( lenSq );
-			return { x / len, y / len };
-		}
-	}
 public:
 	T x;
 	T y;

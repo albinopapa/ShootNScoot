@@ -19,12 +19,15 @@
  *	along with The Chili DirectX Framework.  If not, see <http://www.gnu.org/licenses/>.  *
  ******************************************************************************************/
 #pragma once
-#include <queue>
+
 #include "Vec2.h"
+#include <queue>
 
 class Mouse
 {
-	friend class MainWindow;
+public:
+	Mouse() = default;
+
 public:
 	class Event
 	{
@@ -40,91 +43,61 @@ public:
 			Move,
 			Invalid
 		};
-	private:
-		Type type;
-		bool leftIsPressed;
-		bool rightIsPressed;
-		int x;
-		int y;
 	public:
-		Event()
-			:
-			type( Type::Invalid ),
-			leftIsPressed( false ),
-			rightIsPressed( false ),
-			x( 0 ),
-			y( 0 )
-		{}
-		Event( Type type,const Mouse& parent )
+		Event() = default;
+		Event( Type type, const Mouse& parent )
 			:
 			type( type ),
 			leftIsPressed( parent.leftIsPressed ),
 			rightIsPressed( parent.rightIsPressed ),
-			x( parent.x ),
-			y( parent.y )
+			position( parent.position )
 		{}
-		bool IsValid() const
+		bool IsValid()const noexcept
 		{
 			return type != Type::Invalid;
 		}
-		Type GetType() const
+		Type GetType()const noexcept
 		{
 			return type;
 		}
-		std::pair<int,int> GetPos() const
+		Vei2 const& GetPos()const noexcept
 		{
-			return{ x,y };
+			return position;
 		}
-		int GetPosX() const
+		int GetPosX()const noexcept
 		{
-			return x;
+			return position.x;
 		}
-		int GetPosY() const
+		int GetPosY()const noexcept
 		{
-			return y;
+			return position.y;
 		}
-		bool LeftIsPressed() const
+		bool LeftIsPressed()const noexcept
 		{
 			return leftIsPressed;
 		}
-		bool RightIsPressed() const
+		bool RightIsPressed()const noexcept
 		{
 			return rightIsPressed;
 		}
+
+	private:
+		Point position = { 0, 0 };
+		Type type = Type::Invalid;
+		bool leftIsPressed = false;
+		bool rightIsPressed = false;
 	};
-public:
-	Mouse() = default;
+
+private:
 	Mouse( const Mouse& ) = delete;
 	Mouse& operator=( const Mouse& ) = delete;
-	Vei2 GetPos() const;
-	int GetPosX() const;
-	int GetPosY() const;
-	bool LeftIsPressed() const;
-	bool RightIsPressed() const;
-	bool IsInWindow() const;
-	Mouse::Event Read();
-	bool IsEmpty() const
-	{
-		return buffer.empty();
-	}
-	void Flush();
+
 private:
-	void OnMouseMove( int x,int y );
-	void OnMouseLeave();
-	void OnMouseEnter();
-	void OnLeftPressed( int x,int y );
-	void OnLeftReleased( int x,int y );
-	void OnRightPressed( int x,int y );
-	void OnRightReleased( int x,int y );
-	void OnWheelUp( int x,int y );
-	void OnWheelDown( int x,int y );
-	void TrimBuffer();
-private:
+	friend class MouseController;
 	static constexpr unsigned int bufferSize = 4u;
-	int x;
-	int y;
+	std::queue<Event> buffer;
+	Point position;
 	bool leftIsPressed = false;
 	bool rightIsPressed = false;
 	bool isInWindow = false;
-	std::queue<Event> buffer;
 };

@@ -1,11 +1,21 @@
+#include "App.h"
+#include "AppController.h"
 #include "GameController.h"
-#include "Game.h"
 #include "HeroController.h"
-#include "MainWindow.h"
+#include "KbdController.h"
+#include "MenuController.h"
 #include "WorldController.h"
 
-void GameController::Update( Game& model, float dt )
+void GameController::Update( Game& model )
 {
+#if defined(_DEBUG)
+	const auto dt = .016f;
+#else
+	FrameTimer timer;
+	const auto dt = TimerController::Mark( model.timer );
+#endif
+
+	model.state = model.nextState;
 	switch( model.state )
 	{
 		case Game::State::Intro:
@@ -38,7 +48,7 @@ Game::State GameController::State( Game const & model ) noexcept
 
 int GameController::MenuChoice( Game const & model ) noexcept
 {
-	return model.menu_choice;
+	return sns::MenuController::Choice( model.menu );
 }
 
 sns::World const & GameController::World( Game const & model ) noexcept
@@ -54,75 +64,61 @@ int GameController::Score( Game const & model ) noexcept
 void GameController::TransitionState( Game& model, Game::State newState )noexcept
 {
 	model.nextState = newState;
-	model.wnd.kbd.FlushKey();
-	model.menu_choice = 0;
+	KbdController::FlushKey( model.app.kbd );
 }
 
 void GameController::DoIntroState( Game& model )
 {
-	while( !model.wnd.kbd.KeyIsEmpty() )
+	while( !KbdController::KeyIsEmpty( model.app.kbd ) )
 	{
-		if( const auto event = model.wnd.kbd.ReadKey();
+		if( const auto event = KbdController::ReadKey( model.app.kbd );
 			event.IsPress() && ( event.GetCode() == VK_RETURN ) )
 		{
 			TransitionState( model, Game::State::MainMenu );
+			model.menu = sns::MenuController::Create<sns::MainMenu>();
 		}
 	}
 }
 
 void GameController::DoMainMenuState( Game& model )
 {
-	int menu_choice = model.menu_choice;
-
-	while( !model.wnd.kbd.KeyIsEmpty() )
+	while( !KbdController::KeyIsEmpty( model.app.kbd ) )
 	{
-		if( const auto event = model.wnd.kbd.ReadKey(); event.IsPress() )
+		const auto event = KbdController::ReadKey( model.app.kbd );
+		if( !event.IsPress() )continue;
+
+		if( event.GetCode() == VK_DOWN )
 		{
-			if( event.GetCode() == VK_DOWN )
-			{
-				menu_choice = ( menu_choice + 1 ) % 2;
-			}
-			else if( event.GetCode() == VK_UP )
-			{
-				--menu_choice;
-				if( menu_choice < 0 )
-				{
-					menu_choice += 2;
-				}
-			}
-			else if( event.GetCode() == VK_RETURN )
-			{
-				if( menu_choice == 0 )
-				{
-					TransitionState( model, Game::State::Play );
-				}
-				else
-				{
-					model.wnd.Kill();
-				}
-			}
+			sns::MenuController::OnDownPress( model.menu );
+		}
+		else if( event.GetCode() == VK_UP )
+		{
+			sns::MenuController::OnUpPress( model.menu );
+		}
+		else if( event.GetCode() == VK_RETURN )
+		{
+			sns::MenuController::OnEnterPress( model.menu, model );
 		}
 	}
-
-	model.menu_choice = menu_choice;
 }
 
 void GameController::DoPlayState( Game& model, float dt )
 {
-	while( !model.wnd.kbd.KeyIsEmpty() )
+	while( !KbdController::KeyIsEmpty( model.app.kbd ) )
 	{
-		if( const auto event = model.wnd.kbd.ReadKey();
+		if( const auto event = KbdController::ReadKey( model.app.kbd );
 			event.IsPress() && ( event.GetCode() == VK_ESCAPE ) )
 		{
 			TransitionState( model, Game::State::PauseMenu );
+			model.menu = sns::MenuController::Create<sns::PauseMenu>();
 			return;
 		}
 	}
 
-	sns::World::Controller::Update( model.world, model.wnd.kbd, model, dt );
+	sns::WorldController::Update( model.world, model.app.kbd, model, dt );
 
-	if( sns::World::Controller::HeroLost( model.world ) ||
-		sns::World::Controller::HeroWon( model.world ) )
+	if( sns::WorldController::HeroLost( model.world ) ||
+		sns::WorldController::HeroWon( model.world ) )
 	{
 		TransitionState( model, Game::State::Gameover );
 	}
@@ -130,50 +126,40 @@ void GameController::DoPlayState( Game& model, float dt )
 
 void GameController::DoPauseMenuState( Game& model )
 {
-	auto menu_choice = model.menu_choice;
-	while( !model.wnd.kbd.KeyIsEmpty() )
+	while( !KbdController::KeyIsEmpty( model.app.kbd ) )
 	{
-		if( const auto event = model.wnd.kbd.ReadKey(); event.IsPress() )
+		const auto event = KbdController::ReadKey( model.app.kbd );
+		if( !event.IsPress() ) continue;
+
+		if( event.GetCode() == VK_DOWN )
 		{
-			if( event.GetCode() == VK_DOWN )
-			{
-				menu_choice = ( menu_choice + 1 ) % 2;
-			}
-			else if( event.GetCode() == VK_UP )
-			{
-				--menu_choice;
-				if( menu_choice < 0 ) menu_choice += 2;
-			}
-			else if( event.GetCode() == VK_RETURN )
-			{
-				if( menu_choice == 0 )
-				{
-					TransitionState( model, Game::State::Play );
-				}
-				else
-				{
-					model.wnd.Kill();
-				}
-			}
-			else if( event.GetCode() == VK_ESCAPE )
-			{
-				TransitionState( model, Game::State::Play );
-			}
+			sns::MenuController::OnDownPress( model.menu );
+		}
+		else if( event.GetCode() == VK_UP )
+		{
+			sns::MenuController::OnUpPress( model.menu );
+		}
+		else if( event.GetCode() == VK_RETURN )
+		{
+			sns::MenuController::OnEnterPress( model.menu, model );
+		}
+		else if( event.GetCode() == VK_ESCAPE )
+		{
+			TransitionState( model, Game::State::Play );
 		}
 	}
-
-	model.menu_choice = menu_choice;
 }
 
 void GameController::DoGameoverState( Game& model )
 {
-	while( !model.wnd.kbd.KeyIsEmpty() )
+	while( !KbdController::KeyIsEmpty( model.app.kbd ) )
 	{
-		if( const auto event = model.wnd.kbd.ReadKey();
+		if( const auto event = KbdController::ReadKey( model.app.kbd );
 			event.IsPress() && ( event.GetCode() == VK_RETURN ) )
 		{
 			TransitionState( model, Game::State::MainMenu );
 			sns::WorldController::Reset( model.world );
+			model.menu = sns::MenuController::Create<sns::MainMenu>();
 		}
 	}
 }

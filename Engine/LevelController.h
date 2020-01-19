@@ -15,6 +15,8 @@ namespace sns
 		static bool AsteroidSpawnerComplete( Level const& model )noexcept;
 		static bool EnemySpawnerComplete( Level const& model )noexcept;
 		static bool IsFinal( Level const& model )noexcept;
+		static void Reset( Level& model )noexcept;
+
 	private:
 		static void UpdateAsteroidSpawner( Level& model, World& world, float dt )noexcept;
 		static void UpdateEnemySpawner( Level& model, World& world, float dt )noexcept;

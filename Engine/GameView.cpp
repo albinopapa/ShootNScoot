@@ -1,65 +1,94 @@
-#include "GameView.h"
+#include "App.h"
+#include "FontController.h"
+#include "FontView.h"
 #include "Game.h"
+#include "GameController.h"
+#include "GameView.h"
+#include "Settings.h"
+#include "Window.h"
+#include "WindowView.h"
+#include "MenuView.h"
 #include "World.h"
 #include "WorldController.h"
 #include "WorldView.h"
-#include "GameController.h"
 
-GameView::GameView( MainWindow& wnd )
-	:
-	gfx( wnd )
-{}
-
-void GameView::Draw( Game const& model )noexcept
+void GameView::Draw( Game const& model, Surface& render_target )noexcept
 {
-	gfx.BeginFrame();
-
-	switch( Game::Controller::State( model ) )
+	switch( model.state )
 	{
 		case Game::State::Intro:
 		{
-			font.DrawText( "Press Enter/Return to start", { 176, 286 }, Colors::White, gfx );
-			break;
-		}
-		case Game::State::MainMenu:
-		{
-			const auto menu_choice = Game::Controller::MenuChoice( model );
-			font.DrawText( "Start game", { 200, 272 }, menu_choice == 0 ? Colors::Magenta : Colors::White, gfx );
-			font.DrawText( "Quit game", { 200, 328 }, menu_choice == 1 ? Colors::Magenta : Colors::White, gfx );
+			FontView::Draw( 
+				model.font, 
+				"Press Enter/Return to start", 
+				{ 176, 286 }, 
+				Colors::White, 
+				render_target
+			);
+			
 			break;
 		}
 		case Game::State::Play:
 		{
-			sns::WorldView::Draw( Game::Controller::World( model ), gfx );
+			sns::WorldView::Draw( model.world, render_target );
 
-			const auto score_str = std::to_string( Game::Controller::Score( model ) );
-			const auto pixel_length = ( int( score_str.size() ) * font.GlyphWidth() );
-			const auto x = Graphics::ScreenWidth - pixel_length;
-			const auto y = font.GlyphHeight() / 2;
-			font.DrawText( score_str, { x, y }, Colors::White, gfx );
+			const auto rtRect = SurfaceController::GetRect( render_target );
 
+			const auto score_str = std::to_string( model.score );
+			const auto glyph_width = float( FontController::GlyphWidth( model.font ) );
+			const auto glyph_height = float( FontController::GlyphHeight( model.font ) );
+			const auto pixel_length = float( score_str.size() ) * glyph_width;
+			const auto x = rtRect.right - pixel_length;
+			const auto y = glyph_height * .5f;
+
+			FontView::Draw(
+				model.font, 
+				score_str, 
+				{ x, y }, 
+				Colors::White, 
+				render_target
+			);
 			break;
 		}
+		case Game::State::MainMenu:
 		case Game::State::PauseMenu:
 		{
-			const auto menu_choice = Game::Controller::MenuChoice( model );
-			font.DrawText( "Resume game", { 200, 272 }, menu_choice == 0 ? Colors::Magenta : Colors::White, gfx );
-			font.DrawText( "Quit game", { 200, 328 }, menu_choice == 1 ? Colors::Magenta : Colors::White, gfx );
+			sns::MenuView::Draw( model.menu, model.font, render_target );
 			break;
 		}
 		case Game::State::Gameover:
 		{
-			
-			if( model.world.level > sns::World::max_demo_level )
-				font.DrawText( "Congratulations, you've finished the demo.", { 32, 246 }, Colors::White, gfx );
-			else if(model.world.level > sns::World::max_real_level)
-				font.DrawText( "Congratulations, you've finished the game\nThe universe is safe for now.", { 32, 246 }, Colors::White, gfx );
+			if( sns::WorldController::CurrentLevelIndex( model.world ) > 2 )
+			{
+				FontView::Draw(
+					model.font,
+					"Congratulations, you've finished the demo.",
+					{ 32, 246 },
+					Colors::White,
+					render_target
+				);
+			}
+			else if( sns::WorldController::CurrentLevelIndex( model.world ) == 10 &&
+				sns::WorldController::HeroWon( model.world ) )
+			{
+				FontView::Draw( 
+					model.font, 
+					"Congratulations, you've finished the game\nThe universe is safe for now.", 
+					{ 32, 246 }, 
+					Colors::White, 
+					render_target
+				);
+			}
 
-			font.DrawText( "Press Enter/Return to go back to the main menu", { 32, 272 }, Colors::White, gfx );
+			FontView::Draw(
+				model.font, 
+				"Press Enter/Return to go back to the main menu", 
+				{ 32, 272 }, 
+				Colors::White, 
+				render_target
+			);
 
 			break;
 		}
 	}
-
-	gfx.EndFrame();
 }

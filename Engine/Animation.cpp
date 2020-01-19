@@ -1,38 +1,31 @@
 #include "Animation.h"
-#include "SpriteEffect.h"
 
-Animation::Animation( int x,int y,int width,int height,int count,
-					  const Surface& sprite,float holdTime,Color chroma )
+Animation::Animation(
+	int x,
+	int y,
+	int width,
+	int height,
+	int count,
+	const Surface& sprite,
+	float holdTime,
+	Color chroma )
 	:
+	frames( count ),
 	sprite( sprite ),
 	holdTime( holdTime ),
 	chroma( chroma )
 {
-	for( int i = 0; i < count; i++ )
+	int i = 0;
+	for( auto& frame : frames )
 	{
-		frames.emplace_back( x + i * width,x + (i + 1) * width,y,y + height );
+		const auto j = i + 1;
+		const auto left = x + i * width;
+		const auto top = y;
+		const auto right = x + j * width;
+		const auto bottom = y + height;
+		++i;
+
+		frame = { left, top, right, bottom };
 	}
 }
 
-void Animation::Draw( const Vec2& pos, Graphics& gfx, Color tint )const noexcept
-{
-	gfx.DrawSprite( RectF( frames[ iCurFrame ] ) + pos, Radian{ 0.f }, sprite, tint );
-}
-
-void Animation::Update( float dt )
-{
-	curFrameTime += dt;
-	while( curFrameTime >= holdTime )
-	{
-		Advance();
-		curFrameTime -= holdTime;
-	}
-}
-
-void Animation::Advance()
-{
-	if( ++iCurFrame >= frames.size() )
-	{
-		iCurFrame = 0;
-	}
-}

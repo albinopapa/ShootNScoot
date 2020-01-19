@@ -64,6 +64,48 @@
     <Filter Include="Source Files\Game Files\Views">
       <UniqueIdentifier>{23334094-6691-4de8-a5ec-cf61ff2d86a0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Chili Framework\Controllers">
+      <UniqueIdentifier>{1cd87b6c-6e21-4084-afc9-04db415c92d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Chili Framework\Models">
+      <UniqueIdentifier>{d3f7bc42-d2f9-4c66-b9c8-2aa85917d5f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Chili Framework\Views">
+      <UniqueIdentifier>{936715a4-6a28-4cc5-9ba5-e0454078c3f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Chili Framework\Controllers">
+      <UniqueIdentifier>{467a33c0-0be9-47d7-8d5f-c6d5ea2e54dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Chili Framework\Views">
+      <UniqueIdentifier>{fc1f5de5-b44a-4f7a-962e-9e7ea2849b37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Chili Framework\Models">
+      <UniqueIdentifier>{5f6048c8-663e-49f2-9f61-4a49fb9e3bb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Chili Samples">
+      <UniqueIdentifier>{effebb18-9568-4f2f-a480-cf8184b02f95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Chili Samples\Controllers">
+      <UniqueIdentifier>{40de6dd5-637c-48b9-838a-09d0c60640a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Chili Samples\Models">
+      <UniqueIdentifier>{c88db852-8a47-4d61-b222-982dced034a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Chili Samples\Views">
+      <UniqueIdentifier>{d0ecd87c-91fa-496e-a3e5-093586f7de74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Chili Samples">
+      <UniqueIdentifier>{b05c00cf-e5e6-428a-b7b1-fe7882d658b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Chili Samples\Controllers">
+      <UniqueIdentifier>{f5d75855-fa51-43df-9a54-6de011d358da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Chili Samples\Models">
+      <UniqueIdentifier>{a3fe3d69-f97f-4aa0-8db0-fa0274839a6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Chili Samples\Views">
+      <UniqueIdentifier>{84f4d191-a006-460c-bd0a-c7595ea2d60b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SolidTextureEffect.h">
@@ -77,66 +119,6 @@
     </ClInclude>
     <ClInclude Include="ColorKeyTextureEffect.h">
       <Filter>Header Files\Graphics\Shader Effects</Filter>
-    </ClInclude>
-    <ClInclude Include="Animation.h">
-      <Filter>Header Files\Chili Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Bencher.h">
-      <Filter>Header Files\Chili Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Character.h">
-      <Filter>Header Files\Chili Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="ChiliException.h">
-      <Filter>Header Files\Chili Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="ChiliWin.h">
-      <Filter>Header Files\Chili Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Colors.h">
-      <Filter>Header Files\Chili Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="COMInitializer.h">
-      <Filter>Header Files\Chili Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="DXErr.h">
-      <Filter>Header Files\Chili Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Font.h">
-      <Filter>Header Files\Chili Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="FrameTimer.h">
-      <Filter>Header Files\Chili Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Keyboard.h">
-      <Filter>Header Files\Chili Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="MainWindow.h">
-      <Filter>Header Files\Chili Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Mouse.h">
-      <Filter>Header Files\Chili Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Rect.h">
-      <Filter>Header Files\Chili Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Header Files\Chili Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Sound.h">
-      <Filter>Header Files\Chili Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="SoundEffect.h">
-      <Filter>Header Files\Chili Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="SpriteEffect.h">
-      <Filter>Header Files\Chili Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Surface.h">
-      <Filter>Header Files\Chili Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Vec2.h">
-      <Filter>Header Files\Chili Framework</Filter>
     </ClInclude>
     <ClInclude Include="AngleMath.h">
       <Filter>Header Files\Utilities</Filter>
@@ -156,17 +138,11 @@
     <ClInclude Include="WicWrapper.h">
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics.h">
-      <Filter>Header Files\Chili Framework</Filter>
-    </ClInclude>
     <ClInclude Include="ColorVertex.h">
       <Filter>Header Files\Graphics\Vertices</Filter>
     </ClInclude>
     <ClInclude Include="TextureVertex.h">
       <Filter>Header Files\Graphics\Vertices</Filter>
-    </ClInclude>
-    <ClInclude Include="Pipeline.h">
-      <Filter>Header Files\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Triangle.h">
       <Filter>Header Files\Graphics</Filter>
@@ -193,9 +169,6 @@
       <Filter>Header Files\Game Files\Models</Filter>
     </ClInclude>
     <ClInclude Include="Bosses.h">
-      <Filter>Header Files\Game Files\Models</Filter>
-    </ClInclude>
-    <ClInclude Include="Bullet.h">
       <Filter>Header Files\Game Files\Models</Filter>
     </ClInclude>
     <ClInclude Include="Enemies.h">
@@ -270,12 +243,6 @@
     <ClInclude Include="Starfield.h">
       <Filter>Header Files\Game Files</Filter>
     </ClInclude>
-    <ClInclude Include="SpriteCache.h">
-      <Filter>Header Files\Game Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NullPixelShader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="BossView.h">
       <Filter>Header Files\Game Files\Views</Filter>
     </ClInclude>
@@ -285,63 +252,183 @@
     <ClInclude Include="Levels.h">
       <Filter>Header Files\Game Files\Models</Filter>
     </ClInclude>
-    <ClInclude Include="Grid.h">
-      <Filter>Header Files\Game Files</Filter>
-    </ClInclude>
-    <ClInclude Include="model_type_traits.h">
-      <Filter>Header Files\Game Files</Filter>
-    </ClInclude>
     <ClInclude Include="EntityController.h">
       <Filter>Header Files\Game Files\Controllers</Filter>
     </ClInclude>
     <ClInclude Include="LevelController.h">
       <Filter>Header Files\Game Files\Controllers</Filter>
     </ClInclude>
+    <ClInclude Include="Grid.h">
+      <Filter>Header Files\Game Files\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="GridController.h">
+      <Filter>Header Files\Game Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="GridObject.h">
+      <Filter>Header Files\Game Files\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="CellController.h">
+      <Filter>Header Files\Game Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="Cell.h">
+      <Filter>Header Files\Game Files\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="NullPixelShader.h">
+      <Filter>Header Files\Graphics\Base Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings.h">
+      <Filter>Header Files\Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationController.h">
+      <Filter>Header Files\Chili Framework\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Header Files\Chili Framework\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationView.h">
+      <Filter>Header Files\Chili Framework\Views</Filter>
+    </ClInclude>
+    <ClInclude Include="BencherController.h">
+      <Filter>Header Files\Chili Framework\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="Bencher.h">
+      <Filter>Header Files\Chili Framework\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Character.h">
+      <Filter>Header Files\Chili Samples\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterController.h">
+      <Filter>Header Files\Chili Samples\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterView.h">
+      <Filter>Header Files\Chili Samples\Views</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorController.h">
+      <Filter>Header Files\Chili Framework\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="Colors.h">
+      <Filter>Header Files\Chili Framework\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="FontController.h">
+      <Filter>Header Files\Chili Framework\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="FontView.h">
+      <Filter>Header Files\Chili Framework\Views</Filter>
+    </ClInclude>
+    <ClInclude Include="Font.h">
+      <Filter>Header Files\Chili Framework\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="TimerController.h">
+      <Filter>Header Files\Chili Framework\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameTimer.h">
+      <Filter>Header Files\Chili Framework\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="KbdController.h">
+      <Filter>Header Files\Chili Framework\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="Keyboard.h">
+      <Filter>Header Files\Chili Framework\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="AppController.h">
+      <Filter>Header Files\Chili Framework\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>Header Files\Chili Framework\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuController.h">
+      <Filter>Header Files\Game Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="Menus.h">
+      <Filter>Header Files\Game Files\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuView.h">
+      <Filter>Header Files\Game Files\Views</Filter>
+    </ClInclude>
+    <ClInclude Include="ButtonView.h">
+      <Filter>Header Files\Game Files\Views</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Header Files\Game Files\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="ButtonController.h">
+      <Filter>Header Files\Game Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowController.h">
+      <Filter>Header Files\Chili Framework\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="MouseController.h">
+      <Filter>Header Files\Chili Framework\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="App.h">
+      <Filter>Header Files\Chili Framework\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="ChiliException.h">
+      <Filter>Header Files\Chili Framework\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="ChiliWin.h">
+      <Filter>Header Files\Chili Framework\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="COMInitializer.h">
+      <Filter>Header Files\Chili Framework\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="DXErr.h">
+      <Filter>Header Files\Chili Framework\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Mouse.h">
+      <Filter>Header Files\Chili Framework\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Rect.h">
+      <Filter>Header Files\Chili Framework\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files\Chili Framework\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound.h">
+      <Filter>Header Files\Chili Framework\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundEffect.h">
+      <Filter>Header Files\Chili Framework\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Surface.h">
+      <Filter>Header Files\Chili Framework\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Vec2.h">
+      <Filter>Header Files\Chili Framework\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowView.h">
+      <Filter>Header Files\Chili Framework\Views</Filter>
+    </ClInclude>
+    <ClInclude Include="RectController.h">
+      <Filter>Header Files\Chili Framework\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundController.h">
+      <Filter>Header Files\Chili Framework\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="SurfaceController.h">
+      <Filter>Header Files\Chili Framework\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="Vec2Controller.h">
+      <Filter>Header Files\Chili Framework\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectController.h">
+      <Filter>Header Files\Chili Framework\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectView.h">
+      <Filter>Header Files\Chili Framework\Views</Filter>
+    </ClInclude>
+    <ClInclude Include="Ammo.h">
+      <Filter>Header Files\Game Files\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="AppView.h">
+      <Filter>Header Files\Chili Framework\Views</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Animation.cpp">
-      <Filter>Source Files\Chili Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="Character.cpp">
-      <Filter>Source Files\Chili Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="COMInitializer.cpp">
-      <Filter>Source Files\Chili Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="DXErr.cpp">
-      <Filter>Source Files\Chili Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="Font.cpp">
-      <Filter>Source Files\Chili Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="FrameTimer.cpp">
-      <Filter>Source Files\Chili Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="Keyboard.cpp">
-      <Filter>Source Files\Chili Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="Main.cpp">
-      <Filter>Source Files\Chili Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="MainWindow.cpp">
-      <Filter>Source Files\Chili Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="Mouse.cpp">
-      <Filter>Source Files\Chili Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="Sound.cpp">
-      <Filter>Source Files\Chili Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="Surface.cpp">
-      <Filter>Source Files\Chili Framework</Filter>
-    </ClCompile>
     <ClCompile Include="Asteroids.cpp">
       <Filter>Source Files\Game Files\Models</Filter>
     </ClCompile>
     <ClCompile Include="Bosses.cpp">
-      <Filter>Source Files\Game Files\Models</Filter>
-    </ClCompile>
-    <ClCompile Include="Bullet.cpp">
       <Filter>Source Files\Game Files\Models</Filter>
     </ClCompile>
     <ClCompile Include="Enemies.cpp">
@@ -376,9 +463,6 @@
     </ClCompile>
     <ClCompile Include="WorldController.cpp">
       <Filter>Source Files\Game Files\Controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics.cpp">
-      <Filter>Source Files\Chili Framework</Filter>
     </ClCompile>
     <ClCompile Include="GameView.cpp">
       <Filter>Source Files\Game Files\Views</Filter>
@@ -431,14 +515,113 @@
     <ClCompile Include="BossController.cpp">
       <Filter>Source Files\Game Files\Controllers</Filter>
     </ClCompile>
-    <ClCompile Include="Levels.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LevelController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="BossView.cpp">
       <Filter>Source Files\Game Files\Views</Filter>
+    </ClCompile>
+    <ClCompile Include="CellController.cpp">
+      <Filter>Source Files\Game Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="GridController.cpp">
+      <Filter>Source Files\Game Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelController.cpp">
+      <Filter>Source Files\Game Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="Levels.cpp">
+      <Filter>Source Files\Game Files\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationController.cpp">
+      <Filter>Source Files\Chili Framework\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="BencherController.cpp">
+      <Filter>Source Files\Chili Framework\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationView.cpp">
+      <Filter>Source Files\Chili Framework\Views</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Source Files\Chili Framework\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="COMInitializer.cpp">
+      <Filter>Source Files\Chili Framework\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="DXErr.cpp">
+      <Filter>Source Files\Chili Framework\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Font.cpp">
+      <Filter>Source Files\Chili Framework\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Sound.cpp">
+      <Filter>Source Files\Chili Framework\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Surface.cpp">
+      <Filter>Source Files\Chili Framework\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterView.cpp">
+      <Filter>Source Files\Chili Samples\Views</Filter>
+    </ClCompile>
+    <ClCompile Include="Character.cpp">
+      <Filter>Source Files\Chili Samples\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterController.cpp">
+      <Filter>Source Files\Chili Samples\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="FontView.cpp">
+      <Filter>Source Files\Chili Framework\Views</Filter>
+    </ClCompile>
+    <ClCompile Include="FontController.cpp">
+      <Filter>Source Files\Chili Framework\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="TimerController.cpp">
+      <Filter>Source Files\Chili Framework\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="KbdController.cpp">
+      <Filter>Source Files\Chili Framework\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="AppController.cpp">
+      <Filter>Source Files\Chili Framework\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="App.cpp">
+      <Filter>Source Files\Chili Framework\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="ButtonController.cpp">
+      <Filter>Source Files\Game Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuController.cpp">
+      <Filter>Source Files\Game Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="MouseController.cpp">
+      <Filter>Source Files\Chili Framework\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowController.cpp">
+      <Filter>Source Files\Chili Framework\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="ButtonView.cpp">
+      <Filter>Source Files\Chili Framework\Views</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuView.cpp">
+      <Filter>Source Files\Chili Framework\Views</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>Source Files\Chili Framework\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Source Files\Chili Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundController.cpp">
+      <Filter>Source Files\Chili Framework\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="SurfaceController.cpp">
+      <Filter>Source Files\Chili Framework\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowView.cpp">
+      <Filter>Source Files\Chili Framework\Views</Filter>
+    </ClCompile>
+    <ClCompile Include="Ammo.cpp">
+      <Filter>Source Files\Game Files\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="AppView.cpp">
+      <Filter>Source Files\Chili Framework\Views</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

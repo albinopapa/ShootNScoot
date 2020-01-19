@@ -1,8 +1,12 @@
-#include "HeroController.h"
+#include "ChiliWin.h"
 #include "Hero.h"
-#include "World.h"
+#include "HeroController.h"
+#include "KbdController.h"
+#include "RectController.h"
 #include "ShieldController.h"
+#include "Vec2Controller.h"
 #include "WeaponController.h"
+#include "World.h"
 
 namespace sns
 {
@@ -15,29 +19,31 @@ namespace sns
 		UpdateVelocity( model, kbd );
 		ChangeWeapon( model, kbd );
 		
-		Shield::Controller::Update( model.shield, model.position, dt );
+		model.position += ( model.velocity * ( Hero::max_speed * dt ) );
+		ShieldController::Update( model.shield, model.position, dt );
 
 		const auto heroRect = AABB( model );
 
-		if( !heroRect.IsContainedBy( screenRect ) )
+		if( !RectController::IsContainedBy( heroRect, screen_rect ) )
 		{
 			model.position.x = std::clamp(
 				model.position.x,
-				screenRect.left + Hero::aabb.right,
-				screenRect.right + Hero::aabb.left
+				screen_rect.left + Hero::aabb.right,
+				screen_rect.right + Hero::aabb.left
 			);
 			model.position.y = std::clamp(
 				model.position.y,
-				screenRect.top + Hero::aabb.bottom,
-				screenRect.bottom + Hero::aabb.top
+				screen_rect.top + Hero::aabb.bottom,
+				screen_rect.bottom + Hero::aabb.top
 			);
 		}
 
-		Weapon::Controller::Update( model.weapon, dt );
+		WeaponController::Update( model.weapon, dt );
 
-		if( kbd.KeyIsPressed( VK_CONTROL ) && Weapon::Controller::CanFire( model.weapon ) )
+		if( KbdController::KeyIsPressed( kbd, VK_CONTROL ) &&
+			WeaponController::CanFire( model.weapon ) )
 		{
-			Weapon::Controller::Fire(
+			WeaponController::Fire(
 				model.weapon,
 				model.position, 
 				Vec2{ 0.f, -1.f },
@@ -47,11 +53,10 @@ namespace sns
 		}
 	}
 	
-	
 	void EntityController<Hero>::TakeDamage( Hero& model, float amount )noexcept
 	{
-		if( Shield::Controller::Health( model.shield ) > 0.f )
-			Shield::Controller::TakeDamage( model.shield, amount );
+		if( ShieldController::Health( model.shield ) > 0.f )
+			ShieldController::TakeDamage( model.shield, amount );
 		else
 			model.health -= amount;
 
@@ -65,8 +70,8 @@ namespace sns
 
 	RectF EntityController<Hero>::AABB( Hero const& model )noexcept
 	{
-		if( Shield::Controller::Health( model.shield ) > 0.f )
-			return Shield::Controller::AABB( model.shield, model.position );
+		if( ShieldController::Health( model.shield ) > 0.f )
+			return ShieldController::AABB( model.shield, model.position );
 		else
 			return Hero::aabb + model.position;
 	}
@@ -81,46 +86,57 @@ namespace sns
 		return model.position;
 	}
 	
+	Vec2& EntityController<Hero>::Position( Hero& model )noexcept
+	{
+		return model.position;
+	}
+
+	void EntityController<Hero>::Reset( Hero & model ) noexcept
+	{
+		WeaponController::Reset( model.weapon );
+		ShieldController::Reset( model.shield );
+		model.health = 100.f;
+		model.velocity = { 0.f, 0.f };
+		model.position = { 0.f, 0.f };
+	}
+
 	void EntityController<Hero>::UpdateVelocity( Hero& model, Keyboard const & kbd ) noexcept
 	{
 		Vec2 direction = { 0.f, 0.f };
-		if( kbd.KeyIsPressed( VK_UP ) )
+		if( KbdController::KeyIsPressed( kbd, VK_UP ) )
 		{
 			direction.y = -1.f;
 		}
-		else if( kbd.KeyIsPressed( VK_DOWN ) )
+		else if( KbdController::KeyIsPressed( kbd, VK_DOWN ) )
 		{
 			direction.y = 1.f;
 		}
 
-		if( kbd.KeyIsPressed( VK_LEFT ) )
+		if( KbdController::KeyIsPressed( kbd, VK_LEFT ) )
 		{
 			direction.x = -1.f;
 		}
-		else if( kbd.KeyIsPressed( VK_RIGHT ) )
+		else if( KbdController::KeyIsPressed( kbd, VK_RIGHT ) )
 		{
 			direction.x = 1.f;
 		}
 
-		model.velocity = direction.Normalize();
+		model.velocity = Vec2Controller::Normalize( direction );
 	}
 
 	void EntityController<Hero>::ChangeWeapon( Hero& model, Keyboard const & kbd ) noexcept
 	{
-		if( kbd.KeyIsPressed( '1' ) )
+		if( KbdController::KeyIsPressed( kbd, '1' ) )
 		{
-			if( !std::holds_alternative<Gun>( model.weapon.variant ) )
-				model.weapon.variant = Gun{};
+			WeaponController::SwitchWeapon<Gun>( model.weapon );
 		}
-		else if( kbd.KeyIsPressed( '2' ) )
+		else if( KbdController::KeyIsPressed( kbd, '2' ) )
 		{
-			if( !std::holds_alternative<MachineGun>( model.weapon.variant ) )
-				model.weapon.variant = MachineGun{};
+			WeaponController::SwitchWeapon<MachineGun>( model.weapon );
 		}
-		else if( kbd.KeyIsPressed( '3' ) )
+		else if( KbdController::KeyIsPressed( kbd, '3' ) )
 		{
-			if( !std::holds_alternative<PlasmaGun>( model.weapon.variant ) )
-				model.weapon.variant = PlasmaGun{};
+			WeaponController::SwitchWeapon<PlasmaGun>( model.weapon );
 		}
 	}
 }

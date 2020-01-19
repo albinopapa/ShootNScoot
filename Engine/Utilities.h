@@ -10,7 +10,7 @@ void erase_if( Container& container_, Pred pred_ )noexcept
 }
 
 #include "Vec2.h"
-#include <initializer_list>
+#include <cassert>
 #include <vector>
 
 template<typename T>
@@ -18,7 +18,7 @@ class AnchorPoints
 {
 public:
 	AnchorPoints() = default;
-	AnchorPoints( std::initializer_list<T> _points )
+	AnchorPoints( std::vector<T> _points )
 		:
 		points( std::move( _points ) )
 	{
@@ -94,56 +94,44 @@ public:
 		}
 	}
 
-	void SetSectionCount( std::uint32_t numSections )
-	{
-		( *this ) = Bezier( numSections, std::move( anchors ) );
-	}
-
-	void SetAnchorPoints( AnchorPoints<T> _anchors )
-	{
-		( *this ) = Bezier( sections, std::move( _anchors ) );
-	}
-
-	T const& operator[]( int index )const noexcept
+	auto const& operator[]( int index )const noexcept
 	{
 		assert( index < int( points.size() ) );
 		return points[ index ];
 	}
 
-	int Count()const noexcept
+	auto Count()const noexcept
 	{
 		return int( points.size() );
 	}
 
-	const std::vector<T>& GetControlPoints()const noexcept
+	auto const& GetControlPoints()const noexcept
 	{
 		return points;
 	}
 
 private:
-
-	T PlotControlPoint( float _t )const noexcept
+	auto PlotControlPoint( float _t )const noexcept
 	{
 		switch( anchors.Count() )
 		{
-			case 0: return { 0.f, 0.f };
+			case 0: return T{};
 			case 1: return anchors[ 0 ];
 			case 3: return PlotQuadratic( _t );
 			case 4: return PlotCubic( _t );
 			default: return PlotUknown( _t );	// Also handles linear interpolation of two points
 		}
 	}
-
-	T PlotQuadratic( float _t )const noexcept
+	auto PlotQuadratic( float _t )const noexcept
 	{
 		const auto range0 = ( anchors[ 1 ] - anchors[ 0 ] );
 		const auto range1 = ( anchors[ 2 ] - anchors[ 1 ] );
 		const auto range2 = ( range1 - range0 );
 		const auto doubleRange0 = ( range0 * 2.f );
 
-		return anchors[ 0 ] + ( doubleRange0 * _t ) + ( range2 * _t * _t );
+		return anchors[ 0 ] + ( doubleRange0 * _t ) + ( range2 * ( _t * _t ) );
 	}
-	T PlotCubic( float _t )const noexcept
+	auto PlotCubic( float _t )const noexcept
 	{
 		const auto range10 = anchors[ 1 ] - anchors[ 0 ];
 		const auto range21 = anchors[ 2 ] - anchors[ 1 ];
@@ -169,7 +157,7 @@ private:
 
 		return ( anchors[ 0 ] + ( range10x3 * _t ) + ( range2110x3 * t2 ) + ( range3221_2110 * t3 ) );
 	}
-	T PlotUknown( float _t )const noexcept
+	auto PlotUknown( float _t )const noexcept
 	{
 		const float it = 1.f - _t;
 
@@ -199,7 +187,6 @@ private:
 		return results.front();
 	}
 
-
 private:
 	AnchorPoints<T> anchors;
 	std::vector<T> points;
@@ -209,10 +196,10 @@ private:
 template<typename T> AnchorPoints( std::initializer_list<T> )->AnchorPoints<T>;
 template<typename T> Bezier( AnchorPoints<T> )->Bezier<T>;
 
-template<typename Container, typename T = typename Container::value_type>
-Bezier<T> plot_curve( Container const& source, int output_element_count )
+template<typename T>
+Bezier<T> plot_curve( std::vector<T> source, int output_element_count )
 {
-	return { size_t( output_element_count ), AnchorPoints<T>( source.begin(), source.end() ) };
+	return { size_t( output_element_count ), AnchorPoints<T>( std::move( source ) ) };
 }
 
 #include <cassert>

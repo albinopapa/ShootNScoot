@@ -7,8 +7,9 @@ namespace sns
 {
 	class Enemy;
 
-	template<> struct EntityController<Enemy>
+	template<> class EntityController<Enemy>
 	{
+	public:
 		static void Update( Enemy& model, float dt )noexcept;
 		static void TakeDamage( Enemy& model, float amount )noexcept;
 

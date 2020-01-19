@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Graphics.h"
 #include <random>
 
 using float_distribution = std::uniform_real_distribution<float>;
@@ -14,7 +13,7 @@ namespace sns
 
 	private:
 		static std::mt19937 rng;
-		inline static float_distribution xDist	= float_distribution( screenRect.Center().x - 600.f, screenRect.Center().x + 600.f );
+		inline static float_distribution xDist	= float_distribution( -600.f, 600.f );
 		inline static float_distribution vxDist	= float_distribution( 0.f, 1.f );
 	};
 }

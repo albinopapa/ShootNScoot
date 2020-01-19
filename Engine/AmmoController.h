@@ -1,12 +1,14 @@
 #pragma once
 
-#include "Bullet.h"
+#include "Ammo.h"
+#include "EntityController.h"
 #include "Rect.h"
 
 namespace sns
 {
-	template<> struct EntityController<Ammo>
+	template<> class EntityController<Ammo>
 	{
+	public:
 		static void Update( Ammo& model, float dt )noexcept;
 		static void TakeDamage( Ammo& model, float amount )noexcept;
 

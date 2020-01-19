@@ -1,4 +1,5 @@
 #include "LevelController.h"
+#include "WorldController.h"
 #include "Bosses.h"
 #include "Levels.h"
 #include "Enemies.h"
@@ -29,6 +30,22 @@ namespace sns
 			using type = std::decay_t<decltype( level )>;
 			return std::is_same_v<type, Level10>;
 		}, model.variant );
+	}
+
+	void LevelController::Reset( Level& model ) noexcept
+	{
+		model.variant = Level1{};
+
+		model.asteroid_spawn_timer = 0.f;
+		model.asteroid_spawn_count = 0;
+		model.asteroid_state = Level::State::Idle;
+
+		model.enemy_spawn_timer = 0.f;
+		model.enemy_spawn_count = 0;
+		model.enemy_spawn_group = 0;
+		model.enemy_spawn_group_timer = 0.f;
+		model.enemy_spawn_timer = 0.f;
+		model.enemy_state = Level::State::Idle;
 	}
 
 	void LevelController::Advance( Level& model ) noexcept
@@ -80,13 +97,13 @@ namespace sns
 		return std::visit( [ & ]( auto const& level )
 		{
 			using type = std::decay_t<decltype( level )>;
-			return type::BossType{};
+			return Boss{ type::BossType{} };
 		}, model.variant );
 	}
 
 	int LevelController::CurrentLevelIndex( Level const & model ) noexcept
 	{
-		return model.variant.index() + 1;
+		return int( model.variant.index() ) + 1;
 	}
 
 	void LevelController::UpdateAsteroidSpawner( Level & model, World & world, float dt ) noexcept
@@ -96,6 +113,7 @@ namespace sns
 			case Level::State::Idle:
 				std::visit( [ & ]( auto const& level )
 				{
+					model.asteroid_spawn_timer -= dt;
 					if( model.asteroid_spawn_timer <= 0.f )
 					{
 						constexpr auto max_spawn =
@@ -109,7 +127,8 @@ namespace sns
 				break;
 			case Level::State::Spawning:
 			{
-				world.SpawnAsteroid( AsteroidSpawner::Spawn() );
+				++model.asteroid_spawn_count;
+				WorldController::SpawnAsteroid( world, AsteroidSpawner::Spawn() );
 				model.asteroid_state = Level::State::Idle;
 				break;
 			}
@@ -127,6 +146,7 @@ namespace sns
 			switch( model.enemy_state )
 			{
 				case Level::State::Idle:
+					model.enemy_spawn_group_timer -= dt;
 					if( model.enemy_spawn_group_timer <= 0.f )
 					{
 						model.enemy_state = model.enemy_spawn_group < type::enemy_spawn_group_max ?
@@ -134,12 +154,13 @@ namespace sns
 					}
 					break;
 				case Level::State::Spawning:
+					model.enemy_spawn_timer -= dt;
 					if( model.enemy_spawn_timer <= 0.f )
 					{
 						model.enemy_spawn_timer = type::enemy_spawn_rate;
 
 						++model.enemy_spawn_count;
-						world.SpawnEnemy( EnemySpawner::Spawn( model.enemy_spawn_group ) );
+						WorldController::SpawnEnemy( world, EnemySpawner::Spawn( model.enemy_spawn_group ) );
 
 						if( model.enemy_spawn_count > type::enemy_spawn_max )
 						{

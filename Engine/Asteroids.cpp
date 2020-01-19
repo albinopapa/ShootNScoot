@@ -11,10 +11,4 @@ namespace sns
 		variant( type )
 	{
 	}
-
-	void Asteroid::Update( float dt ) noexcept
-	{
-		position += ( direction * ( dt * Asteroid::speed ) );
-	}
-
 }

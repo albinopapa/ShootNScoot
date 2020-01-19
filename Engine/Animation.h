@@ -1,22 +1,29 @@
 #pragma once
 
 #include "Surface.h"
-#include "Graphics.h"
 #include <vector>
 
 class Animation
 {
 public:
-	Animation( int x,int y,int width,int height,int count,const Surface& sprite,float holdTime,Color chroma = Colors::Magenta );
-	void Draw( const Vec2& pos, Graphics& gfx, Color tint = Colors::White )const noexcept;
-	void Update( float dt );
+	Animation(
+		int x,
+		int y,
+		int width,
+		int height,
+		int count,
+		const Surface& sprite,
+		float holdTime,
+		Color chroma = Colors::Magenta );
+	
 private:
-	void Advance();
-private:
-	Color chroma;
-	const Surface& sprite;
+	friend class AnimationController;
+	friend class AnimationView;
+
 	std::vector<RectI> frames;
+	Surface const& sprite;
+	float holdTime = 0.f;
 	int iCurFrame = 0;
-	float holdTime;
 	float curFrameTime = 0.0f;
+	Color chroma = Colors::Magenta;
 };

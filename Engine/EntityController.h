@@ -2,5 +2,5 @@
 
 namespace sns
 {
-	template<typename Entity> struct EntityController;
+	template<typename Entity> class EntityController;
 }

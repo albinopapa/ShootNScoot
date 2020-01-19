@@ -5,40 +5,39 @@ namespace sns
 {
 	void ShieldController::Update( Shield& model, Vec2 const& position, float dt ) noexcept
 	{
-		constexpr auto rect =
-			RectF{ -Shield::radius,-Shield::radius,Shield::radius,Shield::radius };
-
 		switch( model.state )
 		{
-			case ShieldState::Recharging:
+			case Shield::State::Recharging:
 			{
+				model.health += ( dt * Shield::recharge_rate );
 				if( model.health >= Shield::recharge_max )
 				{
-					model.state = ShieldState::Full;
+					model.state = Shield::State::Full;
 					model.health = Shield::recharge_max;
 				}
 				else if( model.health <= 0.f )
 				{
-					model.state = ShieldState::Depleted;
+					model.state = Shield::State::Depleted;
 					model.health = 0.f;
 				}
 				break;
 			}
-			case ShieldState::Depleted:
+			case Shield::State::Depleted:
 			{
+				model.recharge_delay_timer -= dt;
 				if( model.recharge_delay_timer <= 0.f )
 				{
-					model.state = ShieldState::Recharging;
+					model.state = Shield::State::Recharging;
 					model.recharge_delay_timer = Shield::recharge_delay;
 				}
 				break;
 			}
-			case ShieldState::Full:
+			case Shield::State::Full:
 			{
 				if( model.health < Shield::recharge_max )
-					model.state = ShieldState::Recharging;
+					model.state = Shield::State::Recharging;
 				else if( model.health <= 0.f )
-					model.state = ShieldState::Depleted;
+					model.state = Shield::State::Depleted;
 			}
 		}
 	}
@@ -47,8 +46,8 @@ namespace sns
 	{
 		switch( model.state )
 		{
-			case ShieldState::Full:
-			case ShieldState::Recharging:
+			case Shield::State::Full:
+			case Shield::State::Recharging:
 			{
 				model.health -= amount;
 			}
@@ -61,5 +60,11 @@ namespace sns
 	float ShieldController::Health( Shield const& model )noexcept
 	{
 		return model.health;
+	}
+	void ShieldController::Reset( Shield & model ) noexcept
+	{
+		model.health = 100.f;
+		model.state = Shield::State::Full;
+		model.recharge_delay_timer = 0.f;
 	}
 }

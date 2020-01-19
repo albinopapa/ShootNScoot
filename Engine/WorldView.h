@@ -1,8 +1,6 @@
 #pragma once
 
-#include "Enumerations.h"
-#include "Graphics.h"
-
+class Surface;
 namespace sns
 {
 	class World;
@@ -10,6 +8,6 @@ namespace sns
 	class WorldView
 	{
 	public:
-		static void Draw( World const& model, Graphics& gfx )noexcept;
+		static void Draw( World const& model, Surface& render_target )noexcept;
 	};
 }

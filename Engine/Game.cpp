@@ -1,17 +1,9 @@
-#include "MainWindow.h"
+#include "App.h"
 #include "Game.h"
+#include "Settings.h"
+#include "SurfaceController.h"
 
-Game::Game( MainWindow& wnd )noexcept
+Game::Game( App& app_ )noexcept
 	:
-	wnd( wnd )
+	app( app_ )
 {}
-
-void Game::Update( float dt )noexcept
-{
-	state = nextState;
-	if( state == State::Play )
-	{
-		world.Update( dt );
-	}
-}
-
