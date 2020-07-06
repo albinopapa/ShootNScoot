@@ -15,4 +15,6 @@ enum class ShieldState { Full, Recharging, Depleted };
 
 enum class WeaponState { Idle, Recharge };
 
+// Arena state is actual level play: spawns enemies and asteroids
+// Boss state spawns boss and runs boss update: disables asteroid and automatic enemy spawns
 enum class WorldState { Arena, Boss, LevelComplete };
