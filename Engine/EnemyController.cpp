@@ -23,7 +23,7 @@ namespace sns
 				model.health = 0.f;
 			}
 		};
-
+		
 		std::visit( do_update, model.variant );
 	}
 

@@ -15,5 +15,6 @@ namespace sns
 		RectF AABB( Enemy& model )const noexcept;
 		float Health( Enemy& model )const noexcept;
 		float Damage( Enemy& model )const noexcept;
+
 	};
 }

@@ -33,8 +33,8 @@ namespace sns
 				RemoveDeadEnemies( model );
 				RemoveDeadAsteroids( model );
 
-				if( astro_spawner.state == AsteroidSpawner::State::Complete &&
-					enemy_spawner.state == EnemySpawner::State::Complete )
+				if( astro_spawner.state == AsteroidSpawner::State::Complete && model.asteroids.empty() &&
+					enemy_spawner.state == EnemySpawner::State::Complete && model.enemies.empty() )
 				{
 					model.state = WorldState::Boss;
 				}

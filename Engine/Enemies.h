@@ -76,7 +76,15 @@ namespace sns
 			Vec2{ screenRect.Width() / 2.f + aabb.Width() / 2.f, -aabb.Height() / 2.f }
 		};
 	};
+	class Enemy6
+	{
+	public:
+		void Update( float dt );
 
+	private:
+		Vec2 position;
+		Vec2 velocity;
+	};
 	template<typename EnemyType> struct is_enemy {
 		static constexpr bool value = std::disjunction_v<
 			std::is_same<EnemyType, Enemy1>,
