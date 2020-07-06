@@ -32,3 +32,15 @@ Enemy6
 	Group count:		16
 Enemy7
 	
+
+Implement upgrade shop
+	buy weapons
+	buy ammunition
+	buy fuel
+	buy o2
+
+Limit ammo in all weapons
+Add self destruct button
+No o2, lose health
+
+Change drawing pipeline to sprite animations
