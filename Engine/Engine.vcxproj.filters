@@ -84,9 +84,6 @@
     <ClInclude Include="Bencher.h">
       <Filter>Header Files\Chili Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Character.h">
-      <Filter>Header Files\Chili Framework</Filter>
-    </ClInclude>
     <ClInclude Include="ChiliException.h">
       <Filter>Header Files\Chili Framework</Filter>
     </ClInclude>
@@ -285,9 +282,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp">
-      <Filter>Source Files\Chili Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="Character.cpp">
       <Filter>Source Files\Chili Framework</Filter>
     </ClCompile>
     <ClCompile Include="COMInitializer.cpp">
