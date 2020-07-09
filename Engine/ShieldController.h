@@ -1,12 +1,7 @@
 #pragma once
-
 #include "Rect.h"
 #include "Vec2.h"
-
-namespace sns
-{
-	class Shield;
-
+#include "Shield.h"
 	class ShieldController
 	{
 	public:
@@ -16,4 +11,3 @@ namespace sns
 		RectF AABB( Shield& model, Vec2 position )const noexcept;
 		float Health( Shield& model )const noexcept;
 	};
-}

@@ -1,10 +1,6 @@
 #pragma once
-
+#include "Hero.h"
 #include "Graphics.h"
-
-namespace sns
-{
-	class Hero;
 
 	class HeroView
 	{
@@ -15,4 +11,3 @@ namespace sns
 
 		//Surface	sprite = "Images/HeroShip.png";
 	};
-}

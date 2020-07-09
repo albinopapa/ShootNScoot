@@ -1,8 +1,6 @@
 #include "EnemyView.h"
-#include "Enemies.h"
 
-namespace sns
-{
+
 	void EnemyView::Draw( Enemy const& model, Graphics& gfx ) const noexcept
 	{
 		std::visit( [ & ]( auto const& enemy )
@@ -12,4 +10,4 @@ namespace sns
 			//gfx.DrawSprite( type::aabb + model.position, Radian{ 0.f }, sprite );
 		}, model.variant );
 	}
-}
+

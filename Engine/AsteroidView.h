@@ -1,10 +1,6 @@
 #pragma once
-
+#include "Asteroids.h"
 #include "Graphics.h"
-
-namespace sns
-{
-	class Asteroid;
 
 	class AsteroidView
 	{
@@ -13,4 +9,3 @@ namespace sns
 	private:
 		static constexpr Color color = Color{ 200, 100, 50 };
 	};
-}

@@ -192,9 +192,6 @@
     <ClInclude Include="Bosses.h">
       <Filter>Header Files\Game Files\Models</Filter>
     </ClInclude>
-    <ClInclude Include="Bullet.h">
-      <Filter>Header Files\Game Files\Models</Filter>
-    </ClInclude>
     <ClInclude Include="Enemies.h">
       <Filter>Header Files\Game Files\Models</Filter>
     </ClInclude>
@@ -278,6 +275,9 @@
     </ClInclude>
     <ClInclude Include="Enumerations.h">
       <Filter>Header Files\Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Ammo.h">
+      <Filter>Header Files\Game Files\Models</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

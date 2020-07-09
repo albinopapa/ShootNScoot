@@ -7,10 +7,6 @@
 #include <array>
 #include <variant>
 
-namespace sns
-{
-	class World;
-
 	struct Enemy1
 	{ 
 		static constexpr auto score_value = 30;
@@ -97,4 +93,3 @@ namespace sns
 	};
 
 
-}

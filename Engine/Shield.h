@@ -1,9 +1,6 @@
 #pragma once
-
 #include "Enumerations.h"
 
-namespace sns
-{
 	class Shield
 	{
 	public:
@@ -21,4 +18,3 @@ namespace sns
 		float recharge_delay_timer = recharge_delay;
 		float health = 100.f;
 	};
-}

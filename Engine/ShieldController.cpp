@@ -1,8 +1,6 @@
 #include "ShieldController.h"
 #include "Shield.h"
 
-namespace sns
-{
 	void ShieldController::Update( Shield& model, Vec2 const& position, float dt ) noexcept
 	{
 	//constexpr auto rect = RectF{ -Shield::radius,-Shield::radius,Shield::radius,Shield::radius };
@@ -61,4 +59,4 @@ namespace sns
 	{
 		return model.health;
 	}
-}
+

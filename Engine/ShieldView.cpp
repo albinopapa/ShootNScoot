@@ -4,10 +4,10 @@
 
 Surface make_shield_sprite()
 {
-	constexpr auto radius = int( sns::Shield::radius );
+	constexpr auto radius = int( Shield::radius );
 	
 	auto sprite = Surface( radius * 2, radius * 2 );
-	constexpr auto sqrRadius = sqr( sns::Shield::radius );
+	constexpr auto sqrRadius = sqr( Shield::radius );
 
 	for( int y = -radius; y < radius; ++y )
 	{
@@ -28,8 +28,7 @@ Surface make_shield_sprite()
 	return sprite;
 }
 
-namespace sns
-{
+
 	//const Surface ShieldView::sprite = make_shield_sprite();
 	void ShieldView::Draw( Vec2 const& position, Shield const& model, Graphics & gfx ) const noexcept
 	{
@@ -54,4 +53,4 @@ namespace sns
 		};
 		gfx.DrawSprite( rect + position, Radian{ 0.f }, sprite, Color( r, g, b ) );
 	}*/
-}
+

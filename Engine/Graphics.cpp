@@ -279,20 +279,37 @@ void Graphics::DrawDisc( Vec2 const & center, float radius, Color color ) noexce
 	pl.Draw( RectF{ -radius, -radius, radius, radius } + center, Radian{ 0.f } );
 }
 
- void Graphics::DrawCircle(int xCenter, int yCenter, int radius, Color c)// from http://groups.csail.mit.edu/graphics/classes/6.837/F98/Lecture6/circle.html
+void Graphics::DrawCircle(int xCenter, int yCenter, int radius, Color c)// from http://groups.csail.mit.edu/graphics/classes/6.837/F98/Lecture6/circle.html
 {
 	const int r2 = radius * radius;
-	PutPixel(xCenter, yCenter + radius, c);
-	PutPixel(xCenter, yCenter - radius, c);
+	if (xCenter >= 0 && xCenter < Graphics::ScreenWidth) {
+		if (yCenter + radius >= 0 && yCenter + radius < Graphics::ScreenHeight) {
+			PutPixel(xCenter, yCenter + radius, c);
+		}
+		if (yCenter - radius >= 0 && yCenter - radius < Graphics::ScreenHeight) {
+			PutPixel(xCenter, yCenter - radius, c);
+		}
+	}
 	for (int x = 1; x <= radius; x++) {
 		int y = (int)(sqrt(r2 - x * x) + 0.5);
-		PutPixel(xCenter + x, yCenter + y, c);
-		PutPixel(xCenter + x, yCenter - y, c);
-		PutPixel(xCenter - x, yCenter + y, c);
-		PutPixel(xCenter - x, yCenter - y, c);
+		if (xCenter + x >= 0 && xCenter + x < Graphics::ScreenWidth) {
+			if (yCenter + y >= 0 && yCenter + y < Graphics::ScreenHeight) {
+				PutPixel(xCenter + x, yCenter + y, c);
+			}
+			if (yCenter - y >= 0 && yCenter - y < Graphics::ScreenHeight) {
+				PutPixel(xCenter + x, yCenter - y, c);
+			}
+		}
+		if (xCenter - x >= 0 && xCenter - x < Graphics::ScreenWidth) {
+			if (yCenter + y >= 0 && yCenter + y < Graphics::ScreenHeight) {
+				PutPixel(xCenter - x, yCenter + y, c);
+			}
+			if (yCenter - y >= 0 && yCenter - y < Graphics::ScreenHeight) {
+				PutPixel(xCenter - x, yCenter - y, c);
+			}
+		}
 	}
 }
-
 void Graphics::DrawRect( RectF const& dst, Radian angle, Color color ) noexcept
 {
 	auto pl = Pipeline{ RectFillEffect{}, *this };

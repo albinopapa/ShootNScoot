@@ -2,8 +2,7 @@
 #include "Asteroids.h"
 #include "Graphics.h"
 
-namespace sns
-{
+
 	void AsteroidController::Update( Asteroid& model, float dt ) noexcept
 	{
 		const auto radius = std::visit( [ & ]( auto& astro )
@@ -68,4 +67,4 @@ namespace sns
 			return type::score_value;
 		}, model.variant );
 	}
-}
+

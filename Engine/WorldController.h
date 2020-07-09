@@ -9,13 +9,8 @@
 #include "HeroController.h"
 #include "Keyboard.h"
 #include "StarController.h"
-
-class Game;
-
-namespace sns
-{
-	class World;
-
+#include "World.h"
+#include "Game.h"
 	class WorldController
 	{
 	public:
@@ -50,4 +45,4 @@ namespace sns
 		HeroController hero_controller;
 		Boss1Controller boss_controller;
 	};
-}
+

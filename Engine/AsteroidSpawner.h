@@ -1,13 +1,9 @@
 #pragma once
-
 #include "Graphics.h"
+#include "World.h"
 #include <random>
 
 using float_distribution = std::uniform_real_distribution<float>;
-namespace sns
-{
-	class World;
-
 	struct AsteroidSpawner
 	{
 		void Update( World& world, float dt );
@@ -25,4 +21,4 @@ namespace sns
 		int spawn_count						= 0;
 		State state							= State::Idle;
 	};
-}
+
