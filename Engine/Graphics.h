@@ -24,10 +24,11 @@
 #include "ChiliException.h"
 #include "Colors.h"
 #include "Surface.h"
-
 #include "Rect.h"
 #include "Mat3.h"
 #include "Vec2.h"
+//#include "SpriteEffect.h"
+
 #include <cassert>
 #include <d3d11.h>
 #include <wrl.h>
@@ -72,10 +73,59 @@ public:
 	static bool IsVisible( RectI const& rect );
 
 	void DrawDisc( Vec2 const& center, float radius, Color color )noexcept;
+	void DrawCircle(int xCenter, int yCenter, int radius, Color c);
 	void DrawRect( RectF const& dst, Radian angle, Color color )noexcept;
+	void DrawRect(const RectI& rect,const Color& color);
 	void DrawLine( Vec2 const& p0, Vec2 const& p2, float thickness, Color color )noexcept;
 	void DrawSprite( RectF const& dst, Radian angle, Surface const& sprite, Color tint = Colors::White, Color key = Colors::Magenta )noexcept;
-
+	template<typename E>
+	void DrawSprite(int x, int y, const Surface& s, E effect)
+	{
+		DrawSprite(x, y, s.GetRect(), s, effect);
+	}
+	template<typename E>
+	void DrawSprite(int x, int y, const RectI& srcRect, const Surface& s, E effect)
+	{
+		DrawSprite(x, y, srcRect, GetScreenRect(), s, effect);
+	}
+	template<typename E>
+	void DrawSprite(int x, int y, RectI srcRect, const RectI& clip, const Surface& s, E effect)
+	{
+		assert(srcRect.left >= 0);
+		assert(srcRect.right <= s.GetWidth());
+		assert(srcRect.top >= 0);
+		assert(srcRect.bottom <= s.GetHeight());
+		if (x < clip.left)
+		{
+			srcRect.left += clip.left - x;
+			x = clip.left;
+		}
+		if (y < clip.top)
+		{
+			srcRect.top += clip.top - y;
+			y = clip.top;
+		}
+		if (x + srcRect.GetWidth() > clip.right)
+		{
+			srcRect.right -= x + srcRect.GetWidth() - clip.right;
+		}
+		if (y + srcRect.GetHeight() > clip.bottom)
+		{
+			srcRect.bottom -= y + srcRect.GetHeight() - clip.bottom;
+		}
+		for (int sy = srcRect.top; sy < srcRect.bottom; sy++)
+		{
+			for (int sx = srcRect.left; sx < srcRect.right; sx++)
+			{
+				effect(
+					s.GetPixel(sx, sy),
+					x + sx - srcRect.left,
+					y + sy - srcRect.top,
+					*this
+				);
+			}
+		}
+	}
 
 	~Graphics();
 private:

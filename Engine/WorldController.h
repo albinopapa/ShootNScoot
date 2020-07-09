@@ -22,7 +22,7 @@ namespace sns
 		void Update( World& model, Keyboard& kbd, Game& game_controller, float dt );
 
 		void RemoveDeadBullets( World& model )noexcept;
-		void RemoveDeadEnemies( World& model )noexcept;
+		void RemoveDeadEnemies( World& model );
 		void RemoveDeadAsteroids( World& model )noexcept;
 
 		// Enemy vs Hero, HeroAmmo, Asteroids

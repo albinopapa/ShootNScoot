@@ -8,7 +8,8 @@ namespace sns
 		std::visit( [ & ]( auto const& enemy )
 		{
 			using type = std::decay_t<decltype( enemy )>;
-			gfx.DrawSprite( type::aabb + model.position, Radian{ 0.f }, sprite );
+			gfx.DrawRect(type::aabb + model.position, Colors::Red);
+			//gfx.DrawSprite( type::aabb + model.position, Radian{ 0.f }, sprite );
 		}, model.variant );
 	}
 }

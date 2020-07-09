@@ -15,7 +15,7 @@ namespace sns
 	{ 
 		static constexpr auto score_value = 30;
 		static constexpr auto speed = 120.f;
-		static constexpr auto aabb = RectF{ -16.f, -16.f, 16.f, 16.f };
+		static constexpr auto aabb = RectF{ -5.f,-10.f,5.0f,10.0f};
 		static constexpr auto damage = 50.f;
 		static constexpr auto waypoints = std::array{
 			Vec2{ -aabb.Width(), aabb.Height() * .5f},
@@ -26,7 +26,7 @@ namespace sns
 	struct Enemy2
 	{ 
 		static constexpr auto speed = 120.f;
-		static constexpr auto aabb = RectF{ -16.f, -16.f, 16.f, 16.f };
+		static constexpr auto aabb = RectF{ -5.f,-10.f,5.0f,10.0f};
 		static constexpr auto damage = 50.f;
 		static constexpr auto waypoints = std::array{
 			Vec2{ -aabb.Width(), aabb.Height() * .5f },
@@ -38,7 +38,7 @@ namespace sns
 	struct Enemy3 
 	{ 
 		static constexpr auto speed = 120.f;
-		static constexpr auto aabb = RectF{ -16.f, -16.f, 16.f, 16.f };
+		static constexpr auto aabb = RectF{ -5.f,-10.f,5.0f,10.0f};
 		static constexpr auto damage = 50.f;
 		static constexpr auto waypoints = std::array{
 			Vec2{ -aabb.Width(), aabb.Height() * .5f },
@@ -51,7 +51,7 @@ namespace sns
 	struct Enemy4 
 	{ 
 		static constexpr auto speed = 120.f;
-		static constexpr auto aabb = RectF{ -16.f, -16.f, 16.f, 16.f };
+		static constexpr auto aabb = RectF{ -5.f,-10.f,5.0f,10.0f};
 		static constexpr auto damage = 50.f;
 		static constexpr auto waypoints = std::array{
 			Vec2{ screenRect.Width() / 2.f + 50.f,   0.f },
@@ -66,7 +66,7 @@ namespace sns
 	struct Enemy5 
 	{ 
 		static constexpr auto speed = 120.f;
-		static constexpr auto aabb = RectF{ -16.f, -16.f, 16.f, 16.f };
+		static constexpr auto aabb = RectF{ 0.f, 0.f, 10.f, 20.f };
 		static constexpr auto damage = 50.f;
 		static constexpr auto waypoints = std::array{
 			Vec2{ screenRect.Width() / 2.f, 0.f },
@@ -107,7 +107,7 @@ namespace sns
 		static constexpr int score_value = 10;
 
 		std::variant<Enemy1, Enemy2, Enemy3, Enemy4, Enemy5> variant;
-		Vec2 position = { 0.f, -16.f };
+		Vec2 position = { -5.f, 0.f };
 		Vec2 velocity = { 0.f, 0.f };
 		float health = 100.f;
 		int waypoint_index = 0;
