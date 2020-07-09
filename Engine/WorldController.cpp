@@ -67,7 +67,7 @@ namespace sns
 
 	void WorldController::RemoveDeadEnemies( World& model ) 
 	{
-		erase_if( model.enemies, [ & ]( Enemy const& enemy_ ) { return enemy_.health <= 0.f; } );
+		erase_if( model.enemies, [&]( Enemy const& enemy_ ) { return enemy_.health <= 0.f; } );
 	}
 
 	void WorldController::RemoveDeadAsteroids( World& model ) noexcept

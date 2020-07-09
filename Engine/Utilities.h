@@ -1,5 +1,5 @@
 #pragma once
-
+//why?
 template<typename Container, typename Pred>
 void erase_if( Container& container_, Pred pred_ )noexcept
 {
