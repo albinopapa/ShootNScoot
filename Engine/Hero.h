@@ -9,10 +9,6 @@
 #include "SpriteEffect.h"
 #include <algorithm>
 
-namespace sns
-{
-	class World;
-
 	class Hero
 	{
 	public:
@@ -30,5 +26,3 @@ namespace sns
 		Vec2 velocity = { 0.f, 0.f };
 		float health = 100.f;
 	};
-
-}

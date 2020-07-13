@@ -1,13 +1,8 @@
 #pragma once
-
+#include "Weapon.h"
 #include "Vec2.h"
-#include "Bullet.h"
-
-namespace sns
-{
-	class Weapon;
-	class World;
-
+#include "Ammo.h"
+#include "World.h"
 	class WeaponController
 	{
 	public:
@@ -20,4 +15,3 @@ namespace sns
 			World& world, 
 			AmmoOwner ammo_owner );
 	};
-}

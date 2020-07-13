@@ -1,10 +1,6 @@
 #pragma once
-
+#include "Ammo.h"
 #include "Rect.h"
-
-namespace sns
-{
-	class Ammo;
 
 	class AmmoController
 	{
@@ -16,4 +12,3 @@ namespace sns
 		RectF AABB( Ammo const& model )const noexcept;
 		bool IsAlive( Ammo const& model )const noexcept;
 	};
-}

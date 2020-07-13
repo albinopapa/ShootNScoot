@@ -1,10 +1,7 @@
 #include "WorldController.h"
 #include "Utilities.h"
-#include "World.h"
 #include "Game.h"
 
-namespace sns
-{
 	void WorldController::Update( World& model, Keyboard& kbd, Game& game, float dt )
 	{
 		for( auto& star : model.stars ) star_controller.Update( star );
@@ -61,13 +58,16 @@ namespace sns
 
 	void WorldController::RemoveDeadBullets( World& model ) noexcept
 	{
-		erase_if( model.hero_bullets, [ & ]( Ammo const& bullet ) { return !bullet.isAlive; } );
-		erase_if( model.enemy_bullets, [ & ]( Ammo const& bullet ) { return !bullet.isAlive; } );
+		const auto new_end1 = std::remove_if( model.hero_bullets.begin(), model.hero_bullets.end(), []( Ammo const& bullet ) { return !bullet.isAlive; } );
+		model.hero_bullets.erase(new_end1, model.hero_bullets.end());
+		const auto new_end2 = std::remove_if( model.enemy_bullets.begin(), model.enemy_bullets.end(), []( Ammo const& bullet ) { return !bullet.isAlive; } );
+		model.enemy_bullets.erase(new_end2, model.enemy_bullets.end());
 	}
 
-	void WorldController::RemoveDeadEnemies( World& model ) noexcept
+	void WorldController::RemoveDeadEnemies( World& model ) 
 	{
-		erase_if( model.enemies, [ & ]( Enemy const& enemy_ ) { return enemy_.health <= 0.f; } );
+		const auto new_end=std::remove_if( model.enemies.begin(), model.enemies.end(), []( Enemy const& enemy_ ) { return enemy_.health <= 0.f; } );
+		model.enemies.erase(new_end, model.enemies.end());
 	}
 
 	void WorldController::RemoveDeadAsteroids( World& model ) noexcept
@@ -75,9 +75,7 @@ namespace sns
 		std::vector<Vec2> positions;
 		positions.reserve( model.asteroids.size() );
 
-		erase_if( model.asteroids, [ & ]( Asteroid const& astro ) 
-		{
-			if( astro.health > 0.f ) return false;
+		const auto new_end=std::remove_if( model.asteroids.begin(), model.asteroids.end(), [ & ]( Asteroid const& astro ){return  astro.health <= 0.f;	/*if( astro.health > 0.f ) return false;
 			
 			if( std::holds_alternative<BigAsteroid>( astro.variant ) &&
 				astro.reason != AsteroidDeathReason::LeftScreen )
@@ -85,9 +83,8 @@ namespace sns
 				positions.push_back( astro.position );
 			}
 
-			return true;
-		} );
-
+			return true;*/} );
+		model.asteroids.erase(new_end, model.asteroids.end());
 		constexpr auto nw = Vec2{ -.707f, -.707f };
 		constexpr auto ne = Vec2{  .707f, -.707f };
 		constexpr auto sw = Vec2{ -.707f,  .707f };
@@ -342,4 +339,4 @@ namespace sns
 		enemy_spawner.Reset();
 	}
 
-}
+

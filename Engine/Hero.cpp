@@ -1,8 +1,7 @@
 #include "Hero.h"
 #include "World.h"
 
-namespace sns
-{
+
 	void Hero::Update( float dt )
 	{
 		position += ( velocity * ( Hero::max_speed * dt ) );
@@ -19,4 +18,3 @@ namespace sns
 		velocity = { 0.f, 0.f };
 		position = screenRect.Center();
 	}
-}

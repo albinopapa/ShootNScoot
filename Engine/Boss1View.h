@@ -1,10 +1,6 @@
 #pragma once
-
+#include "Bosses.h"
 #include "Graphics.h"
-
-namespace sns
-{
-	class Boss1;
 
 	class Boss1View
 	{
@@ -14,4 +10,3 @@ namespace sns
 	private:
 		Surface	sprite = "Images/Enemy1Ship.png";
 	};
-}

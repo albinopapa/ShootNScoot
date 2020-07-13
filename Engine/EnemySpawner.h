@@ -1,9 +1,5 @@
 #pragma once
-
-namespace sns
-{
-	class World;
-
+#include "World.h"
 	struct EnemySpawner
 	{
 	public:
@@ -27,4 +23,3 @@ namespace sns
 
 		State state										= State::Waiting;
 	};
-}

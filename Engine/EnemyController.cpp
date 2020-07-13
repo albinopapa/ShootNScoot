@@ -2,8 +2,6 @@
 #include "Enemies.h"
 #include <type_traits>
 
-namespace sns
-{
 	void EnemyController::Update( Enemy& model, float dt ) noexcept
 	{
 		auto do_update = [ & ]( auto& enemy_ )
@@ -53,4 +51,4 @@ namespace sns
 			return type::damage;
 		}, model.variant );
 	}
-}
+

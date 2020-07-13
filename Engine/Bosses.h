@@ -5,8 +5,6 @@
 #include "Shield.h"
 #include "Weapon.h"
 
-namespace sns
-{
 	class Boss1
 	{
 	public:
@@ -33,5 +31,3 @@ namespace sns
 		float health = max_health;
 		int missile_count = 0;
 	};
-
-}

@@ -155,7 +155,7 @@
     <ClInclude Include="Boss1Controller.h" />
     <ClInclude Include="Boss1View.h" />
     <ClInclude Include="Bosses.h" />
-    <ClInclude Include="Bullet.h" />
+    <ClInclude Include="Ammo.h" />
     <ClInclude Include="ChiliException.h" />
     <ClInclude Include="ChiliMath.h" />
     <ClInclude Include="ChiliWin.h" />
