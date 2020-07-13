@@ -6,8 +6,6 @@
 #include <utility>
 #include <vector>
 
-namespace sns
-{
 	class Starfield
 	{
 	public:
@@ -19,4 +17,3 @@ namespace sns
 		static Star generate_star( std::mt19937& rng, std::pair<float, float> width_bounds, std::pair<float, float> speed_bounds )noexcept;
 
 	};
-}

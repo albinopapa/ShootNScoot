@@ -4,8 +4,6 @@
 #include "Vec2.h"
 #include <variant>
 
-namespace sns
-{
 	struct BigAsteroid
 	{
 		static constexpr float radius = 24.f;
@@ -33,4 +31,4 @@ namespace sns
 		float health = 100.f;
 		AsteroidDeathReason reason = AsteroidDeathReason::None;
 	};
-}
+

@@ -1,7 +1,6 @@
 #include "World.h"
 
-namespace sns
-{
+
 	void World::Update( float dt )
 	{
 		for( auto& star : stars ) star.Update();
@@ -40,4 +39,3 @@ namespace sns
 			hero_bullets.emplace_back( ammo );
 	}
 
-}

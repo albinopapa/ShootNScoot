@@ -3,8 +3,7 @@
 #include "World.h"
 #include <cassert>
 
-namespace sns
-{
+
 	void Boss1Controller::Update( Boss1& model, World& world, float dt ) noexcept
 	{
 		const auto rect = ( model.aabb + model.position );
@@ -71,4 +70,4 @@ namespace sns
 	{
 		return Boss1::aabb + model.position;
 	}
-}
+
