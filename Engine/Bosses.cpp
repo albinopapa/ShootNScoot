@@ -3,7 +3,8 @@
 #include "World.h"
 #include <cassert>
 
-
+namespace sns
+{
 	Boss1::Boss1()noexcept
 	{
 		weapon.variant = MissileLauncher{};
@@ -34,4 +35,4 @@
 		health = max_health;
 		missile_count = 0;
 	}
-
+}

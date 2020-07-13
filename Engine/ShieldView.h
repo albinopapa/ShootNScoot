@@ -1,7 +1,10 @@
 #pragma once
 
 #include "Graphics.h"
-#include "Shield.h"
+
+namespace sns
+{
+	class Shield;
 
 	class ShieldView
 	{
@@ -11,3 +14,4 @@
 	private:
 		static const Surface sprite;
 	};
+}

@@ -4,6 +4,8 @@
 #include "Rect.h"
 #include "Vec2.h"
 
+namespace sns
+{
 	class Star
 	{
 	public:
@@ -15,3 +17,4 @@
 		Vec2 position;
 		float speed;
 	};
+}

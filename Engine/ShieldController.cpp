@@ -1,9 +1,12 @@
 #include "ShieldController.h"
 #include "Shield.h"
 
+namespace sns
+{
 	void ShieldController::Update( Shield& model, Vec2 const& position, float dt ) noexcept
 	{
-	//constexpr auto rect = RectF{ -Shield::radius,-Shield::radius,Shield::radius,Shield::radius };
+		constexpr auto rect =
+			RectF{ -Shield::radius,-Shield::radius,Shield::radius,Shield::radius };
 
 		switch( model.state )
 		{
@@ -51,7 +54,7 @@
 			}
 		}
 	}
-	RectF ShieldController::AABB( Shield& model,Vec2 position ) const noexcept
+	RectF ShieldController::AABB( Shield& model, Vec2 position ) const noexcept
 	{
 		return RectF{ -Shield::radius, -Shield::radius, Shield::radius, Shield::radius } + position;
 	}
@@ -59,4 +62,4 @@
 	{
 		return model.health;
 	}
-
+}

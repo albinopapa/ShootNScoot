@@ -1,6 +1,8 @@
 #pragma once
-#include "Game.h"
+
 #include "WorldController.h"
+
+class Game;
 
 class GameController
 {
@@ -15,5 +17,5 @@ private:
 	void DoGameoverState( Game& model );
 
 private:
-	WorldController world;
+	sns::WorldController world;
 };

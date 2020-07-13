@@ -1,4 +1,5 @@
 #include "GameController.h"
+#include "Game.h"
 #include "MainWindow.h"
 
 void GameController::Update( Game& model, float dt )

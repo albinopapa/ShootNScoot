@@ -2,7 +2,7 @@
 
 #include "Asteroids.h"
 #include "Bosses.h"
-#include "Ammo.h"
+#include "Bullet.h"
 #include "Enemies.h"
 #include "Enumerations.h"
 #include "Hero.h"
@@ -10,6 +10,8 @@
 #include "Starfield.h"
 #include <vector>
 
+namespace sns
+{
 	class World
 	{
 	public:
@@ -31,3 +33,5 @@
 		Boss1 boss;
 		WorldState state = WorldState::Arena;
 	};
+
+}

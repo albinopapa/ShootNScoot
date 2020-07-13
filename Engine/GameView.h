@@ -5,7 +5,8 @@
 #include "ChiliWin.h"
 #include "MainWindow.h"
 #include "WorldView.h"
-#include "Game.h"
+
+class Game;
 class GameView
 {
 public:

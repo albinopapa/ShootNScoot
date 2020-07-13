@@ -1,6 +1,7 @@
 #include "Weapon.h"
 
-
+namespace sns
+{
 	void Weapon::Update( float dt ) noexcept 
 	{
 		if( state == WeaponState::Recharge )
@@ -15,4 +16,4 @@
 		fire_timer = 0.f;
 		state = WeaponState::Idle;
 	}
-
+}

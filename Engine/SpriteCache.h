@@ -5,7 +5,8 @@
 
 #include "Surface.h"
 
-
+namespace sns
+{
 	struct SpriteCache
 	{
 		Surface hero_sprite;
@@ -14,4 +15,4 @@
 		Surface asteroid_sprite;
 		Surface plasmaball_sprite;
 	};
-
+}

@@ -1,6 +1,6 @@
 #include "Enemies.h"
 
-void Enemy::Update( float dt )
+void sns::Enemy::Update( float dt )
 {
 	std::visit( [ & ]( auto& entity_ )
 	{

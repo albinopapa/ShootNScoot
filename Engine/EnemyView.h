@@ -1,6 +1,10 @@
 #pragma once
-#include "Enemies.h"
+
 #include "Graphics.h"
+
+namespace sns
+{
+	class Enemy;
 
 	class EnemyView
 	{
@@ -10,3 +14,4 @@
 	private:
 		Surface	sprite = "Images/Enemy1Ship.png";
 	};
+}

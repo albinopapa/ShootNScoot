@@ -252,7 +252,7 @@ bool Graphics::IsVisible( RectI const & rect )
 	return rect.Overlaps( screenRect );
 }
 
-// Rotable(is there even an adjective for that) Sprite code
+
 void Graphics::DrawSprite( RectF const & dst, Radian angle, Surface const & sprite, Color tint, Color key ) noexcept
 {
 	auto pl = Pipeline{ ColorKeyTextureEffect<PointSampler>{}, *this };
@@ -279,37 +279,6 @@ void Graphics::DrawDisc( Vec2 const & center, float radius, Color color ) noexce
 	pl.Draw( RectF{ -radius, -radius, radius, radius } + center, Radian{ 0.f } );
 }
 
-void Graphics::DrawCircle(int xCenter, int yCenter, int radius, Color c)// from http://groups.csail.mit.edu/graphics/classes/6.837/F98/Lecture6/circle.html
-{
-	const int r2 = radius * radius;
-	if (xCenter >= 0 && xCenter < Graphics::ScreenWidth) {
-		if (yCenter + radius >= 0 && yCenter + radius < Graphics::ScreenHeight) {
-			PutPixel(xCenter, yCenter + radius, c);
-		}
-		if (yCenter - radius >= 0 && yCenter - radius < Graphics::ScreenHeight) {
-			PutPixel(xCenter, yCenter - radius, c);
-		}
-	}
-	for (int x = 1; x <= radius; x++) {
-		int y = (int)(sqrt(r2 - x * x) + 0.5);
-		if (xCenter + x >= 0 && xCenter + x < Graphics::ScreenWidth) {
-			if (yCenter + y >= 0 && yCenter + y < Graphics::ScreenHeight) {
-				PutPixel(xCenter + x, yCenter + y, c);
-			}
-			if (yCenter - y >= 0 && yCenter - y < Graphics::ScreenHeight) {
-				PutPixel(xCenter + x, yCenter - y, c);
-			}
-		}
-		if (xCenter - x >= 0 && xCenter - x < Graphics::ScreenWidth) {
-			if (yCenter + y >= 0 && yCenter + y < Graphics::ScreenHeight) {
-				PutPixel(xCenter - x, yCenter + y, c);
-			}
-			if (yCenter - y >= 0 && yCenter - y < Graphics::ScreenHeight) {
-				PutPixel(xCenter - x, yCenter - y, c);
-			}
-		}
-	}
-}
 void Graphics::DrawRect( RectF const& dst, Radian angle, Color color ) noexcept
 {
 	auto pl = Pipeline{ RectFillEffect{}, *this };
@@ -317,18 +286,8 @@ void Graphics::DrawRect( RectF const& dst, Radian angle, Color color ) noexcept
 	pl.vertices[ 1 ] = { {  .5f, -.5f }, color };
 	pl.vertices[ 2 ] = { { -.5f,  .5f }, color };
 	pl.vertices[ 3 ] = { {  .5f,  .5f }, color };
-	pl.Draw( dst, angle );
-}
 
-void Graphics::DrawRect(const RectI& rect, const Color & color)
-{ 
-	for (int y = int(rect.top); y<int(rect.bottom); y++) {
-		for (int x = int(rect.left); x<int(rect.right); x++) {
-			if (x >= 0 && x < Graphics::ScreenWidth&& y >= 0 && y < Graphics::ScreenHeight) {
-				PutPixel(x, y, color);
-			}
-		}
-	}
+	pl.Draw( dst, angle );
 }
 
 void Graphics::DrawLine( Vec2 const & p0, Vec2 const & p1, float thickness, Color color ) noexcept

@@ -4,7 +4,7 @@
 #include "WorldView.h"
 #include "WorldController.h"
 
-void EnemySpawner::Update( World& world, float dt )
+void sns::EnemySpawner::Update( World& world, float dt )
 {
 	switch( state )
 	{
@@ -71,7 +71,7 @@ void EnemySpawner::Update( World& world, float dt )
 	}
 }
 
-void EnemySpawner::Reset() noexcept
+void sns::EnemySpawner::Reset() noexcept
 {
 	enemy_spawn_group			= 0;
 	enemy_spawn_group_count		= 0;

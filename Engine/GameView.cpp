@@ -26,7 +26,7 @@ void GameView::Draw( Game const& model )noexcept
 		}
 		case GameState::Play:
 		{
-			auto world_view = WorldView{};
+			auto world_view = sns::WorldView{};
 			world_view.Draw( model.world, gfx );
 
 			const auto score_str = std::to_string( model.score );

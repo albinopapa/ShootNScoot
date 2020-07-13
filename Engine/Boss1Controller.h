@@ -1,7 +1,12 @@
 #pragma once
-#include "Bosses.h"
+
 #include "Rect.h"
 #include "WeaponController.h"
+
+namespace sns
+{
+	class Boss1;
+	class World;
 
 	class Boss1Controller
 	{
@@ -15,4 +20,4 @@
 	private:
 		WeaponController weapon;
 	};
-
+}

@@ -1,5 +1,7 @@
 #include "Shield.h"
 
+namespace sns
+{
 	void Shield::Update( float delta_time ) noexcept
 	{
 		switch( state )
@@ -18,4 +20,4 @@
 		state = ShieldState::Full;
 		recharge_delay_timer = 0.f;
 	}
-
+}

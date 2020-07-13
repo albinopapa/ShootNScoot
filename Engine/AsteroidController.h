@@ -2,7 +2,11 @@
 
 #include "Enumerations.h"
 #include "Rect.h"
-#include "Asteroids.h"
+
+namespace sns
+{
+	class Asteroid;
+
 	class AsteroidController
 	{
 	public:
@@ -17,3 +21,4 @@
 		AsteroidDeathReason Reason( Asteroid& model )const noexcept;
 		int ScoreValue( Asteroid& model )const noexcept;
 	};
+}

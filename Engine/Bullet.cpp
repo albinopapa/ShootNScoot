@@ -1,7 +1,9 @@
-#include "Ammo.h"
+#include "Bullet.h"
 #include "ChiliMath.h"
 #include <algorithm>
 
+namespace sns
+{
 	Surface make_bullet_sprite() {
 		auto sprite = Surface{ int( Bullet::aabb.Width() ), int( Bullet::aabb.Height() ) };
 
@@ -57,4 +59,4 @@
 			position += ( velocity * ( type::speed * delta_time ) );
 		}, variant );
 	}
-
+}

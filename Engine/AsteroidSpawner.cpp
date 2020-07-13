@@ -2,7 +2,7 @@
 #include "Asteroids.h"
 #include "World.h"
 
-void AsteroidSpawner::Update( World& world, float dt )
+void sns::AsteroidSpawner::Update( World& world, float dt )
 {
 	switch( state )
 	{
@@ -35,7 +35,7 @@ void AsteroidSpawner::Update( World& world, float dt )
 	}
 }
 
-void AsteroidSpawner::Reset() noexcept
+void sns::AsteroidSpawner::Reset() noexcept
 {
 	spawn_timer				= AsteroidSpawner::spawn_delay;
 	spawn_count				= 0;

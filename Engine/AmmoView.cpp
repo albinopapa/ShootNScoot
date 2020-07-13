@@ -1,8 +1,9 @@
 #include "AmmoView.h"
-#include "Ammo.h"
+#include "Bullet.h"
 #include <cassert>
 
-
+namespace sns
+{
 	void AmmoView::Draw( Ammo const& model, Graphics& gfx ) const noexcept
 	{
 		std::visit( [ & ]( auto const& ammo )
@@ -12,4 +13,4 @@
 			gfx.DrawSprite( type::aabb + model.position, Radian( 0.f ), type::sprite );
 		}, model.variant );
 	}
-
+}

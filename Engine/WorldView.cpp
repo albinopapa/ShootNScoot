@@ -7,6 +7,8 @@
 #include "HeroView.h"
 #include "StarView.h"
 
+namespace sns
+{
 	void WorldView::Draw( World const& model, Graphics & gfx ) const noexcept
 	{
 		StarView star_view;
@@ -38,4 +40,4 @@
 			}
 		}
 	}
-
+}

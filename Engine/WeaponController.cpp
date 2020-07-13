@@ -2,7 +2,8 @@
 #include "Weapon.h"
 #include "World.h"
 
-
+namespace sns
+{
 	void WeaponController::Update( Weapon& model, float dt )
 	{
 		if( model.state == WeaponState::Recharge )
@@ -37,4 +38,4 @@
 			}, model.variant );
 		}
 	}
-
+}

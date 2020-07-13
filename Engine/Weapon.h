@@ -1,9 +1,11 @@
 #pragma once
 
-#include "Ammo.h"
+#include "Bullet.h"
 #include "Enumerations.h"
 #include <variant>
 
+namespace sns
+{
 	struct Gun
 	{
 		using ammo_type = Bullet;
@@ -36,3 +38,4 @@
 		float fire_timer = 0.f;
 		WeaponState state = WeaponState::Idle;
 	};
+}
