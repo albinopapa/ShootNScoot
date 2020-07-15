@@ -2,14 +2,10 @@
 
 #include "Enumerations.h"
 #include "Graphics.h"
+#include "World.h"
 
-namespace sns
+class WorldView
 {
-	class World;
-
-	class WorldView
-	{
-	public:
-		void Draw( World const& model, Graphics& gfx )const noexcept;
-	};
-}
+public:
+	void Draw( World const& model, Graphics& gfx )const noexcept;
+};

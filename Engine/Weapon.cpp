@@ -1,19 +1,16 @@
 #include "Weapon.h"
 
-namespace sns
+void Weapon::Update( float dt ) noexcept
 {
-	void Weapon::Update( float dt ) noexcept 
+	if( state == WeaponState::Recharge )
 	{
-		if( state == WeaponState::Recharge )
-		{
-			fire_timer -= dt;
-		}
+		fire_timer -= dt;
 	}
+}
 
-	void Weapon::Reset() noexcept
-	{
-		variant = Gun{};
-		fire_timer = 0.f;
-		state = WeaponState::Idle;
-	}
+void Weapon::Reset() noexcept
+{
+	variant = Gun{};
+	fire_timer = 0.f;
+	state = WeaponState::Idle;
 }

@@ -31,8 +31,5 @@ void Animation::Update( float dt )
 
 void Animation::Advance()
 {
-	if( ++iCurFrame >= frames.size() )
-	{
-		iCurFrame = 0;
-	}
+	iCurFrame = int( std::size_t( iCurFrame + 1 ) % frames.size() );
 }

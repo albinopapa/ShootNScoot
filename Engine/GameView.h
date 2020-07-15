@@ -1,12 +1,12 @@
 #pragma once
 
+#include "ChiliWin.h"
 #include "Enumerations.h"
 #include "Font.h"
-#include "ChiliWin.h"
+#include "Game.h"
 #include "MainWindow.h"
 #include "WorldView.h"
 
-class Game;
 class GameView
 {
 public:

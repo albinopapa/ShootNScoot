@@ -253,7 +253,7 @@ bool Graphics::IsVisible( RectI const & rect )
 }
 
 
-void Graphics::DrawSprite( RectF const & dst, Radian angle, Surface const & sprite, Color tint, Color key ) noexcept
+void Graphics::DrawSprite( RectI const & dst, Radian angle, Surface const & sprite, Color tint, Color key ) noexcept
 {
 	auto pl = Pipeline{ ColorKeyTextureEffect<PointSampler>{}, *this };
 
@@ -268,43 +268,122 @@ void Graphics::DrawSprite( RectF const & dst, Radian angle, Surface const & spri
 	pl.Draw( dst, angle );
 }
 
-void Graphics::DrawDisc( Vec2 const & center, float radius, Color color ) noexcept
+void Graphics::DrawDisc( Point const & center, int radius, Color color ) noexcept
 {
-	auto pl = Pipeline{ DiscFillEffect{}, *this };
-	pl.vertices[ 0 ] = { { -.5f, -.5f }, color };
-	pl.vertices[ 1 ] = { {  .5f, -.5f }, color };
-	pl.vertices[ 2 ] = { { -.5f,  .5f }, color };
-	pl.vertices[ 3 ] = { {  .5f,  .5f }, color };
-	pl.PSSetConstantBuffer( { center, sqr( radius ) } );
-	pl.Draw( RectF{ -radius, -radius, radius, radius } + center, Radian{ 0.f } );
+	const auto left = center.x - radius;
+	const auto top = center.y - radius;
+	const auto size = radius * 2;
+
+	const auto xStart = std::max( -left, 0 ) - radius;
+	const auto yStart = std::max( -top, 0 ) - radius;
+	const auto xEnd = std::min( ScreenWidth - left, size ) - radius;
+	const auto yEnd = std::min( ScreenHeight - top, size ) - radius;
+	const auto sqRadius = sqr( radius );
+
+	for( auto y = yStart; y < yEnd; ++y ) {
+		for( auto x = xStart; x < xEnd; ++x ) {
+			const auto delta = Point{ x, y };
+			if( delta.LengthSq() < sqRadius ) {
+				const auto pos = delta + center;
+				PutPixel( pos.x, pos.y, color );
+			}
+		}
+	}
 }
 
-void Graphics::DrawRect( RectF const& dst, Radian angle, Color color ) noexcept
+void Graphics::DrawCircle( Point const& center, int radius, Color color ) noexcept
 {
-	auto pl = Pipeline{ RectFillEffect{}, *this };
-	pl.vertices[ 0 ] = { { -.5f, -.5f }, color };
-	pl.vertices[ 1 ] = { {  .5f, -.5f }, color };
-	pl.vertices[ 2 ] = { { -.5f,  .5f }, color };
-	pl.vertices[ 3 ] = { {  .5f,  .5f }, color };
+	const auto r2 = sqr( radius );
 
-	pl.Draw( dst, angle );
+	if( center.x - radius >= 0 && center.x + radius < ScreenWidth &&
+		center.y - radius >= 0 && center.y + radius < ScreenHeight )
+	{
+		for( int x = 0; x <= radius; x++ ) {
+			const auto y = ( int )( sqrt( r2 - sqr( x ) ) + 0.5 );
+
+			PutPixel( center.x + x, center.y + y, color );
+			PutPixel( center.x + x, center.y - y, color );
+			PutPixel( center.x - x, center.y + y, color );
+			PutPixel( center.x - x, center.y - y, color );
+			PutPixel( center.x + y, center.y + x, color );
+			PutPixel( center.x + y, center.y - x, color );
+			PutPixel( center.x - y, center.y + x, color );
+			PutPixel( center.x - y, center.y - x, color );
+		}
+	}
+	else
+	{
+		for( int x = 0; x <= radius; x++ ) {
+			const auto y = ( int )( sqrt( r2 - sqr( x ) ) + 0.5 );
+
+			PutPixelClipped( center.x + x, center.y + y, color );
+			PutPixelClipped( center.x + x, center.y - y, color );
+			PutPixelClipped( center.x - x, center.y + y, color );
+			PutPixelClipped( center.x - x, center.y - y, color );
+			PutPixelClipped( center.x + y, center.y + x, color );
+			PutPixelClipped( center.x + y, center.y - x, color );
+			PutPixelClipped( center.x - y, center.y + x, color );
+			PutPixelClipped( center.x - y, center.y - x, color );
+		}
+	}
 }
 
-void Graphics::DrawLine( Vec2 const & p0, Vec2 const & p1, float thickness, Color color ) noexcept
+void Graphics::DrawRect( RectI const& dst, Radian angle, Color color ) noexcept
 {
-	auto pl = Pipeline{ RectFillEffect{}, *this };
-	pl.vertices[ 0 ] = { { -.5f, -.5f }, color };
-	pl.vertices[ 1 ] = { {  .5f, -.5f }, color };
-	pl.vertices[ 2 ] = { { -.5f,  .5f }, color };
-	pl.vertices[ 3 ] = { {  .5f,  .5f }, color };
+	const auto xStart = std::max( -dst.left, 0 ) + dst.left;
+	const auto yStart = std::max( -dst.top, 0 ) + dst.top;
+	const auto xEnd = std::min( ScreenWidth - dst.left, dst.Width() ) + dst.left;
+	const auto yEnd = std::min( ScreenHeight - dst.top, dst.Height() ) + dst.top;
 
-	thickness = std::max( thickness, 1.f );
+	for( auto y = yStart; y < yEnd; ++y ) {
+		for( auto x = xStart; x < xEnd; ++x ) {
+			PutPixel( x, y, color );
+		}
+	}
+}
 
-	const auto delta = ( p1 - p0 );
-	const auto center = p0 + ( delta * .5f );
-	const auto size = Vec2{ delta.Length() * .5f, thickness * .5f };
-	
-	pl.Draw( RectF{ center - size, center + size }, Radian{ std::atan2( delta.y, delta.x ) } );
+void Graphics::DrawLine( Point const& p0, Point const& p1, Color color ) noexcept
+{
+	const auto dist = p1 - p0;
+
+	if( dist.y == 0 && dist.x == 0 )
+	{
+		PutPixel( p0.x, p0.y, color );
+	}
+	else if( abs( dist.y ) > abs( dist.x ) )
+	{
+		auto [pt0, pt1] = [&]()
+		{
+			if( dist.y < 0 )
+				return std::pair{ p1, p0 };
+			else
+				return std::pair{ p0, p1 };
+		}( );
+		const auto m = ( float )dist.x / ( float )dist.y;
+		const auto b = float( pt0.x ) - m * float( pt0.y );
+		for( int y = pt0.y; y <= pt1.y; ++y )
+		{
+			const auto x = static_cast< int >( std::round( m * y + b ) );
+			PutPixel( x, y, color );
+		}
+	}
+	else
+	{
+		auto [pt0, pt1] = [&]()
+		{
+			if( dist.x < 0 )
+				return std::pair{ p1, p0 };
+			else
+				return std::pair{ p0, p1 };
+		}( );
+		const auto m = float( dist.y ) / float( dist.x );
+		const auto b = float( pt0.y ) - m * float( pt0.x );
+		for( int x = pt0.x; x <= pt1.x; ++x )
+		{
+			const auto y = static_cast< int >( std::round( m * x + b ) );
+			PutPixel( x, y, color );
+		}
+	}
 }
 
 Graphics::~Graphics()
@@ -337,6 +416,14 @@ void Graphics::PutPixel( int x, int y, Color c )
 	assert( y >= 0 );
 	assert( y < int( Graphics::ScreenHeight ) );
 	pSysBuffer[ Graphics::ScreenWidth * y + x ] = c;
+}
+
+void Graphics::PutPixelClipped( int x, int y, Color color ) noexcept
+{
+	if( x >= 0 && x < ScreenWidth && y >= 0 && y < ScreenHeight )
+	{
+		pSysBuffer[ x + ( y * ScreenWidth ) ] = color;
+	}
 }
 
 Color Graphics::GetPixel( int x, int y ) const

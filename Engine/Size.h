@@ -2,7 +2,8 @@
 
 template<typename T>
 struct Size {
-	T width, height;
+	T width = {};
+	T height = {};
 };
 
 using SizeI = Size<int>;

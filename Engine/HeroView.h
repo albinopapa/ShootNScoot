@@ -1,16 +1,12 @@
 #pragma once
 
 #include "Graphics.h"
+#include "Hero.h"
 
-namespace sns
+class HeroView
 {
-	class Hero;
-
-	class HeroView
-	{
-	public:
-		void Draw( Hero const& model, Graphics& gfx )const noexcept;
-	private:
-		Surface	sprite = "Images/HeroShip.png";
-	};
-}
+public:
+	void Draw( Hero const& model, Graphics& gfx )const noexcept;
+private:
+	Surface	sprite = "Images/HeroShip.png";
+};

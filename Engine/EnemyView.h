@@ -1,17 +1,13 @@
 #pragma once
 
+#include "Enemies.h"
 #include "Graphics.h"
 
-namespace sns
+class EnemyView
 {
-	class Enemy;
+public:
+	void Draw( Enemy const& model, Graphics& gfx )const noexcept;
 
-	class EnemyView
-	{
-	public:
-		void Draw( Enemy const& model, Graphics& gfx )const noexcept;
-
-	private:
-		Surface	sprite = "Images/Enemy1Ship.png";
-	};
-}
+private:
+	Surface	sprite = "Images/Enemy1Ship.png";
+};

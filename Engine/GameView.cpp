@@ -1,6 +1,4 @@
 #include "GameView.h"
-#include "Game.h"
-#include "WorldView.h"
 
 GameView::GameView( MainWindow& wnd )
 	:
@@ -26,7 +24,7 @@ void GameView::Draw( Game const& model )noexcept
 		}
 		case GameState::Play:
 		{
-			auto world_view = sns::WorldView{};
+			auto world_view = WorldView{};
 			world_view.Draw( model.world, gfx );
 
 			const auto score_str = std::to_string( model.score );

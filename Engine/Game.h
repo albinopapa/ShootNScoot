@@ -46,7 +46,7 @@ private:
 	/********************************/
 	/*  User Variables              */
 	/********************************/
-	sns::World world;
+	World world;
 	GameState state			= GameState::Intro;
 	GameState nextState		= GameState::Intro;
 

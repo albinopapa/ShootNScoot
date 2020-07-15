@@ -68,13 +68,15 @@ public:
 
 	Color GetPixel( int x,int y ) const;
 	void PutPixel( int x,int y,Color c );
+	void PutPixelClipped( int x, int y, Color color )noexcept;
 
 	static bool IsVisible( RectI const& rect );
 
-	void DrawDisc( Vec2 const& center, float radius, Color color )noexcept;
-	void DrawRect( RectF const& dst, Radian angle, Color color )noexcept;
-	void DrawLine( Vec2 const& p0, Vec2 const& p2, float thickness, Color color )noexcept;
-	void DrawSprite( RectF const& dst, Radian angle, Surface const& sprite, Color tint = Colors::White, Color key = Colors::Magenta )noexcept;
+	void DrawDisc( Point const& center, int radius, Color color )noexcept;
+	void DrawCircle( Point const& center, int radius, Color color )noexcept;
+	void DrawRect( RectI const& dst, Radian angle, Color color )noexcept;
+	void DrawLine( Point const& p0, Point const& p2, Color color )noexcept;
+	void DrawSprite( RectI const& dst, Radian angle, Surface const& sprite, Color tint = Colors::White, Color key = Colors::Magenta )noexcept;
 
 
 	~Graphics();

@@ -4,15 +4,14 @@
 // TODO: Determine if a central location for sprites is necessary
 
 #include "Surface.h"
+#include <vector>
 
-namespace sns
+struct SpriteCache
 {
-	struct SpriteCache
-	{
-		Surface hero_sprite;
-		Surface enemy_sprite;
-		Surface bullet_sprite;
-		Surface asteroid_sprite;
-		Surface plasmaball_sprite;
-	};
-}
+	Surface hero_sprite;
+	Surface enemy_sprite;
+	Surface bullet_sprite;
+	Surface asteroid_sprite;
+	Surface plasmaball_sprite;
+	std::vector<Surface> ship1_frames;
+};

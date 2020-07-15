@@ -1,23 +1,19 @@
 #pragma once
 
-#include "Vec2.h"
 #include "Bullet.h"
+#include "Vec2.h"
+#include "Weapon.h"
+#include "World.h"
 
-namespace sns
+class WeaponController
 {
-	class Weapon;
-	class World;
-
-	class WeaponController
-	{
-	public:
-		void Update( Weapon& model, float dt );
-		bool CanFire( Weapon& model )const noexcept;
-		void Fire( 
-			Weapon& model,
-			Vec2 const & position, 
-			Vec2 const & direction,
-			World& world, 
-			AmmoOwner ammo_owner );
-	};
-}
+public:
+	static void Update( Weapon& model, float dt )noexcept;
+	static bool CanFire( Weapon& model )noexcept;
+	static void Fire(
+		Weapon& model,
+		Vec2 const& position,
+		Vec2 const& direction,
+		World& world,
+		AmmoOwner ammo_owner );
+};

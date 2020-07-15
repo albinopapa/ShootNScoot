@@ -1,15 +1,10 @@
 #pragma once
 
 #include "Graphics.h"
+#include "Star.h"
 
-namespace sns
+class StarView
 {
-	class Star;
-
-	class StarView
-	{
-	public:
-		void Draw( Star const& model, Graphics& gfx )const noexcept;
-	};
-
-}
+public:
+	void Draw( Star const& model, Graphics& gfx )const noexcept;
+};

@@ -4,17 +4,14 @@
 #include "Rect.h"
 #include "Vec2.h"
 
-namespace sns
+class Star
 {
-	class Star
-	{
-	public:
-		void Update()noexcept;
+public:
+	void Update()noexcept;
 
-		static constexpr float radius = 1.f;
-		static constexpr auto rect = RectF{ -radius, -radius, radius, radius };
+	static constexpr float radius = 1.f;
+	static constexpr auto rect = RectF{ -radius, -radius, radius, radius };
 
-		Vec2 position;
-		float speed;
-	};
-}
+	Vec2 position;
+	float speed;
+};

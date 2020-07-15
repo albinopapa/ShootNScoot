@@ -1,13 +1,10 @@
 #pragma once
 
+#include "Bullet.h"
 #include "Graphics.h"
 
-namespace sns
+class AmmoView
 {
-	class Ammo;
-	class AmmoView
-	{
-	public:
-		void Draw( Ammo const& model, Graphics& gfx )const noexcept;
-	};
-}
+public:
+	void Draw( Ammo const& model, Graphics& gfx )const noexcept;
+};
