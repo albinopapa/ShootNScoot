@@ -9,20 +9,15 @@
 #include "HeroController.h"
 #include "Keyboard.h"
 #include "StarController.h"
-
-class Game;
-
-namespace sns
-{
-	class World;
-
+#include "World.h"
+#include "Game.h"
 	class WorldController
 	{
 	public:
 		void Update( World& model, Keyboard& kbd, Game& game_controller, float dt );
 
 		void RemoveDeadBullets( World& model )noexcept;
-		void RemoveDeadEnemies( World& model )noexcept;
+		void RemoveDeadEnemies( World& model );
 		void RemoveDeadAsteroids( World& model )noexcept;
 
 		// Enemy vs Hero, HeroAmmo, Asteroids
@@ -50,4 +45,4 @@ namespace sns
 		HeroController hero_controller;
 		Boss1Controller boss_controller;
 	};
-}
+

@@ -3,8 +3,6 @@
 #include "Vec2.h"
 #include <random>
 
-namespace sns
-{
 	class StarController
 	{
 	public:
@@ -12,7 +10,6 @@ namespace sns
 
 	private:
 		std::mt19937 rng;
-
 	};
-}
+
 

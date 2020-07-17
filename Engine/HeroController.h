@@ -4,11 +4,6 @@
 #include "ShieldController.h"
 #include "WeaponController.h"
 
-namespace sns
-{
-	class Hero;
-	class World;
-
 	class HeroController
 	{
 	public:
@@ -28,6 +23,4 @@ namespace sns
 	private:
 		void UpdateVelocity( Hero& model, Keyboard const& kbd )noexcept;
 		void ChangeWeapon( Hero& model, Keyboard const& kbd )noexcept;
-
 	};
-}

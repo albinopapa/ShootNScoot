@@ -6,8 +6,6 @@
 #include "Vec2.h"
 #include <variant>
 
-namespace sns
-{
 	struct Bullet
 	{
 		static constexpr auto aabb			= RectF{ -1.f, -2.f, 1.f, 2.f };
@@ -51,5 +49,5 @@ namespace sns
 		bool isAlive = true;
 		
 	};
-}
+
 

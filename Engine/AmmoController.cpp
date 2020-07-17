@@ -1,10 +1,8 @@
 #include "AmmoController.h"
-#include "Bullet.h"
+#include "Ammo.h"
 #include "Graphics.h"
 #include <algorithm>
 
-namespace sns
-{
 	void AmmoController::Update( Ammo& model, float dt ) noexcept
 	{	
 		model.isAlive = Graphics::IsVisible( RectI( AABB( model ) ) ) && model.energy > 0.f;
@@ -33,4 +31,4 @@ namespace sns
 	{
 		return model.isAlive;
 	}
-}
+

@@ -1,7 +1,5 @@
 #include "Starfield.h"
 
-namespace sns
-{
 	std::vector<Star> Starfield::generate(
 		RectF position_bounds,
 		std::pair<float, float> speed_bounds,
@@ -30,4 +28,3 @@ namespace sns
 		return Star{ Vec2{xDist( rng ), 0.f}, spdDist( rng ) };
 	}
 
-}

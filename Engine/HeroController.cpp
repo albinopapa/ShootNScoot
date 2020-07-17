@@ -2,8 +2,6 @@
 #include "Hero.h"
 #include "World.h"
 
-namespace sns
-{
 	void HeroController::Update( 
 		Hero& model,
 		World& world,
@@ -118,4 +116,4 @@ namespace sns
 				model.weapon.variant = PlasmaGun{};
 		}
 	}
-}
+
