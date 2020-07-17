@@ -12,11 +12,11 @@ namespace SpriteEffect
 			:
 			chroma( c )
 		{}
-		void operator()( Color cSrc,int xDest,int yDest,Graphics& gfx ) const
+		void operator()( int xDest, int yDest, Color cSrc, Graphics& gfx ) const
 		{
 			if( cSrc != chroma )
 			{
-				gfx.PutPixel( xDest,yDest,cSrc );
+				gfx.PutPixel( xDest, yDest, cSrc );
 			}
 		}
 	private:
@@ -25,16 +25,16 @@ namespace SpriteEffect
 	class Substitution
 	{
 	public:
-		Substitution( Color c,Color s )
+		Substitution( Color c, Color s )
 			:
 			chroma( c ),
 			sub( s )
 		{}
-		void operator()( Color cSrc,int xDest,int yDest,Graphics& gfx ) const
+		void operator()( int xDest, int yDest, Color cSrc, Graphics& gfx ) const
 		{
 			if( cSrc != chroma )
 			{
-				gfx.PutPixel( xDest,yDest,sub );
+				gfx.PutPixel( xDest, yDest, sub );
 			}
 		}
 	private:
@@ -44,9 +44,9 @@ namespace SpriteEffect
 	class Copy
 	{
 	public:
-		void operator()( Color cSrc,int xDest,int yDest,Graphics& gfx ) const
+		void operator()( int xDest, int yDest, Color cSrc, Graphics& gfx ) const
 		{
-			gfx.PutPixel( xDest,yDest,cSrc );
+			gfx.PutPixel( xDest, yDest, cSrc );
 		}
 	};
 	class Ghost
@@ -56,26 +56,45 @@ namespace SpriteEffect
 			:
 			chroma( c )
 		{}
-		void operator()( Color src,int xDest,int yDest,Graphics& gfx ) const
+		void operator()( int xDest, int yDest, Color src, Graphics& gfx ) const
 		{
 			if( src != chroma )
 			{
-				const Color dest = gfx.GetPixel( xDest,yDest );
+				const Color dest = gfx.GetPixel( xDest, yDest );
 				const Color blend = {
-					unsigned char( (src.GetR() + dest.GetR()) / 2 ),
-					unsigned char( (src.GetG() + dest.GetG()) / 2 ),
-					unsigned char( (src.GetB() + dest.GetB()) / 2 )
+					unsigned char( ( src.GetR() + dest.GetR() ) / 2 ),
+					unsigned char( ( src.GetG() + dest.GetG() ) / 2 ),
+					unsigned char( ( src.GetB() + dest.GetB() ) / 2 )
 				};
-				gfx.PutPixel( xDest,yDest,blend );
+				gfx.PutPixel( xDest, yDest, blend );
 			}
 		}
 	private:
 		Color chroma;
 	};
+
+	class TintWithChroma {
+	public:
+		TintWithChroma( Color tint_, Color key_ )
+			:
+			tint( tint_ ),
+			key( key_ )
+		{}
+		void operator()( int x, int y, Color const& color, Graphics& gfx )const noexcept {
+			if( color != key )
+			{
+				gfx.PutPixel( x, y, color * tint );
+			}
+		}
+	private:
+		Color tint;
+		Color key;
+	};
+
 	class Alpha
 	{
 	public:
-		void operator()( Color src1, int xDest, int yDest, Graphics& gfx ) const
+		void operator()( int xDest, int yDest, Color src1, Graphics& gfx ) const
 		{
 			const auto srcAlpha1 = src1.GetA();
 			const auto src2 = gfx.GetPixel( xDest, yDest );
@@ -83,7 +102,7 @@ namespace SpriteEffect
 			{
 				gfx.PutPixel( xDest, yDest, src1 );
 			}
-			else if( srcAlpha1 > 0 && srcAlpha1 < 255)
+			else if( srcAlpha1 > 0 && srcAlpha1 < 255 )
 			{
 				const auto srcAlpha2 = 255 - srcAlpha1;
 

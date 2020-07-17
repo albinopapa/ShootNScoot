@@ -72,11 +72,19 @@ public:
 			bottom	+ offset.y
 		};
 	}
+	constexpr Rect_ operator-( Vec2_<T> const& offset )const noexcept {
+		return{
+			left - offset.x,
+			top - offset.y,
+			right - offset.x,
+			bottom - offset.y
+		};
+	}
 public:
-	T left;
-	T top;
-	T right;
-	T bottom;
+	T left = {};
+	T top = {};
+	T right = {};
+	T bottom = {};
 };
 
 typedef Rect_<int> RectI;

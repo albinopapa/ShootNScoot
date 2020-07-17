@@ -17,7 +17,7 @@ struct AsteroidSpawner
 	static constexpr float spawn_delay = 4.f;
 
 	std::mt19937 rng;
-	float_distribution xDist = float_distribution( screenRect.Center().x - 600.f, screenRect.Center().x + 600.f );
+	float_distribution xDist = float_distribution( -600.f, 600.f );
 	float_distribution vxDist = float_distribution( 0.f, 1.f );
 	float spawn_timer = spawn_delay;
 	int spawn_count = 0;

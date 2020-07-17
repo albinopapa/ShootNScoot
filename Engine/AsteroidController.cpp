@@ -11,9 +11,9 @@ void AsteroidController::Update( Asteroid& model, float dt ) noexcept
 
 	const auto is_leaving =
 		( model.position.y + radius < 0.f && model.direction.y < 0.f ) ||
-		( model.position.y - radius > screenRect.bottom && model.direction.y > 0.f ) ||
+		( model.position.y - radius > Graphics::GetRect<float>().bottom && model.direction.y > 0.f ) ||
 		( model.position.x + radius < 0.f && model.direction.x < 0.f ) ||
-		( model.position.x - radius > screenRect.right && model.direction.y > 0.f );
+		( model.position.x - radius > Graphics::GetRect<float>().right && model.direction.y > 0.f );
 
 	if( is_leaving )
 	{

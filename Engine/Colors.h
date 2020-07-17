@@ -87,6 +87,14 @@ public:
 	uint32_t dword;
 };
 
+constexpr Color operator*( Color const& lhs, Color const& rhs )noexcept {
+	return{
+		static_cast< std::uint8_t >( ( lhs.GetA() * rhs.GetA() ) >> 8 ),
+		static_cast< std::uint8_t >( ( lhs.GetR() * rhs.GetR() ) >> 8 ),
+		static_cast< std::uint8_t >( ( lhs.GetG() * rhs.GetG() ) >> 8 ),
+		static_cast< std::uint8_t >( ( lhs.GetB() * rhs.GetB() ) >> 8 )
+	};
+}
 constexpr Color AlphaBlend( Color lhs, Color rhs )noexcept
 {
 	if( lhs.GetA() == 255 )

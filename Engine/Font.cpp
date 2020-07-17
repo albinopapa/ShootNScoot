@@ -1,4 +1,5 @@
 #include "Font.h"
+#include "SpriteEffect.h"
 #include <cassert>
 
 Font::Font( const std::string& filename )
@@ -72,7 +73,11 @@ void Font::DrawText( const std::string& text, const Vei2& pos, Color color, Grap
 		if( c >= firstChar + 1 && c <= lastChar )
 		{
 			const auto index = c - ' ';
-			gfx.DrawSprite( RectI( glyph_rect ) + curPos, Radian{ 0.f }, glyphs[ index ], color );
+			gfx.DrawSprite( 
+				RectI( glyph_rect ) + curPos, 
+				glyphs[ index ],  
+				SpriteEffect::TintWithChroma{ color, Colors::Magenta }
+				);
 		}
 		else if( c == '\n' )
 		{

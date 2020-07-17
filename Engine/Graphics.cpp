@@ -249,24 +249,9 @@ Graphics::Graphics( HWNDKey& key )
 
 bool Graphics::IsVisible( RectI const & rect )
 {
-	return rect.Overlaps( screenRect );
+	return rect.Overlaps( GetRect<int>() );
 }
 
-
-void Graphics::DrawSprite( RectI const & dst, Radian angle, Surface const & sprite, Color tint, Color key ) noexcept
-{
-	auto pl = Pipeline{ ColorKeyTextureEffect<PointSampler>{}, *this };
-
-	pl.vertices[ 0 ] = { {-.5f, -.5f}, { 0.f, 0.f} };
-	pl.vertices[ 1 ] = { { .5f, -.5f}, { 1.f, 0.f} };
-	pl.vertices[ 2 ] = { {-.5f,  .5f}, { 0.f, 1.f} };
-	pl.vertices[ 3 ] = { { .5f,  .5f}, { 1.f, 1.f} };
-
-	pl.PSSetConstantBuffer( { key, tint } );
-	pl.PSSetTexture( sprite );
-
-	pl.Draw( dst, angle );
-}
 
 void Graphics::DrawDisc( Point const & center, int radius, Color color ) noexcept
 {
@@ -328,7 +313,7 @@ void Graphics::DrawCircle( Point const& center, int radius, Color color ) noexce
 	}
 }
 
-void Graphics::DrawRect( RectI const& dst, Radian angle, Color color ) noexcept
+void Graphics::DrawRect( RectI const& dst, Color color ) noexcept
 {
 	const auto xStart = std::max( -dst.left, 0 ) + dst.left;
 	const auto yStart = std::max( -dst.top, 0 ) + dst.top;

@@ -4,8 +4,8 @@
 
 void StarController::Update( Star& model ) noexcept
 {
-	if( !screenRect.Contains( model.position ) )
+	if( !Graphics::GetRect<float>().Contains( model.position ) )
 	{
-		model = Starfield::generate_star( rng, { 0.f, screenRect.Width() }, { 1.f, 2.f } );
+		model = Starfield::generate_star( rng, { 0.f, Graphics::GetRect<float>().Width() }, { 1.f, 2.f } );
 	}
 }

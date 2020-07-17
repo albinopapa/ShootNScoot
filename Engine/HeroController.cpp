@@ -10,7 +10,7 @@ void HeroController::Update(
 	ChangeWeapon( model, kbd );
 
 	const auto heroRect = AABB( model );
-
+	const auto screenRect = Graphics::GetRect<float>();
 	if( !heroRect.IsContainedBy( screenRect ) )
 	{
 		model.position.x = std::clamp(

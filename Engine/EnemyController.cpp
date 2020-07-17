@@ -1,5 +1,6 @@
 #include "EnemyController.h"
 #include "WeaponController.h"
+#include "ChiliMath.h"
 #include <type_traits>
 
 void EnemyController::Update( Enemy& model, World& world, float dt ) noexcept
@@ -35,16 +36,17 @@ float EnemyController::Damage( Enemy& model ) const noexcept
 }
 void EnemyController::Update( Enemy& parent, Enemy1& enemy, World& world, float dt ) noexcept
 {
+	const auto& hero_position = world.hero.position;
+	const auto delta = ( hero_position - parent.position );
+	const auto sqrDistance = delta.LengthSq();
+
+	// Arbitrarily made up line of sight
+	constexpr auto line_of_sight = 250.f;
+
 	switch( enemy.m_state )
 	{
 		case Enemy1::State::Scouting:
 		{
-			const auto& hero_position = world.hero.position;
-			const auto delta = ( hero_position - parent.position );
-			const auto sqrDistance = delta.LengthSq();
-
-			// Arbitrarily made up line of sight
-			constexpr auto line_of_sight = 150.f;
 			if( sqrDistance < sqr( line_of_sight ) )
 			{
 				// Fire at player
@@ -57,18 +59,57 @@ void EnemyController::Update( Enemy& parent, Enemy1& enemy, World& world, float 
 				);
 
 				// Turn tail and run
-				parent.velocity = { 0.f, -1.f };
-				enemy.m_state = Enemy1::State::Retreating;
+				enemy.m_state = Enemy1::State::Turning;
 			}
+			break;
+		}
+		case Enemy1::State::Turning:
+		{
+			constexpr auto min_rotation = Radian{ -( pi * .5f ) };
+			constexpr auto pi2 = Radian{ 2.f * pi };
+
+			// If left of center, turn counterclockwise
+			// If right of center, turn clockwise
+			enemy.m_angle += ( parent.position.x < Graphics::GetRect<float>().Center().x ?
+				Radian{ -.1f } : Radian{ .1f } );
+			
+
+			// If angle is greater than 180 wrap angle to -180 ( probably counting up )
+			if( enemy.m_angle > pi ) enemy.m_angle -= pi2;
+			// If angle is less than -180 wrap angle to 180 ( probably counting down )
+			else if( enemy.m_angle < -pi ) enemy.m_angle += pi2;
+
+			if( enemy.m_angle >= min_rotation - .05f && enemy.m_angle <= min_rotation + .05f )
+			{
+				enemy.m_state = Enemy1::State::Retreating;
+				parent.velocity = Vec2{ 0.f, -1.f };
+			}
+			else 
+			{
+				parent.velocity = Vec2{ enemy.m_angle.Cos(), enemy.m_angle.Sin() };
+			}
+
 			break;
 		}
 		case Enemy1::State::Retreating:
 		{
-			if( parent.position.y + enemy.aabb.bottom < 0.f )
+			// Fire at player while retreating
+			if(WeaponController::CanFire(enemy.m_weapon))
 			{
-				parent.health = 0.f;
+				WeaponController::Fire(
+					enemy.m_weapon,
+					parent.position,
+					delta.Normalize(),
+					world,
+					AmmoOwner::Enemy
+				);
 			}
 			break;
+		}
+
+		if( !Graphics::IsVisible( Enemy1::aabb + parent.position ) )
+		{
+			parent.health = 0.f;
 		}
 	}
 }

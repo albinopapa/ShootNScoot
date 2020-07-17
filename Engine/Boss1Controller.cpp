@@ -39,7 +39,7 @@ void Boss1Controller::Update( Boss1& model, World& world, float dt ) noexcept
 			break;
 		case Boss1State::Idle:
 		{
-			if( rect.IsContainedBy( screenRect ) )
+			if( rect.IsContainedBy( Graphics::GetRect<float>() ) )
 				model.state = Boss1State::Attack;
 			break;
 		}

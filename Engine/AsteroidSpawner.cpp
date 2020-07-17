@@ -18,9 +18,8 @@ void AsteroidSpawner::Update( World& world, float dt )
 			break;
 		case State::Spawning:
 		{
-			constexpr auto cx = screenRect.Center().x;
-			constexpr auto cy = screenRect.Center().y;
-			const auto pos = Vec2{ xDist( rng ), -50.f };
+			const auto cx = Graphics::GetRect<float>().Center().x;
+			const auto pos = Vec2{ cx + xDist( rng ), -50.f };
 			const auto dir = Vec2{ pos.x > cx ? -vxDist( rng ) : vxDist( rng ), 1.f }.Normalize();
 			spawn_timer = AsteroidSpawner::spawn_delay;
 			
@@ -40,4 +39,5 @@ void AsteroidSpawner::Reset() noexcept
 	spawn_timer				= AsteroidSpawner::spawn_delay;
 	spawn_count				= 0;
 	state					= State::Idle;
+	rng = std::mt19937{};
 }

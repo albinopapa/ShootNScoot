@@ -2,10 +2,10 @@
 
 #include "ChiliMath.h"
 #include "Graphics.h"
-#include "SpriteEffect.h"
+#include "SpriteCache.h"
 #include "Vec2.h"
 #include "Weapon.h"
-
+#include "AngleMath.h"
 #include <array>
 #include <variant>
 
@@ -16,7 +16,7 @@ class Enemy;
 class Enemy1
 {
 public:
-	enum class State { Scouting, Retreating };
+	enum class State { Scouting, Turning, Retreating };
 
 public:
 	void Update( Enemy& parent, float dt );
@@ -26,15 +26,15 @@ public:
 	static constexpr auto speed = 120.f;
 	static constexpr auto aabb = RectF{ -30.f, -30.f, 30.f, 30.f };
 	static constexpr auto damage = 50.f;
-	static std::vector<Surface> frames;
-
+	
 private:
 	friend class EnemyController;
+	friend class EnemyView;
 
 	Weapon m_weapon = { Gun{} };
 	State m_state = State::Scouting;
+	Radian m_angle = Radian{ Degree{90.f} };
 	int m_frame = 0;
-	bool m_hero_spotted = false;
 };
 
 // Kamekase: Flies in from random position outside of view
@@ -46,14 +46,14 @@ public:
 
 public:
 	static constexpr auto speed = 120.f;
-	static constexpr auto aabb = RectF{ -16.f, -16.f, 16.f, 16.f };
+	static constexpr auto aabb = RectF{ -35.f, -35.f, 35.f, 35.f };
 	static constexpr auto damage = 50.f;
-	static constexpr auto waypoints = std::array{
-		Vec2{ -aabb.Width(), aabb.Height() * .5f },
-		Vec2{ screenRect.Width() * .5f, screenRect.Height() },
-		Vec2{ screenRect.Width() + aabb.Width() / 2.f, -aabb.Height() / 2.f
-		}
-	};
+
+private:
+	friend class EnemyController;
+	friend class EnemyView;
+
+	Radian m_angle = Radian{ Degree{90.f} };
 
 };
 class Enemy3
@@ -65,13 +65,6 @@ public:
 	static constexpr auto speed = 120.f;
 	static constexpr auto aabb = RectF{ -16.f, -16.f, 16.f, 16.f };
 	static constexpr auto damage = 50.f;
-	static constexpr auto waypoints = std::array{
-		Vec2{ -aabb.Width(), aabb.Height() * .5f },
-		Vec2{
-			screenRect.Width() + aabb.Width() / 2.f,
-			screenRect.Height() + aabb.Height() / 2.f
-		}
-	};
 };
 class Enemy4
 {
@@ -82,15 +75,6 @@ public:
 	static constexpr auto speed = 120.f;
 	static constexpr auto aabb = RectF{ -16.f, -16.f, 16.f, 16.f };
 	static constexpr auto damage = 50.f;
-	static constexpr auto waypoints = std::array{
-		Vec2{ screenRect.Width() / 2.f + 50.f,   0.f },
-		Vec2{ screenRect.Width() / 2.f - 50.f, 100.f },
-		Vec2{ screenRect.Width() / 2.f + 50.f, 200.f },
-		Vec2{ screenRect.Width() / 2.f - 50.f, 300.f },
-		Vec2{ screenRect.Width() / 2.f + 50.f, 400.f },
-		Vec2{ screenRect.Width() / 2.f - 50.f, 500.f },
-		Vec2{ screenRect.Width() / 2.f + 50.f, 600.f }
-	};
 };
 class Enemy5
 {
@@ -101,19 +85,13 @@ public:
 	static constexpr auto speed = 120.f;
 	static constexpr auto aabb = RectF{ -16.f, -16.f, 16.f, 16.f };
 	static constexpr auto damage = 50.f;
-	static constexpr auto waypoints = std::array{
-		Vec2{ screenRect.Width() / 2.f, 0.f },
-		Vec2{ aabb.Width() / 2.f,	screenRect.Height() / 2.f },
-		Vec2{ screenRect.Width() / 2.f, screenRect.Height() },
-		Vec2{ screenRect.Width(), screenRect.Height() / 2.f },
-		Vec2{ screenRect.Width() / 2.f + aabb.Width() / 2.f, -aabb.Height() / 2.f }
-	};
 };
 class Enemy6
 {
 public:
 	void Update( Enemy& parent, float dt ) {}
 };
+
 template<typename EnemyType> struct is_enemy {
 	static constexpr bool value = std::disjunction_v<
 		std::is_same<EnemyType, Enemy1>,
@@ -139,5 +117,4 @@ public:
 	Vec2 position = { 0.f, -16.f };
 	Vec2 velocity = { 0.f, 0.f };
 	float health = 100.f;
-	int waypoint_index = 0;
 };

@@ -24,19 +24,21 @@
 #include "ChiliException.h"
 #include "Colors.h"
 #include "Surface.h"
-
 #include "Rect.h"
 #include "Mat3.h"
 #include "Vec2.h"
+
 #include <cassert>
+#include <algorithm>
+
 #include <d3d11.h>
 #include <wrl.h>
 
 class Graphics
 {
 public:
-	static constexpr int ScreenWidth = 800;
-	static constexpr int ScreenHeight = 600;
+	static inline int ScreenWidth = 800;
+	static inline int ScreenHeight = 600;
 
 public:
 	class Exception : public ChiliException
@@ -74,11 +76,33 @@ public:
 
 	void DrawDisc( Point const& center, int radius, Color color )noexcept;
 	void DrawCircle( Point const& center, int radius, Color color )noexcept;
-	void DrawRect( RectI const& dst, Radian angle, Color color )noexcept;
+	void DrawRect( RectI const& dst, Color color )noexcept;
 	void DrawLine( Point const& p0, Point const& p2, Color color )noexcept;
-	void DrawSprite( RectI const& dst, Radian angle, Surface const& sprite, Color tint = Colors::White, Color key = Colors::Magenta )noexcept;
+	template<typename Effect>
+	void DrawSprite( RectI const& dst, Surface const& sprite, Effect&& effect )noexcept {
+		const auto xStart = std::max( -dst.left, 0 );
+		const auto yStart = std::max( -dst.top, 0 );
+		const auto xEnd = std::min( ScreenWidth - dst.left, dst.Width() );
+		const auto yEnd = std::min( ScreenHeight - dst.top, dst.Height() );
 
+		for( int y = yStart; y < yEnd; ++y )
+		{
+			for( int x = xStart; x < xEnd; ++x )
+			{
+				effect( x + dst.left, y + dst.top, sprite.GetPixel( x, y ), *this );
+			}
+		}
+	}
 
+	template<typename T>
+	static Rect_<T> GetRect()noexcept {
+		return{
+			static_cast< T >( 0 ),
+			static_cast< T >( 0 ),
+			static_cast< T >( ScreenWidth ),
+			static_cast< T >( ScreenHeight )
+		};
+	}
 	~Graphics();
 private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain>				pSwapChain;
@@ -97,6 +121,3 @@ private:
 public:
 	static RectI GetScreenRect();
 };
-
-
-constexpr RectF screenRect = { 0.f,0.f,float( Graphics::ScreenWidth ),float( Graphics::ScreenHeight ) };

@@ -40,15 +40,18 @@ MainWindow::MainWindow( HINSTANCE hInst,wchar_t * pArgs )
 	RegisterClassEx( &wc );
 
 	// create window & get hWnd
-	RECT wr;
-	wr.left = 350;
-	wr.right = Graphics::ScreenWidth + wr.left;
-	wr.top = 100;
-	wr.bottom = Graphics::ScreenHeight + wr.top;
-	AdjustWindowRect( &wr,WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,FALSE );
+	auto desktop_rect = RECT{};
+	GetWindowRect( GetDesktopWindow(), &desktop_rect );
+
+	auto width = 800;
+	auto height = desktop_rect.bottom - desktop_rect.top;
+	auto x = ( desktop_rect.right - width ) / 2;
+	auto y = 0;
+	Graphics::ScreenWidth = width;
+	Graphics::ScreenHeight = height;
 	hWnd = CreateWindow( wndClassName,L"Chili DirectX Framework",
-		WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
-		wr.left,wr.top,wr.right - wr.left,wr.bottom - wr.top,
+		WS_POPUP,
+		x, y, width, height,
 		nullptr,nullptr,hInst,this );
 
 	// throw exception if something went terribly wrong

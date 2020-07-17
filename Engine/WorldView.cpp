@@ -13,7 +13,7 @@ void WorldView::Draw( World const& model, Graphics& gfx ) const noexcept
 	for( auto const& star : model.stars ) star_view.Draw( star, gfx );
 
 	HeroView hero_view;
-	hero_view.Draw( model.hero, gfx );
+	hero_view.Draw( model.hero, sprites, gfx );
 
 	AmmoView ammo_view;
 	for( auto const& bullet : model.hero_bullets ) ammo_view.Draw( bullet, gfx );
@@ -24,7 +24,7 @@ void WorldView::Draw( World const& model, Graphics& gfx ) const noexcept
 		case WorldState::Arena:
 		{
 			EnemyView enemy_view;
-			for( auto const& enemy : model.enemies ) enemy_view.Draw( enemy, gfx );
+			for( auto const& enemy : model.enemies ) enemy_view.Draw( enemy, sprites, gfx );
 
 			AsteroidView asteroid_view;
 			for( auto const& asteroid : model.asteroids ) asteroid_view.Draw( asteroid, gfx );

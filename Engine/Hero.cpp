@@ -15,5 +15,5 @@ void Hero::Reset() noexcept
 	shield.Reset();
 	health = 100.f;
 	velocity = { 0.f, 0.f };
-	position = screenRect.Center();
+	position = Graphics::GetRect<float>().Center();
 }

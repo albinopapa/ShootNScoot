@@ -2,5 +2,5 @@
 
 void StarView::Draw( Star const& model, Graphics& gfx ) const noexcept
 {
-	gfx.DrawRect( model.rect + model.position, Degree{ 45.f }, Colors::White );
+	gfx.DrawRect( model.rect + model.position, Colors::White );
 }

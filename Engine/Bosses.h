@@ -24,7 +24,7 @@ public:
 
 	Shield shield;
 	Weapon weapon;
-	Vec2 position = { screenRect.Center().x, -32.f };
+	Vec2 position = { Graphics::GetRect<float>().Center().x, -32.f };
 	Vec2 direction = { 0.f, 1.f };
 	Boss1State state = Boss1State::Idle;
 	float regen_timer = regen_delay;

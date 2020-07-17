@@ -25,7 +25,7 @@ public:
 	std::vector<Ammo> enemy_bullets;
 	std::vector<Ammo> hero_bullets;
 
-	std::vector<Star> stars = Starfield::generate( screenRect, { 1.f, 2.f }, 250 );
+	std::vector<Star> stars = Starfield::generate( Graphics::GetRect<float>(), { 1.f, 2.f }, 250 );
 
 	Hero hero;
 	Boss1 boss;

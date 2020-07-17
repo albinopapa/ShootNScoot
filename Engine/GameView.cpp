@@ -13,13 +13,24 @@ void GameView::Draw( Game const& model )noexcept
 	{
 		case GameState::Intro:
 		{
-			font.DrawText( "Press Enter/Return to start", { 176, 286 }, Colors::White, gfx );
+			const auto msg = std::string{ "Press Enter/Return to start" };
+			const auto x = ( Graphics::ScreenWidth - ( int( msg.length() ) * font.GlyphWidth() ) ) / 2;
+			const auto y = ( Graphics::ScreenHeight - font.GlyphHeight() ) / 2;
+			font.DrawText( msg, { x, y }, Colors::White, gfx );
 			break;
 		}
 		case GameState::MainMenu:
 		{
-			font.DrawText( "Start game", { 200, 272 }, model.menu_choice == 0 ? Colors::Magenta : Colors::White, gfx );
-			font.DrawText( "Quit game", { 200, 328 }, model.menu_choice == 1 ? Colors::Magenta : Colors::White, gfx );
+			const auto x = ( Graphics::ScreenWidth - ( 10 * font.GlyphWidth() ) ) / 2;
+			auto y = ( Graphics::ScreenHeight - ( 2 * font.GlyphHeight() ) ) / 2;
+			if( model.menu_choice == 0 ) {
+				font.DrawText( "Start game", { x, y }, Colors::Magenta, gfx );
+				font.DrawText( "Quit game", { x, y + font.GlyphHeight() }, Colors::White, gfx );
+			}
+			else if( model.menu_choice == 1 ) {
+				font.DrawText( "Start game", { x, y }, Colors::White, gfx );
+				font.DrawText( "Quit game", { x, y + font.GlyphHeight() }, Colors::Magenta, gfx );
+			}
 			break;
 		}
 		case GameState::Play:
@@ -37,16 +48,28 @@ void GameView::Draw( Game const& model )noexcept
 		}
 		case GameState::PauseMenu:
 		{
-			font.DrawText( "Resume game", { 200, 272 }, model.menu_choice == 0 ? Colors::Magenta : Colors::White, gfx );
-			font.DrawText( "Quit game", { 200, 328 }, model.menu_choice == 1 ? Colors::Magenta : Colors::White, gfx );
+			const auto x = ( Graphics::ScreenWidth - ( 11 * font.GlyphWidth() ) ) / 2;
+			auto y = ( Graphics::ScreenHeight - ( 2 * font.GlyphHeight() ) ) / 2;
+			if( model.menu_choice == 0 ) {
+				font.DrawText( "Start game", { x, y }, Colors::Magenta, gfx );
+				font.DrawText( "Quit game", { x, y + font.GlyphHeight() }, Colors::White, gfx );
+			}
+			else if( model.menu_choice == 1 ) {
+				font.DrawText( "Start game", { x, y }, Colors::White, gfx );
+				font.DrawText( "Quit game", { x, y + font.GlyphHeight() }, Colors::Magenta, gfx );
+			}
 			break;
 		}
 		case GameState::Gameover:
 		{
+			const auto demo_finish = std::string{ "Congratulations, you've finished the demo." };
+			const auto return_msg = std::string{ "Press Enter/Return to go back to the main menu" };
+			const auto x = ( Graphics::ScreenWidth - ( 46 * font.GlyphWidth() ) ) / 2;
+			const auto y = ( Graphics::ScreenHeight - ( 2 * font.GlyphHeight() ) ) / 2;
 			if( model.world.state == WorldState::LevelComplete )
-				font.DrawText( "Congratulations, you've finished the demo.", { 32, 246 }, Colors::White, gfx );
+				font.DrawText( demo_finish, { x, y }, Colors::White, gfx );
 
-			font.DrawText( "Press Enter/Return to go back to the main menu", { 32, 272 }, Colors::White, gfx );
+			font.DrawText( return_msg, { x, y + font.GlyphHeight() }, Colors::White, gfx );
 
 			break;
 		}

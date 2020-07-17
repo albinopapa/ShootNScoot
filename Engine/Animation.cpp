@@ -16,7 +16,7 @@ Animation::Animation( int x,int y,int width,int height,int count,
 
 void Animation::Draw( const Vec2& pos, Graphics& gfx, Color tint )const noexcept
 {
-	gfx.DrawSprite( RectF( frames[ iCurFrame ] ) + pos, Radian{ 0.f }, sprite, tint );
+	//gfx.DrawSprite( RectF( frames[ iCurFrame ] ) + pos, Radian{ 0.f }, sprite, tint );
 }
 
 void Animation::Update( float dt )
