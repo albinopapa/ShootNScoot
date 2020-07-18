@@ -1,15 +1,14 @@
 #pragma once
 
+#include "Star.h"
 #include "Vec2.h"
 #include <random>
 
-	class StarController
-	{
-	public:
-		void Update( class Star& model )noexcept;
+class StarController
+{
+public:
+	void Update( Star& model )noexcept;
 
-	private:
-		std::mt19937 rng;
-	};
-
-
+private:
+	std::mt19937 rng;
+};

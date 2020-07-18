@@ -1,26 +1,29 @@
 #pragma once
 
+#include "Hero.h"
 #include "Keyboard.h"
 #include "ShieldController.h"
 #include "WeaponController.h"
+#include "World.h"
 
-	class HeroController
-	{
-	public:
-		void Update(
-			Hero& model,
-			World& world,
-			Keyboard const& kbd,
-			float dt )noexcept;
+class HeroController
+{
+public:
+	void Update(
+		Hero& model,
+		World& world,
+		Keyboard const& kbd,
+		float dt )noexcept;
 
-		void TakeDamage( Hero& model, float amount )noexcept;
+	void TakeDamage( Hero& model, float amount )noexcept;
 
-		float Damage( Hero& model )const noexcept;
-		RectF AABB( Hero& model )const noexcept;
-		Shield& GetShield( Hero& model )noexcept;
-		Shield const& GetShield( Hero& model )const noexcept;
-		
-	private:
-		void UpdateVelocity( Hero& model, Keyboard const& kbd )noexcept;
-		void ChangeWeapon( Hero& model, Keyboard const& kbd )noexcept;
-	};
+	float Damage( Hero& model )const noexcept;
+	RectF AABB( Hero& model )const noexcept;
+	Shield& GetShield( Hero& model )noexcept;
+	Shield const& GetShield( Hero& model )const noexcept;
+
+private:
+	void UpdateVelocity( Hero& model, Keyboard const& kbd )noexcept;
+	void ChangeWeapon( Hero& model, Keyboard const& kbd )noexcept;
+
+};

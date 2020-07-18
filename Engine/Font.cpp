@@ -1,4 +1,5 @@
 #include "Font.h"
+#include "SpriteEffect.h"
 #include <cassert>
 
 Font::Font( const std::string& filename )
@@ -72,7 +73,11 @@ void Font::DrawText( const std::string& text, const Vei2& pos, Color color, Grap
 		if( c >= firstChar + 1 && c <= lastChar )
 		{
 			const auto index = c - ' ';
-			gfx.DrawSprite( glyph_rect + Vec2( curPos ), Radian{ 0.f }, glyphs[ index ], color );
+			gfx.DrawSprite( 
+				RectI( glyph_rect ) + curPos, 
+				glyphs[ index ],  
+				SpriteEffect::TintWithChroma{ color, Colors::Magenta }
+				);
 		}
 		else if( c == '\n' )
 		{
@@ -80,18 +85,18 @@ void Font::DrawText( const std::string& text, const Vei2& pos, Color color, Grap
 			curPos.x = pos.x;
 			
 			// line feed
-			curPos.y += glyph_rect.Height();
+			curPos.y += int( glyph_rect.Height() );
 
 			// we don't want to advance the character position right for a newline
 			continue;
 		}
 		else if( c == '\t' )
 		{
-			curPos.x += ( glyph_rect.Width() * 4 );
+			curPos.x += int( glyph_rect.Width() * 4.f );
 		}
 
 		// advance screen pos for next character
-		curPos.x += glyph_rect.Width();
+		curPos.x += int( glyph_rect.Width() );
 	}
 }
 

@@ -1,13 +1,11 @@
 #pragma once
-#include "Hero.h"
+
 #include "Graphics.h"
+#include "Hero.h"
+#include "SpriteCache.h"
 
-	class HeroView
-	{
-	public:
-		void Draw( Hero const& model, Graphics& gfx )const noexcept;
-	private:
-		static constexpr int herohalfwidth = 5,herohalfheight=10;
-
-		//Surface	sprite = "Images/HeroShip.png";
-	};
+class HeroView
+{
+public:
+	void Draw( Hero const& model, SpriteCache const& cache, Graphics& gfx )const noexcept;
+};

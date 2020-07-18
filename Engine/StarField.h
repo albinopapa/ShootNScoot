@@ -6,14 +6,14 @@
 #include <utility>
 #include <vector>
 
-	class Starfield
-	{
-	public:
-		static std::vector<Star> generate(
-			RectF position_bounds,
-			std::pair<float, float> speed_bounds,
-			int count );
+class Starfield
+{
+public:
+	static std::vector<Star> generate(
+		RectF position_bounds,
+		std::pair<float, float> speed_bounds,
+		int count );
 
-		static Star generate_star( std::mt19937& rng, std::pair<float, float> width_bounds, std::pair<float, float> speed_bounds )noexcept;
+	static Star generate_star( std::mt19937& rng, std::pair<float, float> width_bounds, std::pair<float, float> speed_bounds )noexcept;
 
-	};
+};

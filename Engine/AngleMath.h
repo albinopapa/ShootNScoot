@@ -75,7 +75,7 @@ class Radian
 {
 public:
 	Radian() = default;
-	constexpr Radian( Degree )noexcept;
+	constexpr Radian( Degree value_ )noexcept;
 	explicit constexpr Radian( float value_ )noexcept;
 	constexpr operator float()const noexcept
 	{

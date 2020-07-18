@@ -2,7 +2,7 @@
 
 #include "Asteroids.h"
 #include "Bosses.h"
-#include "Ammo.h"
+#include "Bullet.h"
 #include "Enemies.h"
 #include "Enumerations.h"
 #include "Hero.h"
@@ -10,24 +10,24 @@
 #include "Starfield.h"
 #include <vector>
 
-	class World
-	{
-	public:
-		void Update( float dt );
+class World
+{
+public:
+	void Update( float dt );
 
-		void SpawnAsteroid( Asteroid const& asteroid );
-		void SpawnEnemy( Enemy const& enemy );
-		void SpawnAmmo( Ammo const& ammo );
+	void SpawnAsteroid( Asteroid const& asteroid );
+	void SpawnEnemy( Enemy const& enemy );
+	void SpawnAmmo( Ammo const& ammo );
 
-	public:
-		std::vector<Asteroid> asteroids;
-		std::vector<Enemy> enemies;
-		std::vector<Ammo> enemy_bullets;
-		std::vector<Ammo> hero_bullets;
+public:
+	std::vector<Asteroid> asteroids;
+	std::vector<Enemy> enemies;
+	std::vector<Ammo> enemy_bullets;
+	std::vector<Ammo> hero_bullets;
 
-		std::vector<Star> stars = Starfield::generate( screenRect, { 1.f, 2.f }, 250 );
+	std::vector<Star> stars = Starfield::generate( Graphics::GetRect<float>(), { 1.f, 2.f }, 250 );
 
-		Hero hero;
-		Boss1 boss;
-		WorldState state = WorldState::Arena;
-	};
+	Hero hero;
+	Boss1 boss;
+	WorldState state = WorldState::Arena;
+};

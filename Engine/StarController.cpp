@@ -1,12 +1,11 @@
 #include "StarController.h"
 #include "Graphics.h"
 #include "Starfield.h"
-#include "Star.h"
 
-	void StarController::Update( Star& model ) noexcept
+void StarController::Update( Star& model ) noexcept
+{
+	if( !Graphics::GetRect<float>().Contains( model.position ) )
 	{
-		if( !screenRect.Contains( model.position ) )
-		{
-			model = Starfield::generate_star( rng, { 0.f, screenRect.Width() }, { 1.f, 2.f } );
-		}
+		model = Starfield::generate_star( rng, { 0.f, Graphics::GetRect<float>().Width() }, { 1.f, 2.f } );
 	}
+}

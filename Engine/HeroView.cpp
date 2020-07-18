@@ -1,13 +1,15 @@
 #include "HeroView.h"
 #include "ShieldView.h"
+#include "SpriteEffect.h"
 
-void HeroView::Draw( Hero const& model, Graphics& gfx ) const noexcept
+void HeroView::Draw( Hero const& model, SpriteCache const& cache, Graphics& gfx ) const noexcept
 {
-	const RectI rect = { int(model.position.x) - herohalfwidth,int(model.position.y) - herohalfheight,
-		int(model.position.x) + herohalfwidth,int(model.position.y) + herohalfheight };
-	//gfx.DrawSprite( Hero::aabb + model.position, Radian{ 0.f }, sprite );
-	gfx.DrawRect(rect, Colors::Magenta);
+	gfx.DrawSprite( 
+		Hero::aabb + model.position, 
+		cache.hero_sprite,
+		SpriteEffect::Alpha{}
+	);
+
 	auto shield_view = ShieldView{};
 	shield_view.Draw( model.position, model.shield, gfx );
 }
-
