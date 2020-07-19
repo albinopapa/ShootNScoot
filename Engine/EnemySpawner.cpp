@@ -82,20 +82,28 @@ void EnemySpawner::Reset() noexcept
 
 void EnemySpawner::SpawnEnemy1( World& world )
 {
-	auto xDist = 
-		std::uniform_real_distribution<float>{ -50.f, Graphics::GetRect<float>().Width() + 50.f };
-	auto position = Vec2{ xDist( rng ), Enemy1::aabb.top };
-
-	world.SpawnEnemy( { Enemy1{}, position, {0.f, 1.f} } );
+	auto xDist = std::uniform_real_distribution<float>{
+		Enemy1::aabb.right,
+		float( Graphics::ScreenWidth ) + Enemy1::aabb.left };
+	
+	world.SpawnEnemy( { 
+		Enemy1{}, 
+		{ xDist( rng ), Enemy1::aabb.top }, 
+		{ 0.f, 1.f } 
+		} );
 }
 
 void EnemySpawner::SpawnEnemy2( World& world )
 {
-	auto xDist = std::uniform_real_distribution<float>{ 0.f, Graphics::GetRect<float>().Width() };
-	const auto pos = Vec2{ xDist( rng ), -50.f };
-	auto delta = world.hero.position - Vec2{ xDist( rng ), Enemy2::aabb.top };
-
-	world.SpawnEnemy( { Enemy2{}, pos, delta.Normalize() } );
+	auto xDist = std::uniform_real_distribution<float>{ 
+		Enemy2::aabb.right, 
+		float( Graphics::ScreenWidth ) + Enemy2::aabb.left };
+	
+	world.SpawnEnemy( { 
+		Enemy2{}, 
+		{ xDist( rng ), Enemy2::aabb.top }, 
+		{ 0.f, 1.f } 
+		} );
 }
 
 void EnemySpawner::SpawnEnemy3( World& world )
