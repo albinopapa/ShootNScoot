@@ -50,7 +50,7 @@ private:
 	}
 
 public:
-	Surface hero_sprite = "Images/Player_Ships_1.png";
+	Surface hero_sprite = "Images/Player_Ships_1-mini.png";
 	Surface bullet_sprite;
 	Surface asteroid_sprite;
 	Surface plasmaball_sprite;
