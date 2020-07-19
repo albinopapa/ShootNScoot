@@ -106,15 +106,37 @@ void EnemyController::Update( Enemy& parent, Enemy1& enemy, World& world, float 
 			}
 			break;
 		}
+	}
 
-		if( !Graphics::IsVisible( Enemy1::aabb + parent.position ) )
-		{
-			parent.health = 0.f;
-		}
+	if( !Graphics::IsVisible( RectI{ Enemy2::aabb + parent.position } ) &&
+		parent.velocity.Dot( world.hero.position - parent.position ) < 0.f )
+	{
+		parent.health = 0.f;
 	}
 }
 void EnemyController::Update( Enemy& parent, Enemy2& enemy, World& world, float dt ) noexcept
 {
+	switch( enemy.m_state )
+	{
+		case Enemy2::State::Drifting:
+		{
+			const auto delta = world.hero.position - parent.position;
+			// Arbitrarily made up line of sight
+			constexpr auto line_of_sight = 400.f;
+			if( delta.LengthSq() < sqr( line_of_sight ) ) {
+				parent.velocity = delta.Normalize() * 1.5f;
+				enemy.m_angle = Radian{ std::atan2( parent.velocity.y, parent.velocity.x ) };
+				enemy.m_state = Enemy2::State::Charging;
+			}
+			break;
+		}
+	}
+
+	if( !Graphics::IsVisible( RectI{ Enemy2::aabb + parent.position } ) &&
+		parent.velocity.Dot( world.hero.position - parent.position ) < 0.f )
+	{
+		parent.health = 0.f;
+	}
 }
 void EnemyController::Update( Enemy& parent, Enemy3& enemy, World& world, float dt ) noexcept
 {

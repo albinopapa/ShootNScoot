@@ -42,6 +42,8 @@ private:
 class Enemy2
 {
 public:
+	enum State { Drifting, Charging };
+public:
 	void Update( Enemy& parent, float dt );
 
 public:
@@ -54,7 +56,7 @@ private:
 	friend class EnemyView;
 
 	Radian m_angle = Radian{ Degree{90.f} };
-
+	State m_state = State::Drifting;
 };
 class Enemy3
 {
