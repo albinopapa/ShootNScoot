@@ -1,6 +1,13 @@
+#include "ColorKeyTextureEffect.h"
 #include "Font.h"
+#include "Pipeline.h"
+#include "PointSampler.h"
+#include "RasterStates.h"
 #include "SpriteEffect.h"
+
 #include <cassert>
+
+using FontEffect = ColorKeyTextureEffect<PointSampler>;
 
 Font::Font( const std::string& filename )
 {
@@ -73,11 +80,19 @@ void Font::DrawText( const std::string& text, const Vei2& pos, Color color, Grap
 		if( c >= firstChar + 1 && c <= lastChar )
 		{
 			const auto index = c - ' ';
-			gfx.DrawSprite( 
+			auto pl = Pipeline{ FontEffect{}, gfx };
+			pl.PSSetTexture( glyphs[ index ] );
+			pl.PSSetConstantBuffer( { Colors::Magenta, color } );
+			pl.vertices[ 0 ] = { { -.5f, -.5f }, { 0.f, 0.f } };
+			pl.vertices[ 1 ] = { {  .5f, -.5f }, { 1.f, 0.f } };
+			pl.vertices[ 2 ] = { { -.5f,  .5f }, { 0.f, 1.f } };
+			pl.vertices[ 3 ] = { {  .5f,  .5f }, { 1.f, 1.f } };
+			pl.Draw( glyph_rect + Vec2( curPos ), Radian{} );
+			/*gfx.DrawSprite( 
 				RectI( glyph_rect ) + curPos, 
 				glyphs[ index ],  
 				SpriteEffect::TintWithChroma{ color, Colors::Magenta }
-				);
+				);*/
 		}
 		else if( c == '\n' )
 		{

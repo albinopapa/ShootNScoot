@@ -85,21 +85,37 @@ void WorldController::RemoveDeadAsteroids( World& model ) noexcept
 	} );
 
 	constexpr auto nw = Vec2{ -.707f, -.707f };
-	constexpr auto ne = Vec2{ .707f, -.707f };
+	constexpr auto ne = Vec2{  .707f, -.707f };
 	constexpr auto sw = Vec2{ -.707f,  .707f };
-	constexpr auto se = Vec2{ .707f,  .707f };
+	constexpr auto se = Vec2{  .707f,  .707f };
 
-	auto spawn = [&]( const auto& position, const auto& direction ) {
+	constexpr float debris_radians[] = {
+		 135.f * ( pi / 180.f ),
+		 -90.f * ( pi / 180.f ),
+		  90.f * ( pi / 180.f ),
+		   0.f * ( pi / 180.f ),
+		-135.f * ( pi / 180.f )
+	};
+	static const Vec2 directions[] = {
+		{ std::cos( debris_radians[ 0 ] ), std::sin( debris_radians[ 0 ] )},
+		{ std::cos( debris_radians[ 1 ] ), std::sin( debris_radians[ 1 ] )},
+		{ std::cos( debris_radians[ 2 ] ), std::sin( debris_radians[ 2 ] )},
+		{ std::cos( debris_radians[ 3 ] ), std::sin( debris_radians[ 3 ] )},
+		{ std::cos( debris_radians[ 4 ] ), std::sin( debris_radians[ 4 ] )}
+	};
+
+	auto spawn = [&]( Vec2 const& position, Vec2 const& direction, int sprite_index ) {
 		const auto spawn_pos = position + ( direction * BigAsteroid::radius );
-		model.SpawnAsteroid( Asteroid{ SmallAsteroid{}, spawn_pos, direction } );
+		model.SpawnAsteroid( Asteroid{ SmallAsteroid{}, spawn_pos, direction, sprite_index } );
 	};
 
 	for( auto const& position : positions )
 	{
-		spawn( position, nw );
-		spawn( position, ne );
-		spawn( position, sw );
-		spawn( position, se );
+		spawn( position, directions[ 0 ], 1 );
+		spawn( position, directions[ 1 ], 2 );
+		spawn( position, directions[ 2 ], 3 );
+		spawn( position, directions[ 3 ], 4 );
+		spawn( position, directions[ 4 ], 5 );
 	}
 }
 

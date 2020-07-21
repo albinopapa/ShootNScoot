@@ -3,18 +3,16 @@
 #include "Colors.h"
 #include "Rect.h"
 #include <string>
-#include <vector>
+#include <memory>
 
 class Surface
 {
 public:
 	Surface() = default;
-	Surface( const Surface& ) = default;
 	Surface( Surface&& donor );
 	Surface( const std::string& filename );
 	Surface( int width,int height );
 
-	Surface& operator=( const Surface& ) = default;
 	Surface& operator=( Surface&& rhs );
 
 	void PutPixel( int x,int y,Color c );
@@ -25,7 +23,8 @@ public:
 	void Fill( Color c );
 	const Color* Data() const;
 private:
-	std::vector<Color> pixels;
+	/*std::vector<Color> pixels;*/
+	std::unique_ptr<Color[]> pixels;
 	int width = 0;
 	int height = 0;
 };

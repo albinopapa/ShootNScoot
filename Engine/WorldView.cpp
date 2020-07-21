@@ -27,7 +27,7 @@ void WorldView::Draw( World const& model, Graphics& gfx ) const noexcept
 			for( auto const& enemy : model.enemies ) enemy_view.Draw( enemy, sprites, gfx );
 
 			AsteroidView asteroid_view;
-			for( auto const& asteroid : model.asteroids ) asteroid_view.Draw( asteroid, gfx );
+			for( auto const& asteroid : model.asteroids ) asteroid_view.Draw( asteroid, sprites, gfx );
 			break;
 		}
 		case WorldState::Boss:

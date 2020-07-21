@@ -64,6 +64,9 @@
     <Filter Include="Source Files\Game Files\Views">
       <UniqueIdentifier>{23334094-6691-4de8-a5ec-cf61ff2d86a0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Graphics\RasterState">
+      <UniqueIdentifier>{b0d9e8fd-30a9-40e1-ada8-1c9aa22986af}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SolidTextureEffect.h">
@@ -281,6 +284,12 @@
     </ClInclude>
     <ClInclude Include="Enumerations.h">
       <Filter>Header Files\Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AlphaTextureEffect.h">
+      <Filter>Header Files\Graphics\Shader Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="RasterStates.h">
+      <Filter>Header Files\Graphics\RasterState</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

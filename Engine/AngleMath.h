@@ -137,6 +137,7 @@ public:
 		return std::cos( value );
 	}
 private:
+	friend constexpr auto operator-( Radian lhs )noexcept;
 	friend constexpr auto operator*( float lhs, Radian rhs )noexcept;
 	friend constexpr auto operator/( float lhs, Radian rhs )noexcept;
 	float value = 0.f;
@@ -172,6 +173,9 @@ constexpr auto operator/( float lhs, Degree rhs )noexcept
 constexpr auto operator+( Radian lhs, Radian rhs )noexcept
 {
 	return lhs += rhs;
+}
+constexpr auto operator-( Radian lhs )noexcept {
+	return Radian{ -lhs.value };
 }
 constexpr auto operator-( Radian lhs, Radian rhs )noexcept
 {

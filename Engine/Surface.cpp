@@ -18,15 +18,14 @@ Surface::Surface( const std::string& filename )
 	);
 	auto data = wic.copy_pixels_to_buffer( width, height, converter.Get() );
 
-	pixels.resize( width * height );
-	memcpy( pixels.data(), data.get(), width * height * sizeof( Color ) );
+	pixels.reset( reinterpret_cast< Color* >( data.release() ) );
 }
 
-Surface::Surface( int width,int height )
+Surface::Surface( int width, int height )
 	:
 	width( width ),
 	height( height ),
-	pixels( width * height )
+	pixels( std::make_unique<Color[]>( width* height ) )
 {}
 
 Surface::Surface( Surface&& donor )
@@ -81,11 +80,11 @@ void Surface::Fill( Color c )
 {
 	if( c.GetA() == 0 )
 	{
-		memset( pixels.data(), 0, sizeof( Color ) * width * height );
+		memset( pixels.get(), 0, sizeof( Color ) * width * height );
 	}
 	else if( c.GetB() == c.GetG() && c.GetB() == c.GetR() )
 	{
-		memset( pixels.data(), c.GetB(), sizeof( Color ) * width * height );
+		memset( pixels.get(), c.GetB(), sizeof( Color ) * width * height );
 	}
 	else
 	{
@@ -101,5 +100,5 @@ void Surface::Fill( Color c )
 
 const Color* Surface::Data() const
 {
-	return pixels.data();
+	return pixels.get();
 }

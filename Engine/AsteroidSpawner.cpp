@@ -23,7 +23,7 @@ void AsteroidSpawner::Update( World& world, float dt )
 			const auto dir = Vec2{ pos.x > cx ? -vxDist( rng ) : vxDist( rng ), 1.f }.Normalize();
 			spawn_timer = AsteroidSpawner::spawn_delay;
 			
-			world.SpawnAsteroid( Asteroid{ BigAsteroid{}, pos, dir } );
+			world.SpawnAsteroid( Asteroid{ BigAsteroid{}, pos, dir, 0 } );
 
 			++spawn_count;
 			state = State::Idle;

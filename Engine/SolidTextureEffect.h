@@ -1,5 +1,6 @@
 #pragma once
 
+#include "BaseGeometryShader.h"
 #include "Colors.h"
 #include "Mat3.h"
 #include "Surface.h"
@@ -25,13 +26,9 @@ struct SolidTextureEffect
 		}
 		ConstantBuffer buffer;
 	};
-	struct GeometryShader
-	{
-		constexpr Triangle<TextureVertex> operator()( Vertex const& v0, Vertex const& v1, Vertex const& v2 )const noexcept
-		{
-			return{ v0, v1, v2 };
-		}
-	};
+
+	using GeometryShader = BaseGeometryShader<Vertex>;
+
 	struct PixelShader
 	{
 		struct ConstantBuffer{};

@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AlphaTextureEffect.h" />
     <ClInclude Include="AmmoController.h" />
     <ClInclude Include="AmmoView.h" />
     <ClInclude Include="AngleMath.h" />
@@ -182,6 +183,7 @@
     <ClInclude Include="Mat3.h" />
     <ClInclude Include="Pipeline.h" />
     <ClInclude Include="PointSampler.h" />
+    <ClInclude Include="RasterStates.h" />
     <ClInclude Include="RectFillEffect.h" />
     <ClInclude Include="ShieldController.h" />
     <ClInclude Include="ShieldEffect.h" />

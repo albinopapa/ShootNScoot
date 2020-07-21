@@ -4,6 +4,8 @@
 #include "Surface.h"
 #include "Vec2.h"
 
+#include <vector>
+
 class Font
 {
 public:

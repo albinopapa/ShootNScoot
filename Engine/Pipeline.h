@@ -3,6 +3,8 @@
 #include "Graphics.h"
 #include "Triangle.h"
 #include <algorithm>
+#include <memory>
+#include <vector>
 
 template<typename Effect>
 struct Pipeline
@@ -51,29 +53,32 @@ public:
 			return left.position.y < right.position.y;
 		};
 
-		const auto[ xMin, xMax ] = 
-			std::minmax_element( &tvertices[ 0 ], &tvertices[ 3 ], xLess );
-		const auto[ yMin, yMax ] = 
-			std::minmax_element( &tvertices[ 0 ], &tvertices[ 3 ], yLess );
+		const Triangle<Vertex> triangles[] = {
+			effect.gs( tvertices[ 0 ], tvertices[ 1 ], tvertices[ 2 ] ),
+			effect.gs( tvertices[ 3 ], tvertices[ 2 ], tvertices[ 1 ] )
+		};
 
-		const auto xStart = std::floor( std::max( xMin->position.x, 0.f ) );
-		const auto yStart = std::floor( std::max( yMin->position.y, 0.f ) );
-		const auto xEnd = std::ceil( std::min( xMax->position.x, screenRect.Width() ) );
-		const auto yEnd = std::ceil( std::min( yMax->position.y, screenRect.Height() ) );
-		
-		const auto triangle0 =
-			effect.gs( tvertices[ 0 ], tvertices[ 1 ], tvertices[ 2 ] );
-		const auto triangle1 =
-			effect.gs( tvertices[ 3 ], tvertices[ 2 ], tvertices[ 1 ] );
-
-		for( float y = yStart; y < yEnd; ++y )
+		for(int i = 0; i < 2; ++i)
 		{
-			for( float x = xStart; x < xEnd; ++x )
+			auto& triangle = triangles[ i ];
+
+			auto [xMin, xMax] = 
+				std::minmax( { triangle.v0.position.x, triangle.v1.position.x, triangle.v2.position.x } );
+			auto [yMin, yMax] = 
+				std::minmax( { triangle.v0.position.y, triangle.v1.position.y, triangle.v2.position.y } );
+			
+
+			const auto screenRect = Graphics::GetRect<float>();
+			const auto xStart = std::floor( std::max( xMin, 0.f ) );
+			const auto yStart = std::floor( std::max( yMin, 0.f ) );
+			const auto xEnd = std::ceil( std::min( xMax, screenRect.Width() ) );
+			const auto yEnd = std::ceil( std::min( yMax, screenRect.Height() ) );
+
+			for( float y = yStart; y < yEnd; ++y )
 			{
-				const auto p = Vec2{ x, y };
-				if( !Rasterize( p, triangle0 ) )
+				for( float x = xStart; x < xEnd; ++x )
 				{
-					Rasterize( p, triangle1 );
+					Rasterize( Vec2{ x, y }, triangles[ i ] );
 				}
 			}
 		}
@@ -84,14 +89,14 @@ private:
 	{
 		auto coords				= triangle.Contains( p );
 
-		if( !coords.has_value() ) return false;
-
+		if( !coords ) return false;
 		const auto ix			= int( p.x );
 		const auto iy			= int( p.y );
-		const auto vertex		= triangle.Interpolate( *coords );
+
+		const auto vertex		= coords->Interpolate( triangle );
 		const auto effect_color = effect.ps( vertex );
 		const auto bg_color		= gfx.GetPixel( ix, iy );
-		const auto dst_color	= AlphaBlend( effect_color, bg_color );
+		const auto dst_color	= effect.rs( effect_color, bg_color );
 
 		gfx.PutPixel( ix, iy, dst_color );
 

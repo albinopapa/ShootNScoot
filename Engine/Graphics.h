@@ -20,12 +20,13 @@
 ******************************************************************************************/
 #pragma once
 
+#include "AlphaTextureEffect.h"
 #include "ChiliWin.h"
 #include "ChiliException.h"
 #include "Colors.h"
-#include "Surface.h"
-#include "Rect.h"
 #include "Mat3.h"
+#include "Rect.h"
+#include "Surface.h"
 #include "Vec2.h"
 
 #include <cassert>
@@ -78,6 +79,7 @@ public:
 	void DrawCircle( Point const& center, int radius, Color color )noexcept;
 	void DrawRect( RectI const& dst, Color color )noexcept;
 	void DrawLine( Point const& p0, Point const& p2, Color color )noexcept;
+
 	template<typename Effect>
 	void DrawSprite( RectI const& dst, Surface const& sprite, Effect&& effect )noexcept {
 		const auto xStart = std::max( -dst.left, 0 );

@@ -45,8 +45,7 @@ public:
 	}
 	static constexpr Rect_ FromCenter( const Vec2_<T>& center, const Size<T>& halfSize )noexcept
 	{
-		const auto half = Vec2_<T>( halfSize.width, halfSize.height );
-		return Rect_( center - half, center + half );
+		return Rect_( center - halfSize, center + halfSize );
 	}
 	constexpr Rect_ Expand( T offset ) const noexcept
 	{

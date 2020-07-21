@@ -13,6 +13,11 @@ struct Triangle
 			u( u_ ), v( v_ ), w( w_ )
 		{}
 
+		constexpr auto Interpolate( Triangle const& triangle )const noexcept
+		{
+			return ( triangle.v0 * u ) + ( triangle.v1 * v ) + ( triangle.v2 * w );
+		}
+
 		float u = -1.f;
 		float v = -1.f;
 		float w = -1.f;
@@ -28,17 +33,20 @@ struct Triangle
 
 	constexpr std::optional<Barycentric> Contains( Vec2 const& p )const noexcept
 	{
-		const auto a = ( v1.position - p ).Cross( v2.position - p ) * area;
-		const auto b = ( v2.position - p ).Cross( v0.position - p ) * area;
-		const auto c = ( v0.position - p ).Cross( v1.position - p ) * area;
+		auto get_area = [this]( Vec2 const& vpos0, Vec2 const& vpos1, Vec2 const& p ) {
+			return ( vpos0 - p ).Cross( vpos1 - p ) * area;
+		};
 
-		const auto contains =
-			( a >= 0.f ) & ( a <= 1.f ) &
-			( b >= 0.f ) & ( b <= 1.f ) &
-			( c >= 0.f ) & ( c <= 1.f );
+		const auto a = get_area( v1.position, v2.position, p );
+		if( a < 0.f || a > 1.f )return {};
 
-		return contains != 0 ? 
-			std::optional<Barycentric>{std::in_place_t{}, a, b, c} : std::optional<Barycentric>{};
+		const auto b = get_area( v2.position, v0.position, p );
+		if( b < 0.f || b > 1.f )return {};
+
+		const auto c = get_area( v0.position, v1.position, p );
+		if( c < 0.f || c > 1.f )return {};
+
+		return std::optional<Barycentric>{ std::in_place_t{}, a, b, c };
 	}
 	constexpr auto Interpolate( Barycentric const& coords )const noexcept
 	{

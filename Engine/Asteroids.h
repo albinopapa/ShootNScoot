@@ -27,7 +27,9 @@ public:
 	static constexpr float speed = 200.f;
 
 	std::variant<BigAsteroid, SmallAsteroid> variant;
-	Vec2 position, direction;
+	Vec2 position;
+	Vec2 direction;
+	int sprite_index = 0;
 	float health = 100.f;
 	AsteroidDeathReason reason = AsteroidDeathReason::None;
 };

@@ -25,7 +25,7 @@ public:
 	static constexpr float enemy_spawn_group_delay = 12.f;
 	// Max number of groups
 	static constexpr int enemy_spawn_group_max = 2;
-	static constexpr float boss_spawn_delay = 60.f;
+
 	// Max number of enemies in each group
 	static constexpr int enemy_spawn_max = 10;
 
