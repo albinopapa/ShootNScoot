@@ -102,3 +102,8 @@ const Color* Surface::Data() const
 {
 	return pixels.get();
 }
+
+Color* Surface::Data()
+{
+	return pixels.get();
+}

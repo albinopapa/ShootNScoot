@@ -22,8 +22,8 @@ public:
 	RectI GetRect() const;
 	void Fill( Color c );
 	const Color* Data() const;
+	Color* Data();
 private:
-	/*std::vector<Color> pixels;*/
 	std::unique_ptr<Color[]> pixels;
 	int width = 0;
 	int height = 0;
