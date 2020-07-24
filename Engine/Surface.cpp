@@ -29,17 +29,22 @@ Surface::Surface( int width, int height )
 {}
 
 Surface::Surface( Surface&& donor )
-{
-	*this = std::move( donor );
-}
+	:
+	width( donor.width ),
+	height( donor.height ),
+	pixels( std::move( donor.pixels ) )
+{}
 
 Surface& Surface::operator=( Surface&& rhs )
 {
-	width = rhs.width;
-	height = rhs.height;
-	pixels = std::move( rhs.pixels );
-	rhs.width = 0;
-	rhs.height = 0;
+	if(this != &rhs)
+	{
+		width = rhs.width;
+		height = rhs.height;
+		pixels = std::move( rhs.pixels );
+		rhs.width = 0;
+		rhs.height = 0;
+	}
 	return *this;
 }
 
@@ -50,6 +55,14 @@ void Surface::PutPixel( int x, int y, Color c )
 	assert( x < width );
 	assert( y < height );
 	pixels[ x + ( y * width ) ] = c;
+}
+
+void Surface::PutPixelClipped( int x, int y, Color color ) noexcept
+{
+	if( x >= 0 && x < width && y >= 0 && y < height )
+	{
+		PutPixel( x, y, color );
+	}
 }
 
 Color Surface::GetPixel( int x, int y ) const

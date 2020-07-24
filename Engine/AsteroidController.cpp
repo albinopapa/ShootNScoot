@@ -3,23 +3,18 @@
 
 void AsteroidController::Update( Asteroid& model, float dt ) noexcept
 {
-	const auto radius = std::visit( [&]( auto& astro )
+	std::visit( [&]( auto& astro )
 	{
 		using type = std::decay_t<decltype( astro )>;
-		return type::radius;
+		constexpr auto size = SizeF{ type::radius, type::radius };
+		
+		if( !Graphics::IsVisible( RectF::FromCenter( model.position, size ) ) &&
+			( Graphics::GetRect<float>().Center() - model.position ).Dot( model.direction ) <= 0.f )
+		{
+			model.health = 0.f;
+			model.reason = AsteroidDeathReason::LeftScreen;
+		}
 	}, model.variant );
-
-	const auto is_leaving =
-		( model.position.y + radius < 0.f && model.direction.y < 0.f ) ||
-		( model.position.y - radius > Graphics::GetRect<float>().bottom && model.direction.y > 0.f ) ||
-		( model.position.x + radius < 0.f && model.direction.x < 0.f ) ||
-		( model.position.x - radius > Graphics::GetRect<float>().right && model.direction.y > 0.f );
-
-	if( is_leaving )
-	{
-		model.health = 0.f;
-		model.reason = AsteroidDeathReason::LeftScreen;
-	}
 }
 
 void AsteroidController::TakeDamage( Asteroid& model, float amount ) noexcept
@@ -36,7 +31,7 @@ RectF AsteroidController::AABB( Asteroid& model ) const noexcept
 {
 	return std::visit( [&]( auto const& astro ) {
 		using type = std::decay_t<decltype( astro )>;
-		return RectF{ -type::radius, -type::radius, type::radius, type::radius } + model.position;
+		return RectF::FromCenter( model.position, SizeF{ type::radius, type::radius } );
 	}, model.variant );
 }
 

@@ -25,6 +25,7 @@
 #include "ChiliException.h"
 #include "Colors.h"
 #include "Mat3.h"
+#include "Pipeline.h"
 #include "Rect.h"
 #include "Surface.h"
 #include "Vec2.h"
@@ -81,19 +82,17 @@ public:
 	void DrawLine( Point const& p0, Point const& p2, Color color )noexcept;
 
 	template<typename Effect>
-	void DrawSprite( RectI const& dst, Surface const& sprite, Effect&& effect )noexcept {
-		const auto xStart = std::max( -dst.left, 0 );
-		const auto yStart = std::max( -dst.top, 0 );
-		const auto xEnd = std::min( ScreenWidth - dst.left, dst.Width() );
-		const auto yEnd = std::min( ScreenHeight - dst.top, dst.Height() );
+	void DrawSprite( RectI const& dst, Radian angle, Surface const& sprite, Effect&& effect )noexcept {
+		const auto ratio = static_cast< float >( dst.Height() ) / static_cast< float >( dst.Width() );
+		const auto quad = RectF::FromCenter( Vec2{}, SizeF{ 1.f, ratio } *.5f );
 
-		for( int y = yStart; y < yEnd; ++y )
-		{
-			for( int x = xStart; x < xEnd; ++x )
-			{
-				effect( x + dst.left, y + dst.top, sprite.GetPixel( x, y ), *this );
-			}
-		}
+		auto pl = Pipeline{ effect, pSysBuffer };
+		pl.PSSetTexture( sprite );
+		pl.vertices[ 0 ] = { { quad.left, quad.top }, { 0.f, 0.f } };
+		pl.vertices[ 1 ] = { { quad.right, quad.top }, { 1.f, 0.f } };
+		pl.vertices[ 2 ] = { { quad.left, quad.bottom }, { 0.f, 1.f } };
+		pl.vertices[ 3 ] = { { quad.right, quad.bottom }, { 1.f, 1.f } };
+		pl.Draw( dst, angle );
 	}
 
 	template<typename T>
@@ -119,7 +118,5 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>			pInputLayout;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState>			pSamplerState;
 	D3D11_MAPPED_SUBRESOURCE							mappedSysBufferTexture;
-	Color*                                              pSysBuffer = nullptr;
-public:
-	static RectI GetScreenRect();
+	Surface                                             pSysBuffer;
 };

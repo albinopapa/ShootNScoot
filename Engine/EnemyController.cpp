@@ -70,46 +70,31 @@ void EnemyController::Update( Enemy& parent, Enemy1& enemy, World& world, float 
 
 			// If left of center, turn counterclockwise
 			// If right of center, turn clockwise
-			enemy.m_angle += ( parent.position.x < Graphics::GetRect<float>().Center().x ?
+			parent.m_angle += ( parent.position.x < Graphics::GetRect<float>().Center().x ?
 				Radian{ -.1f } : Radian{ .1f } );
 			
 
 			// If angle is greater than 180 wrap angle to -180 ( probably counting up )
-			if( enemy.m_angle > pi ) enemy.m_angle -= pi2;
+			if( parent.m_angle > pi ) parent.m_angle -= pi2;
 			// If angle is less than -180 wrap angle to 180 ( probably counting down )
-			else if( enemy.m_angle < -pi ) enemy.m_angle += pi2;
+			else if( parent.m_angle < -pi ) parent.m_angle += pi2;
 
-			if( enemy.m_angle >= min_rotation - .05f && enemy.m_angle <= min_rotation + .05f )
+			if( parent.m_angle >= min_rotation - .05f && parent.m_angle <= min_rotation + .05f )
 			{
-				enemy.m_state = Enemy1::State::Retreating;
 				parent.velocity = Vec2{ 0.f, -1.f };
+				enemy.m_state = Enemy1::State::Retreating;
 			}
 			else 
 			{
-				parent.velocity = Vec2{ enemy.m_angle.Cos(), enemy.m_angle.Sin() };
+				parent.velocity = Vec2{ parent.m_angle.Cos(), parent.m_angle.Sin() };
 			}
 
-			break;
-		}
-		case Enemy1::State::Retreating:
-		{
-			// Fire at player while retreating
-			if(WeaponController::CanFire(enemy.m_weapon))
-			{
-				WeaponController::Fire(
-					enemy.m_weapon,
-					parent.position,
-					delta.Normalize(),
-					world,
-					AmmoOwner::Enemy
-				);
-			}
 			break;
 		}
 	}
 
-	if( !Graphics::IsVisible( RectI{ Enemy2::aabb + parent.position } ) &&
-		parent.velocity.Dot( world.hero.position - parent.position ) < 0.f )
+	if( !Graphics::IsVisible( RectI{ Enemy1::aabb + parent.position } ) &&
+		parent.velocity.Dot( Graphics::GetRect<float>().Center() - parent.position ) < 0.f )
 	{
 		parent.health = 0.f;
 	}
@@ -125,7 +110,7 @@ void EnemyController::Update( Enemy& parent, Enemy2& enemy, World& world, float 
 			constexpr auto line_of_sight = 400.f;
 			if( delta.LengthSq() < sqr( line_of_sight ) ) {
 				parent.velocity = delta.Normalize() * 1.5f;
-				enemy.m_angle = Radian{ std::atan2( parent.velocity.y, parent.velocity.x ) };
+				parent.m_angle = Radian{ std::atan2( parent.velocity.y, parent.velocity.x ) };
 				enemy.m_state = Enemy2::State::Charging;
 			}
 			break;

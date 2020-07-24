@@ -19,14 +19,9 @@
 *	along with The Chili DirectX Framework.  If not, see <http://www.gnu.org/licenses/>.  *
 ******************************************************************************************/
 #include "ChiliException.h"
-#include "ColorKeyTextureEffect.h"
 #include "DXErr.h"
-#include "DiscFillEffect.h"
 #include "Graphics.h"
 #include "MainWindow.h"
-#include "Pipeline.h"
-#include "PointSampler.h"
-#include "RectFillEffect.h"
 
 #include <algorithm>
 #include <array>
@@ -243,8 +238,7 @@ Graphics::Graphics( HWNDKey& key )
 	}
 
 	// allocate memory for sysbuffer (16-byte aligned for faster access)
-	pSysBuffer = reinterpret_cast<Color*>(
-		_aligned_malloc( sizeof( Color ) * Graphics::ScreenWidth * Graphics::ScreenHeight,16u ));
+	pSysBuffer = Surface( ScreenWidth, ScreenHeight );
 }
 
 bool Graphics::IsVisible( RectI const & rect )
@@ -270,7 +264,7 @@ void Graphics::DrawDisc( Point const & center, int radius, Color color ) noexcep
 			const auto delta = Point{ x, y };
 			if( delta.LengthSq() < sqRadius ) {
 				const auto pos = delta + center;
-				PutPixel( pos.x, pos.y, color );
+				pSysBuffer.PutPixel( pos.x, pos.y, color );
 			}
 		}
 	}
@@ -286,14 +280,14 @@ void Graphics::DrawCircle( Point const& center, int radius, Color color ) noexce
 		for( int x = 0; x <= radius; x++ ) {
 			const auto y = ( int )( sqrt( r2 - sqr( x ) ) + 0.5 );
 
-			PutPixel( center.x + x, center.y + y, color );
-			PutPixel( center.x + x, center.y - y, color );
-			PutPixel( center.x - x, center.y + y, color );
-			PutPixel( center.x - x, center.y - y, color );
-			PutPixel( center.x + y, center.y + x, color );
-			PutPixel( center.x + y, center.y - x, color );
-			PutPixel( center.x - y, center.y + x, color );
-			PutPixel( center.x - y, center.y - x, color );
+			pSysBuffer.PutPixel( center.x + x, center.y + y, color );
+			pSysBuffer.PutPixel( center.x + x, center.y - y, color );
+			pSysBuffer.PutPixel( center.x - x, center.y + y, color );
+			pSysBuffer.PutPixel( center.x - x, center.y - y, color );
+			pSysBuffer.PutPixel( center.x + y, center.y + x, color );
+			pSysBuffer.PutPixel( center.x + y, center.y - x, color );
+			pSysBuffer.PutPixel( center.x - y, center.y + x, color );
+			pSysBuffer.PutPixel( center.x - y, center.y - x, color );
 		}
 	}
 	else
@@ -301,14 +295,14 @@ void Graphics::DrawCircle( Point const& center, int radius, Color color ) noexce
 		for( int x = 0; x <= radius; x++ ) {
 			const auto y = ( int )( sqrt( r2 - sqr( x ) ) + 0.5 );
 
-			PutPixelClipped( center.x + x, center.y + y, color );
-			PutPixelClipped( center.x + x, center.y - y, color );
-			PutPixelClipped( center.x - x, center.y + y, color );
-			PutPixelClipped( center.x - x, center.y - y, color );
-			PutPixelClipped( center.x + y, center.y + x, color );
-			PutPixelClipped( center.x + y, center.y - x, color );
-			PutPixelClipped( center.x - y, center.y + x, color );
-			PutPixelClipped( center.x - y, center.y - x, color );
+			pSysBuffer.PutPixelClipped( center.x + x, center.y + y, color );
+			pSysBuffer.PutPixelClipped( center.x + x, center.y - y, color );
+			pSysBuffer.PutPixelClipped( center.x - x, center.y + y, color );
+			pSysBuffer.PutPixelClipped( center.x - x, center.y - y, color );
+			pSysBuffer.PutPixelClipped( center.x + y, center.y + x, color );
+			pSysBuffer.PutPixelClipped( center.x + y, center.y - x, color );
+			pSysBuffer.PutPixelClipped( center.x - y, center.y + x, color );
+			pSysBuffer.PutPixelClipped( center.x - y, center.y - x, color );
 		}
 	}
 }
@@ -322,7 +316,7 @@ void Graphics::DrawRect( RectI const& dst, Color color ) noexcept
 
 	for( auto y = yStart; y < yEnd; ++y ) {
 		for( auto x = xStart; x < xEnd; ++x ) {
-			PutPixel( x, y, color );
+			pSysBuffer.PutPixel( x, y, color );
 		}
 	}
 }
@@ -333,7 +327,7 @@ void Graphics::DrawLine( Point const& p0, Point const& p1, Color color ) noexcep
 
 	if( dist.y == 0 && dist.x == 0 )
 	{
-		PutPixel( p0.x, p0.y, color );
+		pSysBuffer.PutPixel( p0.x, p0.y, color );
 	}
 	else if( abs( dist.y ) > abs( dist.x ) )
 	{
@@ -349,7 +343,7 @@ void Graphics::DrawLine( Point const& p0, Point const& p1, Color color ) noexcep
 		for( int y = pt0.y; y <= pt1.y; ++y )
 		{
 			const auto x = static_cast< int >( std::round( m * y + b ) );
-			PutPixel( x, y, color );
+			pSysBuffer.PutPixel( x, y, color );
 		}
 	}
 	else
@@ -366,58 +360,39 @@ void Graphics::DrawLine( Point const& p0, Point const& p1, Color color ) noexcep
 		for( int x = pt0.x; x <= pt1.x; ++x )
 		{
 			const auto y = static_cast< int >( std::round( m * x + b ) );
-			PutPixel( x, y, color );
+			pSysBuffer.PutPixel( x, y, color );
 		}
 	}
 }
 
 Graphics::~Graphics()
 {
-	// free sysbuffer memory (aligned free)
-	if( pSysBuffer )
-	{
-		_aligned_free( pSysBuffer );
-		pSysBuffer = nullptr;
-	}
 	// clear the state of the device context before destruction
 	if( pImmediateContext ) pImmediateContext->ClearState();
-}
-
-RectI Graphics::GetScreenRect()
-{
-	return{ 0,0,ScreenWidth,ScreenHeight };
 }
 
 void Graphics::BeginFrame()noexcept
 {
 	// clear the sysbuffer
-	memset( pSysBuffer, 0u, sizeof( Color ) * Graphics::ScreenHeight * Graphics::ScreenWidth );
+	pSysBuffer.Fill( Colors::Black );
 }
 
 void Graphics::PutPixel( int x, int y, Color c )
 {
-	assert( x >= 0 );
-	assert( x < int( Graphics::ScreenWidth ) );
-	assert( y >= 0 );
-	assert( y < int( Graphics::ScreenHeight ) );
-	pSysBuffer[ Graphics::ScreenWidth * y + x ] = c;
+	pSysBuffer.PutPixel( x, y, c );
 }
 
 void Graphics::PutPixelClipped( int x, int y, Color color ) noexcept
 {
 	if( x >= 0 && x < ScreenWidth && y >= 0 && y < ScreenHeight )
 	{
-		pSysBuffer[ x + ( y * ScreenWidth ) ] = color;
+		pSysBuffer.PutPixel( x, y, color );
 	}
 }
 
 Color Graphics::GetPixel( int x, int y ) const
 {
-	assert( x >= 0 );
-	assert( x < int( Graphics::ScreenWidth ) );
-	assert( y >= 0 );
-	assert( y < int( Graphics::ScreenHeight ) );
-	return pSysBuffer[ Graphics::ScreenWidth * y + x ];
+	return pSysBuffer.GetPixel( x, y );
 }
 
 void Graphics::EndFrame()
@@ -438,7 +413,9 @@ void Graphics::EndFrame()
 	// perform the copy line-by-line
 	for( size_t y = 0u; y < Graphics::ScreenHeight; y++ )
 	{
-		memcpy( &pDst[y * dstPitch],&pSysBuffer[y * srcPitch],rowBytes );
+		auto* dst = pDst + ( y * dstPitch );
+		const auto* src = pSysBuffer.Data() + ( y * srcPitch );
+		memcpy( dst, src, rowBytes );
 	}
 	// release the adapter memory
 	pImmediateContext->Unmap( pSysBufferTexture.Get(),0u );

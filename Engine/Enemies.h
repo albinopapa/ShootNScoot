@@ -33,8 +33,6 @@ private:
 
 	Weapon m_weapon = { Gun{} };
 	State m_state = State::Scouting;
-	Radian m_angle = Radian{ Degree{90.f} };
-	int m_frame = 0;
 };
 
 // Kamekase: Flies in from random position outside of view
@@ -55,12 +53,14 @@ private:
 	friend class EnemyController;
 	friend class EnemyView;
 
-	Radian m_angle = Radian{ Degree{90.f} };
 	State m_state = State::Drifting;
 };
+
 class Enemy3
 {
 public:
+	enum class State{};
+public:
 	void Update( Enemy& parent, float dt );
 
 public:
@@ -68,8 +68,11 @@ public:
 	static constexpr auto aabb = RectF{ -16.f, -16.f, 16.f, 16.f };
 	static constexpr auto damage = 50.f;
 };
+
 class Enemy4
 {
+public:
+	enum class State{ Attacking, Rearming };
 public:
 	void Update( Enemy& parent, float dt );
 
@@ -77,6 +80,12 @@ public:
 	static constexpr auto speed = 120.f;
 	static constexpr auto aabb = RectF{ -16.f, -16.f, 16.f, 16.f };
 	static constexpr auto damage = 50.f;
+
+private:
+	friend class EnemyController;
+	friend class EnemyView;
+
+	State m_state = State::Rearming;
 };
 class Enemy5
 {
@@ -94,19 +103,6 @@ public:
 	void Update( Enemy& parent, float dt ) {}
 };
 
-template<typename EnemyType> struct is_enemy {
-	static constexpr bool value = std::disjunction_v<
-		std::is_same<EnemyType, Enemy1>,
-		std::is_same<EnemyType, Enemy2>,
-		std::is_same<EnemyType, Enemy3>,
-		std::is_same<EnemyType, Enemy4>,
-		std::is_same<EnemyType, Enemy5>
-	>;
-};
-
-template<typename T>
-constexpr bool is_enemy_v = is_enemy<T>::value;
-
 class Enemy
 {
 public:
@@ -118,5 +114,6 @@ public:
 	std::variant<Enemy1, Enemy2, Enemy3, Enemy4, Enemy5> variant;
 	Vec2 position = { 0.f, -16.f };
 	Vec2 velocity = { 0.f, 0.f };
+	Radian m_angle = Radian{ Degree{ 90.f } };
 	float health = 100.f;
 };

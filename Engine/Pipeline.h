@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Graphics.h"
+#include "Surface.h"
 #include "Triangle.h"
 #include <algorithm>
 #include <memory>
@@ -14,10 +14,10 @@ public:
 	using VSConstantBuffer = typename Effect::VertexShader::ConstantBuffer;
 	using PSConstantBuffer = typename Effect::PixelShader::ConstantBuffer;
 public:
-	Pipeline( Effect const& effect_, Graphics& gfx_ )
+	Pipeline( Effect const& effect_, Surface& target_ )
 		:
 		effect( effect_ ),
-		gfx( gfx_ )
+		target( target_ )
 	{}
 
 	void PSSetConstantBuffer( PSConstantBuffer const& buffer_ )noexcept
@@ -33,7 +33,7 @@ public:
 	{
 		VSSetConstantBuffer( {
 				Mat3F::Rotate( angle ) *
-				Mat3F::Scale( dst.Width(), dst.Height() ) *
+				Mat3F::Scale( dst.Width(), dst.Width() ) *
 				Mat3F::Translation( dst.Center() ) 
 			} );
 
@@ -85,22 +85,20 @@ public:
 	}
 
 private:
-	bool Rasterize( Vec2 const& p, Triangle<Vertex> const& triangle )noexcept
+	void Rasterize( Vec2 const& p, Triangle<Vertex> const& triangle )noexcept
 	{
-		auto coords				= triangle.Contains( p );
+		if(auto coords = triangle.Contains( p ); coords.has_value() )
+		{
+			const auto ix			= int( p.x );
+			const auto iy			= int( p.y );
 
-		if( !coords ) return false;
-		const auto ix			= int( p.x );
-		const auto iy			= int( p.y );
+			const auto vertex		= coords->Interpolate( triangle );
+			const auto effect_color = effect.ps( vertex );
+			const auto bg_color		= target.GetPixel( ix, iy );
+			const auto dst_color	= effect.rs( effect_color, bg_color );
 
-		const auto vertex		= coords->Interpolate( triangle );
-		const auto effect_color = effect.ps( vertex );
-		const auto bg_color		= gfx.GetPixel( ix, iy );
-		const auto dst_color	= effect.rs( effect_color, bg_color );
-
-		gfx.PutPixel( ix, iy, dst_color );
-
-		return true;
+			target.PutPixel( ix, iy, dst_color );
+		}
 	}
 	void VSSetConstantBuffer( VSConstantBuffer const& buffer_ )noexcept
 	{
@@ -108,7 +106,7 @@ private:
 	}
 
 public:
-	Graphics& gfx;
+	Surface& target;
 	Effect effect;
 	Vertex vertices[ 4 ];
 };

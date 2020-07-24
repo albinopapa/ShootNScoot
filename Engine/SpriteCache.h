@@ -20,7 +20,7 @@ struct SpriteCache
 			asteroid_fames.push_back( make_asteroid_frame( 5, sheet ) );
 		}
 		{
-			auto sheet = Surface{ "Enemy_Example_1-a.png" };
+			auto sheet = Surface{ "Images/Enemy_Example_1-a_rotated.png" };
 			enemy1_ship = load_from_sheet( { 130, 164, 173, 216 }, sheet );
 			enemy2_ship = load_from_sheet( { 129,  82, 174, 147 }, sheet );
 			enemy3_ship = load_from_sheet( { 129,   9, 169,  59 }, sheet );
