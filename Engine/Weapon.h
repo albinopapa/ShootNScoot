@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Bullet.h"
+#include "Ammo.h"
 #include "Enumerations.h"
 #include <variant>
 

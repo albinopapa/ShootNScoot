@@ -58,8 +58,8 @@ public:
 
 		const auto xStart = std::floor( std::max( xMin->position.x, 0.f ) );
 		const auto yStart = std::floor( std::max( yMin->position.y, 0.f ) );
-		const auto xEnd = std::ceil( std::min( xMax->position.x, screenRect.Width() ) );
-		const auto yEnd = std::ceil( std::min( yMax->position.y, screenRect.Height() ) );
+		const auto xEnd = std::ceil( std::min( xMax->position.x, Graphics::ScreenWidth ) );
+		const auto yEnd = std::ceil( std::min( yMax->position.y, Graphics::ScreenHeight ) );
 		
 		const auto triangle0 =
 			effect.gs( tvertices[ 0 ], tvertices[ 1 ], tvertices[ 2 ] );

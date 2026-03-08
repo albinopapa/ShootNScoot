@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Rect.h"
-#include "Bullet.h"
+#include "Ammo.h"
 
 class AmmoController
 {

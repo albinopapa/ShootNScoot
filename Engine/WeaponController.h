@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Bullet.h"
+#include "Ammo.h"
 #include "Vec2.h"
 #include "Weapon.h"
 #include "World.h"
